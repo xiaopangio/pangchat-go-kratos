@@ -1,0 +1,17 @@
+<svg width="128.000000" height="128.000000" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<desc>
+			Created with Pixso.
+	</desc>
+	<g clip-path="url(#clip220_2448)">
+		<path id="Vector" d="M80 74.6666C80 74.6666 75 79.5 64 79.5C53 79.5 48 74.6666 48 74.6666" stroke="#57B77D" stroke-width="10.666667" stroke-linecap="round"/>
+		<path id="Vector" d="M74.6667 101.333C94.7787 101.333 104.837 101.333 111.083 95.0826C117.333 88.8373 117.333 78.7787 117.333 58.6666C117.333 38.5547 117.333 28.496 111.083 22.2506C104.837 16 94.7787 16 74.6667 16L53.3333 16C33.2213 16 23.1627 16 16.9174 22.2506C10.6667 28.496 10.6667 38.5547 10.6667 58.6666C10.6667 78.7787 10.6667 88.8373 16.9174 95.0826C20.4 98.5707 25.0667 100.112 32 100.789" stroke="#57B77D" stroke-width="10.666667" stroke-linejoin="round" stroke-linecap="round"/>
+		<path id="Vector" d="M74.6667 101.333C68.0747 101.333 60.8107 104 54.1813 107.44C43.5253 112.971 38.1973 115.739 35.5733 113.973C32.9493 112.213 33.4453 106.747 34.4427 95.8187L34.6667 93.3334" stroke="#57B77D" stroke-width="10.666667" stroke-linecap="round"/>
+		<circle id="Ellipse 33" cx="39.000000" cy="44.000000" r="10.000000" fill="#57B77D"/>
+		<circle id="Ellipse 34" cx="89.000000" cy="44.000000" r="10.000000" fill="#57B77D"/>
+	</g>
+	<defs>
+		<clipPath id="clip220_2448">
+			<rect id="akar-icons:chat-remove" width="128.000000" height="128.000000" fill="white"/>
+		</clipPath>
+	</defs>
+</svg>

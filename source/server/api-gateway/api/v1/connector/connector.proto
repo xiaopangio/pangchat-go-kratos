@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package api.v1.connector;
+import "v1/universal/universal.proto";
+option go_package = "./api/v1/connector;connector";
+message LoginRequest {
+    int64 type= 1;
+    string username = 2;
+    string password = 3;
+}
+message UserAddress{
+  string city_id=1;
+  string city=2;
+  string province=3;
+}
+message Province {
+  string province_id=1;
+  string province_name=2;
+  repeated City cities=3;
+}
+message City {
+  string city_id=1;
+  string city_name=2;
+}
+message LoginResponse {
+  int64 uid =1;
+  string account_id=2;
+  string nick_name=4;
+  string personal_desc=6;
+  string avatar_url=8;
+  UserAddress address=9;
+}
+message LogoutRequest {
+  string uid =1;
+}
+message LogoutResponse {
+}
+//message FriendRequest{
+//  int64 request_id = 1;
+//  int64 requester_id = 2;
+//  int64 receiver_id = 3;
+//  string desc = 5;
+//  string status = 6;
+//  string create_time = 7;
+//  string update_time = 8;
+//}
+message PushFriendRequestsRequest{
+  int64 uid = 1;
+  repeated universal.FriendRequest requests = 2;
+}
+message PushFriendRequestsResponse{
+
+}
+service ConnectorService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+  rpc PushFriendRequests(PushFriendRequestsRequest) returns (PushFriendRequestsResponse);
+}

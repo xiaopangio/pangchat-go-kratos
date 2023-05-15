@@ -1,0 +1,101 @@
+syntax = "proto3";
+package kratos.api;
+
+option go_package = "user/internal/conf;conf";
+
+import "google/protobuf/duration.proto";
+
+message Bootstrap {
+  Server server = 1;
+  Data data = 2;
+  Discovery discovery=3;
+  Registry registry=4;
+  Service service = 5;
+  Kafka kafka = 6;
+  Message_queue message_queue = 7;
+}
+message Message_queue{
+  string friend_request_topic = 1;
+  string friend_request_group = 2;
+  string connect_topic = 3;
+  string connect_group = 4;
+}
+message Kafka{
+  repeated string addrs = 1;
+}
+message Service{
+  string logic_service = 1;
+  string connector_service = 2;
+  string relationship_service = 3;
+  string user_service = 4;
+  string job_service = 5;
+  string online_service = 6;
+}
+message Aliyun {
+  string access_key = 1;
+  string access_secret = 2;
+  Sms sms = 4;
+  Oss oss = 5;
+  Sts sts = 6;
+}
+message Sts {
+  string endpoint = 1;
+  string role_arn = 2;
+  string role_session_name = 3;
+}
+message Sms {
+  string sign_name = 1;
+  string template_code = 2;
+  string region_id = 3;
+  string endpoint = 4;
+}
+message Oss {
+  string endpoint = 1;
+  string bucket = 2;
+}
+message Etcd {
+  repeated string addrs = 1;
+}
+message Discovery {
+  Etcd etcd = 1;
+}
+message Registry {
+  Etcd etcd = 1;
+}
+message HTTP {
+  string network = 1;
+  string addr = 2;
+  google.protobuf.Duration timeout = 3;
+}
+message GRPC {
+  string network = 1;
+  string addr = 2;
+  google.protobuf.Duration timeout = 3;
+}
+message Server {
+  HTTP http = 1;
+  GRPC grpc = 2;
+  string name = 3;
+  string version = 4;
+  string environment = 5;
+}
+
+message Data {
+  message Database {
+    string driver = 1;
+    string source = 2;
+  }
+  message Redis {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration read_timeout = 3;
+    google.protobuf.Duration write_timeout = 4;
+    int64 db = 5;
+    string password = 6;
+    int64 pool_size = 7;
+    int64 min_idle_conns = 8;
+    int64 max_retries = 9;
+  }
+  Database database = 1;
+  Redis redis = 2;
+}

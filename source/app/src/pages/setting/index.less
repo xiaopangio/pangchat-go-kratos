@@ -1,0 +1,108 @@
+.setting {
+  height: 768px;
+  overflow: auto;
+  background: #ededed;
+}
+
+.exit-popper {
+  .mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: rgba(8, 28, 44, 0.24);
+    opacity: 0;
+  }
+
+  .mask-active {
+    animation: fadeIn 0.2s ease forwards;
+  }
+
+  .mask-hide {
+    animation: fadeOut 0.2s ease forwards;
+  }
+
+  .popper {
+    position: absolute;
+    width: 375px;
+    bottom: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    box-sizing: border-box;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    background: #ededed;
+
+    .popper-item {
+      width: 100%;
+      height: 48px;
+      line-height: 48px;
+      text-align: center;
+      border-bottom: 1px solid #e5e5e5;
+      background: #ffffff;
+
+      &:last-child {
+        margin-top: 8px;
+        border-bottom: none;
+      }
+    }
+  }
+
+  .popper-active {
+    animation: slideUp 0.2s ease forwards;
+  }
+
+  .popper-hide {
+    animation: slideDown 0.2s ease forwards;
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    visibility: visible;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(120%);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    z-index: 200;
+  }
+  100% {
+    z-index: 200;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    z-index: 200;
+    opacity: 1;
+  }
+  100% {
+    z-index: -1;
+    opacity: 0;
+  }
+}

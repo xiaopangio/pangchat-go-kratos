@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package api.v1.logic.relationship;
+
+option go_package = "./api/v1/relationship;relationship";
+service relationShip {
+    rpc SendFriendRequest (SendFriendRequestRequest) returns (SendFriendRequestResponse) {}
+    rpc GetFriendRequestList (GetFriendRequestListRequest) returns (GetFriendRequestListResponse) {}
+    rpc GetFriendRequest( GetFriendRequestRequest) returns (GetFriendRequestResponse) {}
+    rpc DealFriendRequest (DealFriendRequestRequest) returns (DealFriendRequestResponse) {}
+    rpc GetFriendList (GetFriendListRequest) returns (GetFriendListResponse) {}
+    rpc DeleteFriend (DeleteFriendRequest) returns (DeleteFriendResponse) {}
+    rpc GetFriendInfo (GetFriendInfoRequest) returns (GetFriendInfoResponse) {}
+    rpc UpdateFriendInfo (UpdateFriendInfoRequest) returns (UpdateFriendInfoResponse) {}
+    rpc CreateFriendGroup (CreateFriendGroupRequest) returns (CreateFriendGroupResponse) {}
+    rpc UpdateFriendGroup (UpdateFriendGroupRequest) returns (UpdateFriendGroupResponse) {}
+    rpc DeleteFriendGroup (DeleteFriendGroupRequest) returns (DeleteFriendGroupResponse) {}
+}
+message SendFriendRequestRequest {
+    string requester_id = 1;
+    string receiver_id = 2;
+    string note_name = 3;
+    string desc = 4;
+    string group_name = 5;
+}
+message SendFriendRequestResponse {
+}
+message GetFriendRequestListRequest {
+    string user_id = 1;
+    int64 page_number = 2;
+    int64 page_size = 3;
+}
+message FriendRequest{
+    string request_id = 1;
+    string requester_id = 2;
+    string receiver_id = 3;
+    string desc = 5;
+    int64 status = 6;
+    int64 create_time = 7;
+    int64 update_time = 8;
+}
+message GetFriendRequestListResponse {
+    repeated FriendRequest friend_requests = 1;
+    int64 total = 2;
+}
+message GetFriendRequestRequest {
+    string request_id = 1;
+}
+message GetFriendRequestResponse {
+    FriendRequest friend_request = 1;
+}
+message DealFriendRequestRequest {
+    string request_id = 1;
+    int64 status = 2;
+}
+message DealFriendRequestResponse {
+}
+message GetFriendListRequest {
+    string user_id = 1;
+}
+message FriendGroup{
+    string group_name = 2;
+    repeated Friend friends = 3;
+}
+message Friend {
+    string friend_id = 1;
+    string nick_name = 3;
+    string note_name = 4;
+    string avatar = 5;
+}
+message GetFriendListResponse {
+    repeated FriendGroup friend_groups = 1;
+}
+message DeleteFriendRequest {
+    string user_id = 1;
+    string friend_id = 2;
+}
+message DeleteFriendResponse {
+}
+message GetFriendInfoRequest {
+    string friend_id = 1;
+}
+message GetFriendInfoResponse {
+    string city_name = 1;
+    string province_name = 2;
+    string desc = 3;
+}
+message UpdateFriendInfoRequest {
+    string user_id = 1;
+    string friend_id = 2;
+    string note_name = 3;
+    string group_name = 4;
+}
+message UpdateFriendInfoResponse {
+}
+message CreateFriendGroupRequest {
+    string user_id = 1;
+    string group_name = 2;
+}
+message CreateFriendGroupResponse {
+}
+message UpdateFriendGroupRequest {
+    string user_id = 1;
+    string group_name = 2;
+    string new_group_name = 3;
+}
+message UpdateFriendGroupResponse {
+}
+message DeleteFriendGroupRequest {
+    string user_id = 1;
+    string group_name = 2;
+}
+message DeleteFriendGroupResponse {
+}

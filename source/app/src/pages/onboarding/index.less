@@ -1,0 +1,223 @@
+.boarding {
+  position: relative;
+  width: 375px;
+  height: 100vh;
+
+  .boarding-top {
+    /* Illustration Onboarding */
+    position: absolute;
+    width: 375px;
+    height: 502px;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 266px;
+    background: rgb(247, 255, 250);
+
+    .boarding-top-content {
+      /* Logo */
+      position: absolute;
+      width: 160px;
+      height: 40px;
+      left: 118px;
+      right: 118px;
+      top: 32px;
+      bottom: 696px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .boarding-top-content-logo {
+        width: 40px;
+        height: 40px;
+        background: url("@img/pangchat-40.png") no-repeat 100% 100%;
+        background-size: contain;
+
+      }
+
+      .boarding-top-content-title {
+        margin-left: 2px;
+        color: rgb(87, 183, 125);
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1.25;
+        letter-spacing: 0;
+        text-align: left;
+      }
+    }
+
+    .boarding-top-imgs {
+      div {
+        position: absolute;
+        overflow: hidden;
+      }
+
+      :nth-child(1) {
+        width: 40px;
+        height: 40px;
+        left: 101px;
+        right: 234px;
+        top: 358px;
+        bottom: 104px;
+        background: url("@img/Emoji.png") no-repeat 100% 100%;
+        background-size: contain;
+
+      }
+
+      :nth-child(2) {
+        width: 40px;
+        height: 40px;
+        left: 44px;
+        right: 291px;
+        top: 183px;
+        bottom: 279px;
+        background: url("@img/Emoji1.png") no-repeat 100% 100%;
+        background-size: contain;
+
+      }
+
+      :nth-child(3) {
+        width: 24px;
+        height: 24px;
+        left: 334px;
+        right: 17px;
+        top: 207px;
+        bottom: 271px;
+        background: url("@img/Emoji2.png") no-repeat 100% 100%;
+        background-size: contain;
+
+      }
+
+      :nth-child(4) {
+        width: 175px;
+        height: 175px;
+        left: 140px;
+        right: 60px;
+        top: 144px;
+        bottom: 183px;
+        background: url("@img/Image_1.png") no-repeat 100% 100%;
+        background-size: contain;
+
+      }
+
+      :nth-child(5) {
+        width: 124px;
+        height: 124px;
+        left: -58px;
+        right: 309px;
+        top: 284px;
+        bottom: 94px;
+        background: url("@img/Image_2.png") no-repeat 100% 100%;
+        background-size: contain;
+
+      }
+
+      :nth-child(6) {
+        width: 48px;
+        height: 48px;
+        left: 70px;
+        right: 257px;
+        top: 257px;
+        bottom: 194px;
+        background: url("@img/Image_3.png") no-repeat;
+        background-size: contain;
+      }
+
+      :nth-child(7) {
+        width: 100px;
+        height: 100px;
+        left: 192px;
+        right: 83px;
+        top: 348px;
+        bottom: 54px;
+        background: url("@img/Image_4.png") no-repeat 100% 100%;
+        background-size: contain;
+      }
+
+      :nth-child(8) {
+        width: 80px;
+        height: 80px;
+        left: 325px;
+        right: -30px;
+        top: 292px;
+        bottom: 130px;
+        background: url("@img/Image_5.png") no-repeat 100% 100%;
+        background-size: contain;
+      }
+    }
+  }
+
+  .boarding-bottom {
+    position: absolute;
+    width: 375px;
+    height: 266px;
+    left: 0;
+    right: 0;
+    top: 502px;
+    bottom: 0;
+    background: rgb(255, 255, 255);
+
+    .boarding-bottom-content1 {
+      /* Stay connected with your friends and family */
+      position: absolute;
+      width: 320px;
+      height: 60px;
+      left: 35px;
+      top: 32px;
+      /* Heading/Bold 24 */
+      color: rgb(8, 28, 44);
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: 0;
+      text-align: center;
+    }
+
+    .boarding-bottom-content2 {
+      /* ChatMe is messaging app that will help you to connect with everyone. */
+      position: absolute;
+      width: 327px;
+      height: 42px;
+      left: 24px;
+      top: 104px;
+      /* Body Medium/Regular */
+      color: rgb(110, 133, 151);
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    .boarding-bottom-content3 {
+      //去掉按钮的边框
+      border: none;
+      /* Button - Get Started */
+      position: absolute;
+      top: 170px;
+      left: 24px;
+      width: 328px;
+      height: 56px;
+      /* Primary/400 - Primary */
+      background: rgb(87, 183, 125);
+      border-radius: 16px;
+      /* 自动布局 */
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 18px 32px 17px 32px;
+      color: rgb(255, 255, 255);
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.5;
+      letter-spacing: 0;
+      text-align: center;
+
+      &:hover {
+        background: rgb(87, 183, 125, 0.8);
+      }
+    }
+  }
+}

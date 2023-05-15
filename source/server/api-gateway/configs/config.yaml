@@ -1,0 +1,20 @@
+server:
+  http:
+    addr: 0.0.0.0:8081
+    timeout: 1s
+  name: "api_gateway"
+service:
+  user_service: "logic_user"
+  connector_service: "connector"
+  logic_service: "logic_logic"
+  relationship_service: "logic_relationship"
+discovery:
+  etcd:
+    addrs:
+      - 127.0.0.1:2379
+registry:
+  etcd:
+    addrs:
+      - 127.0.0.1:2379
+jwt:
+  key: "mysecret"

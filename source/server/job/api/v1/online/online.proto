@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package api.v1.online;
+
+option go_package = "./api/v1/online;online";
+service Online{
+  rpc RegisterDevice(RegisterDeviceRequest) returns (RegisterDeviceResponse) {}
+  rpc UnregisterDevice(UnregisterDeviceRequest) returns (UnregisterDeviceResponse) {}
+  rpc GetOnlineDevices(GetOnlineDevicesRequest) returns (GetOnlineDevicesResponse) {}
+  rpc GetOnlineDevice(GetOnlineDeviceRequest) returns (GetOnlineDeviceResponse) {}
+}
+message RegisterDeviceRequest{
+  int64 uid = 1;
+  string device_url = 2;
+}
+message RegisterDeviceResponse{
+}
+message UnregisterDeviceRequest{
+  int64 uid = 1;
+}
+message UnregisterDeviceResponse{
+}
+message GetOnlineDevicesRequest{
+}
+message OnlineDevice{
+  int64 uid = 1;
+  string device_url = 2;
+}
+message GetOnlineDevicesResponse{
+  repeated OnlineDevice devices = 1;
+}
+message GetOnlineDeviceRequest{
+  int64 uid = 1;
+}
+message GetOnlineDeviceResponse{
+  string device_url = 1;
+}

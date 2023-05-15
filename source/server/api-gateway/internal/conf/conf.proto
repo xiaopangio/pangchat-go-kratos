@@ -1,0 +1,48 @@
+syntax = "proto3";
+package kratos.api;
+
+option go_package = "api-gateway/internal/conf;conf";
+
+import "google/protobuf/duration.proto";
+
+message Bootstrap {
+  Server server = 1;
+  Discovery discovery = 2;
+  Registry registry = 3;
+  Service service = 4;
+  Jwt jwt = 5;
+}
+message Jwt {
+  string key = 1;
+}
+message Service{
+  string user_service = 1;
+  string connector_service = 2;
+  string logic_service = 3;
+  string relationship_service = 4;
+  string online_service = 5;
+}
+message Discovery{
+  Etcd etcd = 1;
+}
+message Etcd{
+  repeated string addrs = 1;
+}
+message Registry{
+  Etcd etcd = 1;
+}
+message Server {
+  message HTTP {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  message GRPC {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  HTTP http = 1;
+  GRPC grpc = 2;
+  string name = 3;
+}

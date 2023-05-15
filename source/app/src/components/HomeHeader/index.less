@@ -1,0 +1,90 @@
+.home-header {
+  width: 100%;
+  height: 44px;
+  background: rgb(237, 237, 237);
+  position: sticky;
+  top: 0;
+  border-bottom: rgb(198, 198, 198) 1px solid;
+  box-sizing: border-box;
+
+  .home-header-title {
+    //居中
+    font-size: 20px;
+    color: #000000;
+    line-height: 44px;
+    text-align: center;
+  }
+
+  .home-header-search {
+    position: absolute;
+    top: 10.5px;
+    right: 60px;
+    width: 25px;
+    height: 25px;
+  }
+
+  .home-header-add {
+    position: absolute;
+    top: 7px;
+    right: 25px;
+    width: 25px;
+    height: 25px;
+  }
+
+  .add-popper {
+    width: 180px;
+    height: 240px;
+    background: rgb(76, 76, 76);
+    position: absolute;
+    right: 14px;
+    top: 54px;
+    border-radius: 4px;
+    color: #ffffff;
+    //隐藏
+    visibility: hidden;
+    scale: 0;
+    opacity: 0;
+    transition: all 0.3s;
+    transform-origin: 90% 0;
+
+    &:before {
+      content: '';
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      top: -7px;
+      right: 20px;
+      transform: rotate(45deg);
+      //倒三角
+      background: rgb(76, 76, 76);
+      border-radius: 2px;
+      z-index: -20;
+    }
+
+    .add-popper-item:hover {
+      background: rgb(102, 102, 102);
+    }
+
+    .add-popper-item {
+      width: 100%;
+      height: 60px;
+      line-height: 50px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      border-bottom: rgb(93, 93, 93) 1px solid;
+      padding-left: 20px;
+      box-sizing: border-box;
+
+      span {
+        margin-left: 20px;
+      }
+    }
+  }
+
+  .add-popper-active {
+    visibility: visible;
+    opacity: 1;
+    scale: 1;
+  }
+}

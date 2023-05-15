@@ -1,0 +1,7 @@
+export const HomePrefix = "/home"
+export const MePrefix = HomePrefix + "/me"
+export const SettingPrefix = "/setting"
+export const LoginPrefix = "/login"
+export const RegisterPrefix = "/register/"
+export const AddFriendPrefix = "/addFriend"
+export const AddSearchPrefix = "/addSearch"

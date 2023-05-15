@@ -1,0 +1,36 @@
+server:
+  http:
+    addr: 0.0.0.0:8010
+    timeout: 1s
+  grpc:
+    addr: 0.0.0.0:9010
+    timeout: 1s
+  name: online
+  version: "1.0"
+  environment: "dev"
+service:
+  connector_service: connector
+  user_service: logic_user
+  relationship_service: logic_relationship
+  online_service: online
+discovery:
+  etcd:
+    addrs:
+      - 127.0.0.1:2379
+registry:
+  etcd:
+    addrs:
+      - 127.0.0.1:2379
+data:
+  database:
+    driver: mysql
+    source: pangchat:password@tcp(127.0.0.1:3307)/pangchat
+  redis:
+    addr: 127.0.0.1:6379
+    password: password
+    db: 0
+    pool_size: 100
+    min_idle_conns: 10
+    max_retries: 3
+    read_timeout: 0.2s
+    write_timeout: 0.2s

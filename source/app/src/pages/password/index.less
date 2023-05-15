@@ -1,0 +1,82 @@
+.password {
+  margin-top: 24px;
+
+  .password-label {
+    color: rgb(8, 28, 44);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 0;
+    text-align: left;
+  }
+
+  .password-tip {
+    margin-top: 12px;
+    /* Body Medium/Regular */
+    color: rgb(110, 133, 151);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+    text-align: left;
+  }
+
+  .password-input {
+    .password-input-label {
+      margin-top: 24px;
+      color: rgb(31, 60, 81);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.5;
+      letter-spacing: 0;
+      text-align: left;
+    }
+
+    .password-input-box {
+      margin-top: 8px;
+      /* Other/White */
+      background: rgb(255, 255, 255);
+      /* Other/Divider */
+      border: 1px solid rgb(234, 238, 242);
+      border-radius: 16px;
+      /* 自动布局 */
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 18px 20px 17px 20px;
+
+      &:focus-within {
+        //父级 nickname-input-box 的样式
+        background: rgb(245, 251, 247);
+        border: 1px solid rgb(87, 183, 125);
+      }
+
+      .password-input-input {
+        margin-left: 12px;
+        outline: none;
+        border: none;
+        color: rgb(110, 133, 151);
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.5;
+        letter-spacing: 0;
+        text-align: left;
+
+        &:focus {
+          background: rgb(245, 251, 247);
+        }
+      }
+    }
+
+    .password-err {
+      margin-top: 8px;
+      color: rgb(255, 0, 0);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.5;
+      letter-spacing: 0;
+      text-align: left;
+    }
+  }
+}

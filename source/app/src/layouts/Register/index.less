@@ -1,0 +1,98 @@
+.register {
+  position: relative;
+  width: 375px;
+  height: 100vh;
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  .btn-back {
+    /* Back */
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 12px;
+    box-sizing: border-box;
+    /* Other/White */
+    background: rgb(255, 255, 255);
+    /* Other/Divider */
+    border: 1px solid rgb(234, 238, 242);
+    border-radius: 12px;
+    /* 自动布局 */
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 8px;
+
+    //  按住时的样式
+    &:active {
+      //背景灰色
+      background: rgb(234, 238, 242);
+      //加点阴影
+      box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .content {
+    position: absolute;
+    top: 52px;
+    height: 596px;
+    box-sizing: border-box;
+    width: 327px;
+  }
+
+  .next-enter, .next-appear {
+    opacity: 0;
+    transform: translateX(300px);
+  }
+
+  .next-enter-active, .next-appear-active {
+    opacity: 1;
+    transform: translateX(-45px);
+    transition: all 0.5s ease;
+  }
+
+  .next-exit {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .next-exit-active {
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: all 0.5s ease;
+  }
+
+  .btn-next {
+    position: absolute;
+    width: 328px;
+    height: 56px;
+    bottom: 20px;
+    background: rgb(171, 219, 190);
+    box-sizing: border-box;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 18px 32px 17px 32px;
+    //文字
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: 0;
+    text-align: center;
+    //active时变深绿
+    &:active {
+      background: rgb(70, 178, 106);
+      //  加点阴影
+      box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .btn-next-active {
+    background: rgb(87, 183, 125);;
+  }
+}
+

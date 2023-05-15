@@ -1,0 +1,40 @@
+server:
+  grpc:
+    addr: 0.0.0.0:9015
+    timeout: 1s
+  name: job
+  version: "1.0"
+  environment: "dev"
+service:
+  logic_service: logic_logic
+  connector_service: connector
+  job_service: job
+  relationship_service: logic_relationship
+  online_service: online
+  user_service: logic_user
+kafka:
+  addrs:
+    - 192.168.37.1:9092
+discovery:
+  etcd:
+    addrs:
+      - 127.0.0.1:2379
+registry:
+  etcd:
+    addrs:
+      - 127.0.0.1:2379
+message_queue:
+  friend_request_topic: friend_request
+  friend_request_group: friend_request_group
+  connect_topic: connect
+  connect_group: connect_group
+data:
+  redis:
+    addr: 127.0.0.1:6379
+    password: password
+    db: 0
+    pool_size: 100
+    min_idle_conns: 10
+    max_retries: 3
+    read_timeout: 0.2s
+    write_timeout: 0.2s

@@ -1,0 +1,239 @@
+.avatar {
+  padding-top: 24px;
+  position: relative;
+  height: 672px;
+
+  .avatar-tip {
+    /* Heading/Bold 24 */
+    color: rgb(8, 28, 44);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 0;
+    text-align: center;
+  }
+
+  .avatar-upload {
+    margin-top: 174px;
+    width: 164px;
+    height: 164px;
+    position: relative;
+    transform: translateX(50%);
+
+    .avatar-img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      //background: url("@img/avatar_default.png") no-repeat;
+      //缩放图片
+      //background-size: cover;
+      border-radius: 50%;
+    }
+
+    .avatar-img2 {
+      position: absolute;
+      right: 0;
+      width: 40px;
+      height: 40px;
+      background-size: cover;
+    }
+  }
+
+  .avatar-title {
+    width: 60%;
+    height: 24px;
+    position: relative;
+    margin: 16px auto 0;
+    color: rgb(110, 133, 151);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0;
+    text-align: center;
+  }
+
+  .avatar-upload-btn {
+    margin: 50px auto 0;
+    width: 150px;
+    height: 56px;
+    background: rgb(87, 183, 125);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 18px 32px 17px 32px;
+    border: none;
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: 0;
+    text-align: center;
+
+    &:active {
+      background: rgb(70, 178, 106);
+      //  加点阴影
+      box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .cover {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: rgba(8, 28, 44, 0.24);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+  }
+
+  .cover-active {
+    animation: fadeIn 0.2s ease forwards;
+  }
+
+  .cover-hide {
+    animation: fadeOut 0.2s ease forwards;
+  }
+
+  .avatar-select {
+    /* Upload */
+    position: absolute;
+    width: 327px;
+    height: 168px;
+    bottom: 0px;
+    background: white;
+    box-shadow: 0 3px 8px rgba(24, 52, 33, 0.01);
+    border-radius: 16px;
+    z-index: 300;
+    box-sizing: border-box;
+    padding-top: 8px;
+    padding-left: 8px;
+
+    .avatar-list {
+      //不允许换行
+      white-space: nowrap;
+      //多余部分可以滑动显示
+      overflow-x: auto;
+
+      .avatar-item {
+        width: 64px;
+        height: 64px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-right: 8px;
+      }
+    }
+
+    .take-photo {
+      width: 311px;
+      height: 40px;
+      box-sizing: border-box;
+      /* 自动布局 */
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 8px;
+
+      .icon {
+        display: flex;
+      }
+
+      .tip {
+        height: 24px;
+        /* Body Large/Medium */
+        color: rgb(31, 60, 81);
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1.5;
+        letter-spacing: 0;
+        text-align: left;
+        /* 自动布局 */
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 8px;
+        /* Inside Auto Layout */
+        flex: none;
+        order: 1;
+        flex-grow: 0;
+        margin: 0 16px;
+      }
+
+
+    }
+
+    .choose-from-album {
+      width: 311px;
+      height: 40px;
+      box-sizing: border-box;
+
+      /* 自动布局 */
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 8px;
+    }
+  }
+
+  .avatar-select-show {
+    animation: slideUp 0.2s ease;
+  }
+
+  .avatar-select-hide {
+    animation: slideDown 0.2s ease;
+  }
+
+  .avatar-select-none {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    visibility: hidden;
+    transform: translateY(120%);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    z-index: 200;
+  }
+  100% {
+    z-index: 200;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    z-index: 200;
+    opacity: 1;
+  }
+  100% {
+    z-index: -1;
+    opacity: 0;
+  }
+}
