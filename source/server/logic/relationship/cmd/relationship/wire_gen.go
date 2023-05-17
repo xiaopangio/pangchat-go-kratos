@@ -12,6 +12,7 @@ import (
 	"relationship/internal/biz"
 	"relationship/internal/components/broker"
 	"relationship/internal/components/client"
+	"relationship/internal/components/endpoints"
 	"relationship/internal/components/logger"
 	"relationship/internal/components/mysql"
 	"relationship/internal/components/registry"
@@ -47,8 +48,9 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 	relationshipBiz := biz.NewRelationshipBiz(helper, userClient, kafkaBroker, bootstrap, relationshipRepo, db)
 	relationShipService := service.NewRelationShipService(relationshipBiz, helper)
 	grpcServer := server.NewGRPCServer(bootstrap, logLogger, relationShipService)
+	v := endpoints.NewEndPoints(bootstrap)
 	relationshipRegistry := registry.NewEtcdRelationshipRegistry(bootstrap, clientv3Client)
-	app := newApp(logLogger, bootstrap, grpcServer, relationshipRegistry)
+	app := newApp(logLogger, bootstrap, grpcServer, v, relationshipRegistry)
 	return app, func() {
 	}, nil
 }

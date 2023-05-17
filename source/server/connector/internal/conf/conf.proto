@@ -68,12 +68,14 @@ message Registry {
 message HTTP {
   string network = 1;
   string addr = 2;
+  string endpoint = 4;
   google.protobuf.Duration timeout = 3;
 }
 message GRPC {
   string network = 1;
   string addr = 2;
   google.protobuf.Duration timeout = 3;
+  string endpoint = 4;
 }
 message Server {
   HTTP http = 1;

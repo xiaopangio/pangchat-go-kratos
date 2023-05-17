@@ -4,6 +4,7 @@ import (
 	"github.com/google/wire"
 	"relationship/internal/components/broker"
 	"relationship/internal/components/client"
+	"relationship/internal/components/endpoints"
 	"relationship/internal/components/logger"
 	"relationship/internal/components/mysql"
 	"relationship/internal/components/redis"
@@ -21,4 +22,5 @@ var ProviderSet = wire.NewSet(
 	mysql.NewMysql,
 	broker.NewKafkaBroker,
 	uid.NewUidGenerator,
+	endpoints.NewEndPoints,
 )

@@ -50,46 +50,58 @@ type UserRepo interface {
 }
 
 func (u *UserBiz) Register(ctx context.Context, t int64, username, password, nickName, avatarUrl string) error {
-	var user *model.User
+	var us *model.User
 	var err error
-	u.helper.Infof("register user: %s,type: %d", username, t)
-	if t == pkg.Phone {
-		user, err = u.repo.FindUserByPhone(ctx, username)
+	u.helper.Infof("register us: %s,type: %d", username, t)
+	//检查注册类型
+	if t == pkg.Phone { //手机号注册
+		us, err = u.repo.FindUserByPhone(ctx, username)
 		if err != nil {
 			return err
 		}
-		if user != nil {
+		if us != nil {
 			return pkg.AlreadyExistsError("该手机号已注册")
 		}
-		user = &model.User{}
-		user.Phone = username
+		us = &model.User{}
+		us.Phone = username
 		randString, err := pkg.RandString(8)
 		if err != nil {
 			return pkg.InternalError("生成随机字符串失败")
 		}
-		user.AccountID = fmt.Sprintf("%s%s", randString, username)
-	} else if t == pkg.Account {
-		user, err = u.repo.FindUserByAccountID(ctx, username)
+		us.AccountID = fmt.Sprintf("%s%s", randString, username)
+	} else if t == pkg.Account { //账号注册
+		us, err = u.repo.FindUserByAccountID(ctx, username)
 		if err != nil {
 			return err
 		}
-		if user != nil {
+		if us != nil {
 			return pkg.AlreadyExistsError("该用户名已注册")
 		}
-		user = &model.User{}
-		user.AccountID = username
+		us = &model.User{}
+		us.AccountID = username
 	} else {
 		return pkg.InvalidArgumentError("非法类型: %v", t)
 	}
+	//密码加密
 	cryptedPasswd, err := bcrypt.GenerateFromPassword([]byte(password), pkg.PasswordCost)
 	if err != nil {
 		return pkg.InternalError("密码加密错误: %s", err)
 	}
-	user.Password = string(cryptedPasswd)
-	user.UID = u.uidGen.Generate().Int64()
-	user.NickName = nickName
-	user.AvatarURL = avatarUrl
-	err = u.repo.CreateUser(ctx, user)
+	us.Password = string(cryptedPasswd)
+	//生成uid
+	us.UID = u.uidGen.Generate().Int64()
+	us.NickName = nickName
+	us.AvatarURL = avatarUrl
+	//创建默认好友分组
+	_, err = u.relationshipClient.CreateFriendGroup(ctx, &relationship.CreateFriendGroupRequest{
+		UserId:    us.UID,
+		GroupName: "我的好友",
+	})
+	if err != nil {
+		return pkg.InternalError("创建默认好友分组失败: %s", err)
+	}
+	//创建用户
+	err = u.repo.CreateUser(ctx, us)
 	if err != nil {
 		return pkg.InternalError("创建用户失败: %s", err)
 	}

@@ -10,6 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"online/internal/biz"
+	"online/internal/components/endpoints"
 	"online/internal/components/logger"
 	"online/internal/components/redis"
 	"online/internal/components/registry"
@@ -32,11 +33,12 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 		return nil, nil, err
 	}
 	onlineRegistry := registry.NewOnlineRegistry(bootstrap, client)
+	v := endpoints.NewEndPoints(bootstrap)
 	redisRedis := redis.NewRedisClient(bootstrap, helper)
 	onlineBiz := biz.NewOnlineBiz(helper, redisRedis)
 	onlineService := service.NewOnlineService(helper, onlineBiz)
 	grpcServer := server.NewGRPCServer(bootstrap, onlineService, logLogger)
-	app := newApp(logLogger, bootstrap, onlineRegistry, grpcServer)
+	app := newApp(logLogger, bootstrap, onlineRegistry, v, grpcServer)
 	return app, func() {
 	}, nil
 }

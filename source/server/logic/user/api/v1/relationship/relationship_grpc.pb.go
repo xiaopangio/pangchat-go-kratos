@@ -22,6 +22,7 @@ const (
 	RelationShip_SendFriendRequest_FullMethodName    = "/api.v1.logic.relationship.relationShip/SendFriendRequest"
 	RelationShip_GetFriendRequestList_FullMethodName = "/api.v1.logic.relationship.relationShip/GetFriendRequestList"
 	RelationShip_GetFriendRequest_FullMethodName     = "/api.v1.logic.relationship.relationShip/GetFriendRequest"
+	RelationShip_GetFriendRequests_FullMethodName    = "/api.v1.logic.relationship.relationShip/GetFriendRequests"
 	RelationShip_DealFriendRequest_FullMethodName    = "/api.v1.logic.relationship.relationShip/DealFriendRequest"
 	RelationShip_GetFriendList_FullMethodName        = "/api.v1.logic.relationship.relationShip/GetFriendList"
 	RelationShip_DeleteFriend_FullMethodName         = "/api.v1.logic.relationship.relationShip/DeleteFriend"
@@ -30,6 +31,7 @@ const (
 	RelationShip_CreateFriendGroup_FullMethodName    = "/api.v1.logic.relationship.relationShip/CreateFriendGroup"
 	RelationShip_UpdateFriendGroup_FullMethodName    = "/api.v1.logic.relationship.relationShip/UpdateFriendGroup"
 	RelationShip_DeleteFriendGroup_FullMethodName    = "/api.v1.logic.relationship.relationShip/DeleteFriendGroup"
+	RelationShip_GetFriendGroupList_FullMethodName   = "/api.v1.logic.relationship.relationShip/GetFriendGroupList"
 )
 
 // RelationShipClient is the client API for RelationShip service.
@@ -39,6 +41,7 @@ type RelationShipClient interface {
 	SendFriendRequest(ctx context.Context, in *SendFriendRequestRequest, opts ...grpc.CallOption) (*SendFriendRequestResponse, error)
 	GetFriendRequestList(ctx context.Context, in *GetFriendRequestListRequest, opts ...grpc.CallOption) (*GetFriendRequestListResponse, error)
 	GetFriendRequest(ctx context.Context, in *GetFriendRequestRequest, opts ...grpc.CallOption) (*GetFriendRequestResponse, error)
+	GetFriendRequests(ctx context.Context, in *GetFriendRequestsRequest, opts ...grpc.CallOption) (*GetFriendRequestsResponse, error)
 	DealFriendRequest(ctx context.Context, in *DealFriendRequestRequest, opts ...grpc.CallOption) (*DealFriendRequestResponse, error)
 	GetFriendList(ctx context.Context, in *GetFriendListRequest, opts ...grpc.CallOption) (*GetFriendListResponse, error)
 	DeleteFriend(ctx context.Context, in *DeleteFriendRequest, opts ...grpc.CallOption) (*DeleteFriendResponse, error)
@@ -47,6 +50,7 @@ type RelationShipClient interface {
 	CreateFriendGroup(ctx context.Context, in *CreateFriendGroupRequest, opts ...grpc.CallOption) (*CreateFriendGroupResponse, error)
 	UpdateFriendGroup(ctx context.Context, in *UpdateFriendGroupRequest, opts ...grpc.CallOption) (*UpdateFriendGroupResponse, error)
 	DeleteFriendGroup(ctx context.Context, in *DeleteFriendGroupRequest, opts ...grpc.CallOption) (*DeleteFriendGroupResponse, error)
+	GetFriendGroupList(ctx context.Context, in *GetFriendGroupListRequest, opts ...grpc.CallOption) (*GetFriendGroupListResponse, error)
 }
 
 type relationShipClient struct {
@@ -78,6 +82,15 @@ func (c *relationShipClient) GetFriendRequestList(ctx context.Context, in *GetFr
 func (c *relationShipClient) GetFriendRequest(ctx context.Context, in *GetFriendRequestRequest, opts ...grpc.CallOption) (*GetFriendRequestResponse, error) {
 	out := new(GetFriendRequestResponse)
 	err := c.cc.Invoke(ctx, RelationShip_GetFriendRequest_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) GetFriendRequests(ctx context.Context, in *GetFriendRequestsRequest, opts ...grpc.CallOption) (*GetFriendRequestsResponse, error) {
+	out := new(GetFriendRequestsResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetFriendRequests_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -156,6 +169,15 @@ func (c *relationShipClient) DeleteFriendGroup(ctx context.Context, in *DeleteFr
 	return out, nil
 }
 
+func (c *relationShipClient) GetFriendGroupList(ctx context.Context, in *GetFriendGroupListRequest, opts ...grpc.CallOption) (*GetFriendGroupListResponse, error) {
+	out := new(GetFriendGroupListResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetFriendGroupList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RelationShipServer is the server API for RelationShip service.
 // All implementations must embed UnimplementedRelationShipServer
 // for forward compatibility
@@ -163,6 +185,7 @@ type RelationShipServer interface {
 	SendFriendRequest(context.Context, *SendFriendRequestRequest) (*SendFriendRequestResponse, error)
 	GetFriendRequestList(context.Context, *GetFriendRequestListRequest) (*GetFriendRequestListResponse, error)
 	GetFriendRequest(context.Context, *GetFriendRequestRequest) (*GetFriendRequestResponse, error)
+	GetFriendRequests(context.Context, *GetFriendRequestsRequest) (*GetFriendRequestsResponse, error)
 	DealFriendRequest(context.Context, *DealFriendRequestRequest) (*DealFriendRequestResponse, error)
 	GetFriendList(context.Context, *GetFriendListRequest) (*GetFriendListResponse, error)
 	DeleteFriend(context.Context, *DeleteFriendRequest) (*DeleteFriendResponse, error)
@@ -171,6 +194,7 @@ type RelationShipServer interface {
 	CreateFriendGroup(context.Context, *CreateFriendGroupRequest) (*CreateFriendGroupResponse, error)
 	UpdateFriendGroup(context.Context, *UpdateFriendGroupRequest) (*UpdateFriendGroupResponse, error)
 	DeleteFriendGroup(context.Context, *DeleteFriendGroupRequest) (*DeleteFriendGroupResponse, error)
+	GetFriendGroupList(context.Context, *GetFriendGroupListRequest) (*GetFriendGroupListResponse, error)
 	mustEmbedUnimplementedRelationShipServer()
 }
 
@@ -186,6 +210,9 @@ func (UnimplementedRelationShipServer) GetFriendRequestList(context.Context, *Ge
 }
 func (UnimplementedRelationShipServer) GetFriendRequest(context.Context, *GetFriendRequestRequest) (*GetFriendRequestResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFriendRequest not implemented")
+}
+func (UnimplementedRelationShipServer) GetFriendRequests(context.Context, *GetFriendRequestsRequest) (*GetFriendRequestsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFriendRequests not implemented")
 }
 func (UnimplementedRelationShipServer) DealFriendRequest(context.Context, *DealFriendRequestRequest) (*DealFriendRequestResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DealFriendRequest not implemented")
@@ -210,6 +237,9 @@ func (UnimplementedRelationShipServer) UpdateFriendGroup(context.Context, *Updat
 }
 func (UnimplementedRelationShipServer) DeleteFriendGroup(context.Context, *DeleteFriendGroupRequest) (*DeleteFriendGroupResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFriendGroup not implemented")
+}
+func (UnimplementedRelationShipServer) GetFriendGroupList(context.Context, *GetFriendGroupListRequest) (*GetFriendGroupListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFriendGroupList not implemented")
 }
 func (UnimplementedRelationShipServer) mustEmbedUnimplementedRelationShipServer() {}
 
@@ -274,6 +304,24 @@ func _RelationShip_GetFriendRequest_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RelationShipServer).GetFriendRequest(ctx, req.(*GetFriendRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_GetFriendRequests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFriendRequestsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetFriendRequests(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetFriendRequests_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetFriendRequests(ctx, req.(*GetFriendRequestsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -422,6 +470,24 @@ func _RelationShip_DeleteFriendGroup_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RelationShip_GetFriendGroupList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFriendGroupListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetFriendGroupList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetFriendGroupList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetFriendGroupList(ctx, req.(*GetFriendGroupListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RelationShip_ServiceDesc is the grpc.ServiceDesc for RelationShip service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -440,6 +506,10 @@ var RelationShip_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetFriendRequest",
 			Handler:    _RelationShip_GetFriendRequest_Handler,
+		},
+		{
+			MethodName: "GetFriendRequests",
+			Handler:    _RelationShip_GetFriendRequests_Handler,
 		},
 		{
 			MethodName: "DealFriendRequest",
@@ -472,6 +542,10 @@ var RelationShip_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteFriendGroup",
 			Handler:    _RelationShip_DeleteFriendGroup_Handler,
+		},
+		{
+			MethodName: "GetFriendGroupList",
+			Handler:    _RelationShip_GetFriendGroupList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

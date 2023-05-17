@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"net/url"
 	"online/internal/components/registry"
 	"online/internal/conf"
 	"os"
@@ -31,7 +32,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, cf *conf.Bootstrap, registry *registry.OnlineRegistry, grpcSrv *grpc.Server) *kratos.App {
+func newApp(logger log.Logger, cf *conf.Bootstrap, registry *registry.OnlineRegistry, endpoints []*url.URL, grpcSrv *grpc.Server) *kratos.App {
 	server := cf.Server
 	port := strings.Split(server.Grpc.Addr, ":")[1]
 	return kratos.New(
@@ -44,6 +45,7 @@ func newApp(logger log.Logger, cf *conf.Bootstrap, registry *registry.OnlineRegi
 		kratos.Server(
 			grpcSrv,
 		),
+		kratos.Endpoint(endpoints...),
 	)
 }
 

@@ -1,6 +1,7 @@
 server:
   grpc:
     addr: 0.0.0.0:9009
+    endpoint: 192.168.37.1:9009
     timeout: 1s
   name: logic_relationship
   version: "1.0"
@@ -17,19 +18,19 @@ message_queue:
 discovery:
   etcd:
     addrs:
-      - 127.0.0.1:2379
+      - 43.143.137.232:2379
 registry:
   etcd:
     addrs:
-      - 127.0.0.1:2379
+      - 43.143.137.232:2379
 snowflake:
   worker_id: 1
 data:
   database:
     driver: mysql
-    source: pangchat:password@tcp(127.0.0.1:3307)/pangchat?charset=utf8mb4&parseTime=True&loc=Local
+    source: pangchat:password@tcp(43.143.137.232:3307)/pangchat?charset=utf8mb4&parseTime=True&loc=Local
   redis:
-    addr: 127.0.0.1:6379
+    addr: 43.143.137.232:6379
     password: password
     db: 0
     pool_size: 100

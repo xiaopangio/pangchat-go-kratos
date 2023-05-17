@@ -11,10 +11,10 @@ service:
 discovery:
   etcd:
     addrs:
-      - 127.0.0.1:2379
+      - 43.143.137.232:2379
 registry:
   etcd:
     addrs:
-      - 127.0.0.1:2379
+      - 43.143.137.232:2379
 jwt:
   key: "mysecret"

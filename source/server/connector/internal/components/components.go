@@ -4,6 +4,7 @@ import (
 	"connector/internal/components/broker"
 	"connector/internal/components/cache"
 	"connector/internal/components/client"
+	"connector/internal/components/endpoints"
 	"connector/internal/components/logger"
 	"connector/internal/components/mysql"
 	"connector/internal/components/redis"
@@ -23,4 +24,5 @@ var ProviderSet = wire.NewSet(
 	cache.NewConnectionCache,
 	websocket.NewUpgrader,
 	broker.NewKafkaBroker,
+	endpoints.NewEndPoints,
 )

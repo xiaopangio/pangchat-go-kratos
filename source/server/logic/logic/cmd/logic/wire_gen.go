@@ -10,6 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"logic/internal/biz"
+	"logic/internal/components/endpoints"
 	"logic/internal/components/loadbalance"
 	"logic/internal/components/logger"
 	"logic/internal/components/redis"
@@ -26,20 +27,21 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, data *conf.Data, logLogger log.Logger, confRegistry *conf.Registry, confService *conf.Service) (*kratos.App, func(), error) {
+func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func(), error) {
 	helper := logger.NewHelper(logLogger)
-	redisRedis := redis.NewRedisClient(data, helper)
-	client, err := registry.NewEtcdClient(confRegistry, confServer, helper)
+	redisRedis := redis.NewRedisClient(bootstrap, helper)
+	client, err := registry.NewEtcdClient(bootstrap, helper)
 	if err != nil {
 		return nil, nil, err
 	}
-	connectorRegistry := registry.NewEtcdConnectorRegistry(confService, client)
+	connectorRegistry := registry.NewEtcdConnectorRegistry(bootstrap, client)
 	loadBalance := loadbalance.NewRandomLoadBalance()
-	logicBiz := biz.NewLogicBiz(helper, redisRedis, connectorRegistry, loadBalance, confService)
+	logicBiz := biz.NewLogicBiz(helper, redisRedis, connectorRegistry, loadBalance, bootstrap)
 	logicService := service.NewLogicService(logicBiz, helper)
-	grpcServer := server.NewGRPCServer(confServer, logLogger, logicService)
-	logicRegistry := registry.NewEtcdLogicRegistry(confService, client)
-	app := newApp(logLogger, confServer, grpcServer, logicRegistry)
+	grpcServer := server.NewGRPCServer(bootstrap, logLogger, logicService)
+	v := endpoints.NewEndPoints(bootstrap)
+	logicRegistry := registry.NewEtcdLogicRegistry(bootstrap, client)
+	app := newApp(logLogger, bootstrap, grpcServer, v, logicRegistry)
 	return app, func() {
 	}, nil
 }

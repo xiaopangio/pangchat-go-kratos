@@ -31,3 +31,14 @@ func NewEtcdUserRegistry(cf *conf.Bootstrap, client *clientv3.Client) *UserRegis
 		Registry: etcd.New(client, etcd.Namespace(service.UserService)),
 	}
 }
+
+type RelationshipRegistry struct {
+	*etcd.Registry
+}
+
+func NewEtcdRelationshipRegistry(cf *conf.Bootstrap, client *clientv3.Client) *RelationshipRegistry {
+	service := cf.Service
+	return &RelationshipRegistry{
+		Registry: etcd.New(client, etcd.Namespace(service.RelationshipService)),
+	}
+}

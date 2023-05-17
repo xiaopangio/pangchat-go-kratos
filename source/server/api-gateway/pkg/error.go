@@ -24,9 +24,9 @@ func HandlerError(c *gin.Context, err error) error {
 		errLog.Error(s.Message())
 		FailMessage(c, "服务器内部错误")
 	case codes.NotFound:
-		FailMessage(c, s.Message())
+		SuccessMessage(c, s.Message())
 	case codes.InvalidArgument, codes.AlreadyExists:
-		FailMessage(c, s.Message())
+		SuccessMessage(c, s.Message())
 	default:
 		errLog.Error(s.Message())
 		FailMessage(c, "未知错误")

@@ -13,7 +13,7 @@ import (
 	"user/internal/conf"
 )
 
-func NewRelationshipClient(registry *registry.UserRegistry, logger *log.Helper, cf *conf.Bootstrap) (relationship.RelationShipClient, error) {
+func NewRelationshipClient(registry *registry.RelationshipRegistry, logger *log.Helper, cf *conf.Bootstrap) (relationship.RelationShipClient, error) {
 	version := filter.Version("1.0")
 	selector.SetGlobalSelector(wrr.NewBuilder())
 	conn, err := grpc.DialInsecure(

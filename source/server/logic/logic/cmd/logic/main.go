@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"logic/internal/components/registry"
+	"net/url"
 	"os"
 	"strings"
 
@@ -32,18 +33,20 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, cf *conf.Server, gs *grpc.Server, registry *registry.LogicRegistry) *kratos.App {
-	port := strings.Split(cf.Grpc.Addr, ":")[1]
+func newApp(logger log.Logger, cf *conf.Bootstrap, gs *grpc.Server, endpoints []*url.URL, registry *registry.LogicRegistry) *kratos.App {
+	server := cf.Server
+	port := strings.Split(server.Grpc.Addr, ":")[1]
 	return kratos.New(
 		kratos.ID(id+"."+port),
-		kratos.Name(cf.Name),
-		kratos.Version(cf.Version),
+		kratos.Name(server.Name),
+		kratos.Version(server.Version),
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
 		kratos.Server(
 			gs,
 		),
 		kratos.Registrar(registry),
+		kratos.Endpoint(endpoints...),
 	)
 }
 
@@ -74,7 +77,7 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data, logger, bc.Registry, bc.Service)
+	app, cleanup, err := wireApp(&bc, logger)
 	if err != nil {
 		panic(err)
 	}

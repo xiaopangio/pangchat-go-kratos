@@ -18,8 +18,8 @@ type LogicBiz struct {
 	cf                *conf.Service
 }
 
-func NewLogicBiz(helper *log.Helper, redisCli *redis.Redis, connectorRegistry *registry.ConnectorRegistry, lb loadbalance.LoadBalance, cf *conf.Service) *LogicBiz {
-	return &LogicBiz{helper: helper, redisCli: redisCli, connectorRegistry: connectorRegistry, lb: lb, cf: cf}
+func NewLogicBiz(helper *log.Helper, redisCli *redis.Redis, connectorRegistry *registry.ConnectorRegistry, lb loadbalance.LoadBalance, cf *conf.Bootstrap) *LogicBiz {
+	return &LogicBiz{helper: helper, redisCli: redisCli, connectorRegistry: connectorRegistry, lb: lb, cf: cf.Service}
 }
 func (l *LogicBiz) GetConnectorUrl(ctx context.Context) (error error, host, port string) {
 	instances, err := l.connectorRegistry.GetService(ctx, l.cf.ConnectorService)
@@ -33,7 +33,14 @@ func (l *LogicBiz) GetConnectorUrl(ctx context.Context) (error error, host, port
 		return
 	}
 	l.helper.Info("GetConnectorUrl", "instance", instance.Endpoints)
-	url := strings.Split(instance.Endpoints[1], "//")[1]
+	var endpoint string
+	for _, s := range instance.Endpoints {
+		if strings.Contains(s, "http") {
+			endpoint = s
+			break
+		}
+	}
+	url := strings.Split(endpoint, "//")[1]
 	host = strings.Split(url, ":")[0]
 	port = strings.Split(url, ":")[1]
 	return nil, host, port

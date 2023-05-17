@@ -118,6 +118,7 @@ func (c *ConnectorServiceBiz) Logout(ctx context.Context, uid string) error {
 		return err
 	}
 	c.cache.RemoveConn(WsPrefix + uid)
+	c.helper.Info("unregisterDevice")
 	_, err = c.onlineClient.UnregisterDevice(ctx, &online.UnregisterDeviceRequest{
 		Uid: pkg.ParseInt64(uid),
 	})

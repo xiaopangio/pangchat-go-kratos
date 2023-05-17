@@ -22,7 +22,16 @@ export interface image {
     name: string
     blob: string
 }
-
+export interface Friend {
+    friend_id: string
+    nick_name: string
+    note_name: string
+    avatar: string
+    city_name: string
+    province_name: string
+    desc: string
+    group_name: string
+}
 export class PangChatDatabase extends Dexie {
     // 'friends' is added by dexie when declaring the stores()
     // We just tell the typing system this is the case

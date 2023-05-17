@@ -3,6 +3,7 @@ package components
 import (
 	"github.com/google/wire"
 	"job/internal/components/client"
+	"job/internal/components/endpoints"
 	"job/internal/components/logger"
 	"job/internal/components/redis"
 	"job/internal/components/registry"
@@ -21,4 +22,5 @@ var ProviderSet = wire.NewSet(
 	client.NewOnlineClient,
 	client.NewRelationshipClient,
 	client.NewUserClient,
+	endpoints.NewEndPoints,
 )

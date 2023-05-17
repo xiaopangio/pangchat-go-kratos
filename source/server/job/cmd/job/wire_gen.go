@@ -11,6 +11,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"job/internal/biz"
 	"job/internal/components/client"
+	"job/internal/components/endpoints"
 	"job/internal/components/logger"
 	"job/internal/components/redis"
 	"job/internal/components/registry"
@@ -33,6 +34,7 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 		return nil, nil, err
 	}
 	jobRegistry := registry.NewEtcdJobRegistry(bootstrap, clientv3Client)
+	v := endpoints.NewEndPoints(bootstrap)
 	redisRedis := redis.NewRedisClient(bootstrap, helper)
 	onlineRegistry := registry.NewOnlineRegistry(bootstrap, clientv3Client)
 	onlineClient, err := client.NewOnlineClient(onlineRegistry, helper, bootstrap)
@@ -52,7 +54,7 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 	jobBiz := biz.NewJobBiz(helper, redisRedis, onlineClient, relationShipClient, userClient)
 	jobService := service.NewJobService(helper, jobBiz)
 	kafkaServer, cleanup := server.NewKafkaConsumerServer(bootstrap, jobService)
-	app := newApp(logLogger, bootstrap, jobRegistry, kafkaServer)
+	app := newApp(logLogger, bootstrap, jobRegistry, v, kafkaServer)
 	return app, func() {
 		cleanup()
 	}, nil

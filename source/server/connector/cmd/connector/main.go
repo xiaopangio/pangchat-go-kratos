@@ -3,6 +3,7 @@ package main
 import (
 	"connector/internal/components/registry"
 	"flag"
+	"net/url"
 	"os"
 	"strings"
 
@@ -34,7 +35,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs/config.yaml", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, cf *conf.Bootstrap, registry *registry.ConnectorRegistry, gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(logger log.Logger, cf *conf.Bootstrap, registry *registry.ConnectorRegistry, endpoints []*url.URL, gs *grpc.Server, hs *http.Server) *kratos.App {
 	server := cf.Server
 	port := strings.Split(server.Grpc.Addr, ":")[1]
 	return kratos.New(
@@ -48,6 +49,7 @@ func newApp(logger log.Logger, cf *conf.Bootstrap, registry *registry.ConnectorR
 			hs,
 		),
 		kratos.Registrar(registry),
+		kratos.Endpoint(endpoints...),
 	)
 }
 

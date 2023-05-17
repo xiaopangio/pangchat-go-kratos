@@ -18,6 +18,7 @@ var ProviderSet = wire.NewSet(
 	redis.NewRedisClient,
 	registry.NewEtcdClient,
 	registry.NewEtcdUserRegistry,
+	registry.NewEtcdRelationshipRegistry,
 	client.NewRelationshipClient,
 	sms.NewSmsClient,
 	oss.NewOSS,

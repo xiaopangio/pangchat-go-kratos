@@ -1,11 +1,10 @@
 import "@/pages/me/index.less"
 import {useRecoilState} from "recoil";
 import {currentUserState} from "@/store";
-import {useEffect, useRef, useState} from "react";
-import {useUserInfo} from "@/hooks/userInfoHooks";
+import {useEffect, useState} from "react";
 import {blobToFile, RefreshCurrentUser} from "@/utils/util";
 import SvgIcon from "@/components/Icon";
-import {UploadUserAvatar} from "@/api/user";
+import {GetAvatar, UploadUserAvatar} from "@/api/user";
 import UploadAvatar from "../uploadAvatar";
 import {useNavigate} from "react-router";
 import {SettingPrefix} from "@/declare/const";
@@ -17,9 +16,7 @@ import SettingHeader from "@/components/SettingHeader";
 
 function Me() {
     const [currentUser, setCurrentUser] = useRecoilState(currentUserState)
-    const avatarRef = useRef<HTMLImageElement>(null);
     const [avatarData, setAvatarData] = useState(DefaultImg);
-    const {getAvatar} = useUserInfo()
     const [isTakePhoto, setIsTakePhoto] = useState(false);
     // 拿到当前路由
     useEffect(() => {
@@ -38,6 +35,7 @@ function Me() {
         if (!currentUser) {
             return
         }
+        console.log(currentUser.avatar)
         //从indexedDB中获取用户头像
         GetImg(currentUser.avatar).then((res) => {
             // 设置头像
@@ -47,7 +45,8 @@ function Me() {
                 return
             }
             // 如果头像没有缓存，就请求头像
-            getAvatar({avatar_url: currentUser.avatar}).then((res) => {
+            GetAvatar({avatar_url: currentUser.avatar}).then((res) => {
+                console.log(res)
                 // 将头像存入indexedDB
                 StoreImg(currentUser.avatar, res).then((value) => {
                     // 设置头像
@@ -56,7 +55,7 @@ function Me() {
             })
         }, () => {
             // 如果头像没有缓存，就请求头像
-            getAvatar({avatar_url: currentUser.avatar}).then((res) => {
+            GetAvatar({avatar_url: currentUser.avatar}).then((res) => {
                 // 将头像存入indexedDB
                 StoreImg(currentUser.avatar, res).then((value) => {
                     // 设置头像
@@ -74,7 +73,7 @@ function Me() {
         }
         let avatar = GenAvatarName();
         try {
-            let res = await StoreImg(avatar, file)
+             await StoreImg(avatar, file)
         } catch (e) {
             console.log(e)
             return

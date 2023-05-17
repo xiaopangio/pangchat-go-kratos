@@ -36398,3 +36398,140 @@
 1:M 14 May 2023 19:30:14.496 * DB saved on disk
 1:M 14 May 2023 19:30:14.500 * Removing the pid file.
 1:M 14 May 2023 19:30:14.505 # Redis is now ready to exit, bye bye...
+1:C 15 May 2023 15:03:06.298 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 15 May 2023 15:03:06.305 # Redis version=6.2.6, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 15 May 2023 15:03:06.311 # Configuration loaded
+1:M 15 May 2023 15:03:06.317 * monotonic clock: POSIX clock_gettime
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 6.2.6 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                  
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 1
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           https://redis.io       
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+1:M 15 May 2023 15:03:06.333 # Server initialized
+1:M 15 May 2023 15:03:06.339 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+1:M 15 May 2023 15:03:06.355 * DB loaded from append only file: 0.010 seconds
+1:M 15 May 2023 15:03:06.363 * Ready to accept connections
+1:M 15 May 2023 15:03:11.280 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:03:16.297 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:03:21.315 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:03:26.330 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:03:31.347 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:03:36.363 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:03:41.379 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:03:46.394 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:03:51.413 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:03:56.430 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:04:01.445 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:04:06.462 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:04:11.482 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:04:16.499 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:04:21.517 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:04:26.534 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:04:31.551 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:04:36.569 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:04:41.583 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:04:46.599 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:04:51.614 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:04:56.627 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:05:01.644 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:05:06.660 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:05:11.674 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:05:16.688 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:05:21.701 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:05:26.713 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:05:31.727 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:05:36.743 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:05:41.756 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:05:46.771 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:05:51.790 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:05:56.809 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:06:01.828 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:06:06.848 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:06:11.866 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:06:16.882 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:06:21.899 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:06:26.914 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:06:31.930 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:06:36.947 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:06:41.968 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:06:46.987 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:06:52.006 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:06:57.026 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:07:02.046 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:07:07.064 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:07:12.083 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:07:17.099 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:07:22.116 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:07:27.136 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:07:32.155 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:07:37.174 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:07:42.194 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:07:47.213 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:signal-handler (1684134470) Received SIGTERM scheduling shutdown...
+1:M 15 May 2023 15:07:50.930 # User requested shutdown...
+1:M 15 May 2023 15:07:50.935 * Calling fsync() on the AOF file.
+1:M 15 May 2023 15:07:50.940 * Saving the final RDB snapshot before exiting.
+1:M 15 May 2023 15:07:50.956 * DB saved on disk
+1:M 15 May 2023 15:07:50.958 * Removing the pid file.
+1:M 15 May 2023 15:07:50.964 # Redis is now ready to exit, bye bye...
+1:C 15 May 2023 15:08:28.170 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 15 May 2023 15:08:28.189 # Redis version=6.2.6, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 15 May 2023 15:08:28.195 # Configuration loaded
+1:M 15 May 2023 15:08:28.201 * monotonic clock: POSIX clock_gettime
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 6.2.6 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                  
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 1
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           https://redis.io       
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+1:M 15 May 2023 15:08:28.218 # Server initialized
+1:M 15 May 2023 15:08:28.223 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+1:M 15 May 2023 15:08:28.240 * DB loaded from append only file: 0.009 seconds
+1:M 15 May 2023 15:08:28.250 * Ready to accept connections
+1:M 15 May 2023 15:08:33.176 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:08:38.194 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:08:43.212 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:08:48.231 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:08:53.249 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:08:58.267 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:09:03.286 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:09:08.305 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:09:13.325 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:09:18.343 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:09:23.361 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:09:28.380 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:09:33.398 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:09:38.416 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:M 15 May 2023 15:09:43.436 - DB 0: 1 keys (0 volatile) in 4 slots HT.
+1:signal-handler (1684134586) Received SIGTERM scheduling shutdown...
+1:M 15 May 2023 15:09:46.755 # User requested shutdown...
+1:M 15 May 2023 15:09:46.764 * Calling fsync() on the AOF file.
+1:M 15 May 2023 15:09:46.775 * Saving the final RDB snapshot before exiting.
+1:M 15 May 2023 15:09:46.798 * DB saved on disk
+1:M 15 May 2023 15:09:46.803 * Removing the pid file.
+1:M 15 May 2023 15:09:46.806 # Redis is now ready to exit, bye bye...

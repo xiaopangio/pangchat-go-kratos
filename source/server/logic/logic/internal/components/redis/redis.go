@@ -15,7 +15,8 @@ type Redis struct {
 	helper *log.Helper
 }
 
-func NewRedisClient(redisCf *conf.Data, helper *log.Helper) *Redis {
+func NewRedisClient(cf *conf.Bootstrap, helper *log.Helper) *Redis {
+	redisCf := cf.Data
 	client := redis.NewClient(&redis.Options{
 		Addr:         redisCf.Redis.Addr,
 		Password:     redisCf.Redis.Password,

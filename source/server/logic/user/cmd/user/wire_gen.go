@@ -49,8 +49,8 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 		cleanup()
 		return nil, nil, err
 	}
-	userRegistry := registry.NewEtcdUserRegistry(bootstrap, clientv3Client)
-	relationShipClient, err := client.NewRelationshipClient(userRegistry, helper, bootstrap)
+	relationshipRegistry := registry.NewEtcdRelationshipRegistry(bootstrap, clientv3Client)
+	relationShipClient, err := client.NewRelationshipClient(relationshipRegistry, helper, bootstrap)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
@@ -58,6 +58,7 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 	userBiz := biz.NewUserBiz(userRepo, helper, redisRedis, smsClient, ossClient, relationShipClient, node)
 	userService := service.NewUserService(userBiz, helper)
 	grpcServer := server.NewGRPCServer(bootstrap, userService, logLogger)
+	userRegistry := registry.NewEtcdUserRegistry(bootstrap, clientv3Client)
 	app := newApp(logLogger, bootstrap, grpcServer, userRegistry)
 	return app, func() {
 		cleanup()

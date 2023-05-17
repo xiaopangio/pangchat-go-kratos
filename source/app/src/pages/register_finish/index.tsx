@@ -1,8 +1,9 @@
 import "@/pages/register_finish/index.less"
-import {useEffect, useRef} from "react";
+import {useEffect, useState} from "react";
 import SvgIcon from "@/components/Icon";
-import storage from "@/utils/storage";
-import {dataURLtoBlob} from "@/utils/util";
+import {useRecoilState} from "recoil";
+import {RegisterAvatar} from "@/store";
+import {GetImg} from "@/utils/store";
 
 type RegisterFinishProps = {
     name: string;
@@ -13,25 +14,19 @@ type RegisterFinishProps = {
 
 function RegisterFinish({name, phoneNumber, accountId, type}: RegisterFinishProps) {
     // const [registerContext, setRegisterContext] = useRegisterContext();
-    let avatar = useRef<HTMLImageElement>(null);
+    const [avatarUrl] = useRecoilState(RegisterAvatar);
+    const [avatarData, setAvatarData] = useState("");
     useEffect(() => {
-        let userAvatar = storage().get("user_avatar");
-        if (userAvatar) {
-            let blob = dataURLtoBlob(userAvatar.value);
-            let url = (URL || webkitURL).createObjectURL(blob);
-            if (avatar.current) {
-                avatar.current.src = url
-                avatar.current.onload = function () {
-                    URL.revokeObjectURL(url)
-                }
-            }
+        if (avatarUrl) {
+            GetImg(avatarUrl).then((res) => {
+                setAvatarData(res)
+            })
         }
-
     }, [])
     return (
         <div className="register-finish">
             <div className="register-display">
-                <img className="dis-avatar" ref={avatar} alt="">
+                <img className="dis-avatar" src={avatarData} alt="">
                 </img>
                 <div className="dis-nickname">
                     <div className="dis-tip">NickName:</div>

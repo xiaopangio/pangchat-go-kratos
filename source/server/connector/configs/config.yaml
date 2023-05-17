@@ -1,9 +1,11 @@
 server:
   http:
     addr: 0.0.0.0:8002
+    endpoint: 192.168.37.1:8002
     timeout: 1s
   grpc:
     addr: 0.0.0.0:9003
+    endpoint: 192.168.37.1:9003
     timeout: 1s
   name: connector
   version: "1.0"
@@ -15,7 +17,7 @@ service:
   online_service: online
 kafka:
   addrs:
-    - 192.168.37.1:9092
+    - 43.143.137.232:9092
 message_queue:
   friend_request_topic: friend_request
   friend_request_group: friend_request_group
@@ -24,21 +26,21 @@ message_queue:
 discovery:
   etcd:
     addrs:
-      - 127.0.0.1:2379
+      - 43.143.137.232:2379
 registry:
   etcd:
     addrs:
-      - 127.0.0.1:2379
+      - 43.143.137.232:2379
 data:
   database:
     driver: mysql
-    source: pangchat:password@tcp(127.0.0.1:3307)/pangchat
+    source: pangchat:password@tcp(43.143.137.232:3307)/pangchat
   redis:
-    addr: 127.0.0.1:6379
+    addr: 43.143.137.232:6379
     password: password
     db: 0
     pool_size: 100
     min_idle_conns: 10
     max_retries: 3
-    read_timeout: 0.2s
-    write_timeout: 0.2s
+    read_timeout: 0.4s
+    write_timeout: 0.6s

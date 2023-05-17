@@ -1,4 +1,4 @@
-import {FriendRequest} from "@/store/db";
+import {Friend, FriendRequest} from "@/store/db";
 
 export interface SendFriendRequestRequest {
     requester_id: string;
@@ -30,4 +30,18 @@ export interface GetFriendGroupListRequest {
 
 export interface GetFriendGroupListResponse {
     group_names: string[];
+}
+export interface GetFriendListResponse {
+    friends: Friend[]
+}
+export interface GetFriendInfoResponse {
+    city_name: string
+    province_name: string
+    desc: string
+}
+export interface UpdateFriendInfoRequest {
+    user_id: string
+    friend_id: string
+    note_name: string
+    group_name: string
 }

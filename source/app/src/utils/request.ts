@@ -39,11 +39,12 @@ service.interceptors.response.use((response: AxiosResponse) => {
         return body
     } else {
         // 处理业务错误。
+        message.error({content: message, duration: 2000})
         return Promise.reject(new Error(message))
     }
 }, (error: AxiosError) => {
     // 处理 HTTP 网络错误
-    let m = ''
+    let m: string
     // HTTP 状态码
     const status = error.response?.status
     switch (status) {

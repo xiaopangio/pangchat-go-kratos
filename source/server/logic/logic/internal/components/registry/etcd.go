@@ -7,7 +7,8 @@ import (
 	"logic/internal/conf"
 )
 
-func NewEtcdClient(r *conf.Registry, s *conf.Server, logger *log.Helper) (*clientv3.Client, error) {
+func NewEtcdClient(cf *conf.Bootstrap, logger *log.Helper) (*clientv3.Client, error) {
+	r := cf.Registry
 	client, err := clientv3.New(
 		clientv3.Config{
 			Endpoints: r.Etcd.Addrs,
@@ -24,7 +25,8 @@ type LogicRegistry struct {
 	*etcd.Registry
 }
 
-func NewEtcdLogicRegistry(service *conf.Service, client *clientv3.Client) *LogicRegistry {
+func NewEtcdLogicRegistry(cf *conf.Bootstrap, client *clientv3.Client) *LogicRegistry {
+	service := cf.Service
 	return &LogicRegistry{
 		Registry: etcd.New(client, etcd.Namespace(service.LogicService)),
 	}
@@ -34,7 +36,8 @@ type ConnectorRegistry struct {
 	*etcd.Registry
 }
 
-func NewEtcdConnectorRegistry(service *conf.Service, client *clientv3.Client) *ConnectorRegistry {
+func NewEtcdConnectorRegistry(cf *conf.Bootstrap, client *clientv3.Client) *ConnectorRegistry {
+	service := cf.Service
 	return &ConnectorRegistry{
 		Registry: etcd.New(client, etcd.Namespace(service.ConnectorService)),
 	}

@@ -13,9 +13,12 @@ import Name from "@/pages/name";
 import Password from "@/pages/password";
 import UploadAvatar from "@/pages/uploadAvatar";
 import RegisterFinish from "@/pages/register_finish";
-import {blobToFile, fileToBlob, storeBlob} from "@/utils/util";
-import storage from "@/utils/storage";
+import {dataUrlToFile} from "@/utils/util";
 import {ParseJwt} from "@/utils/jwt";
+import {GenAvatarName} from "@/utils/gen";
+import {GetImg, StoreImg} from "@/utils/store";
+import {useRecoilState} from "recoil";
+import {RegisterAvatar} from "@/store";
 
 
 function Register() {
@@ -23,6 +26,7 @@ function Register() {
     const [back, setBack] = useState(false);
     const [next, setNext] = useState(false);
     const [step, setStep] = useState(1);
+    const [avatarUrl, setAvatarUrl] = useRecoilState(RegisterAvatar);
     const [isUploadAvatar, setIsUploadAvatar] = useState(false);
     const [isRegister, setIsRegister] = useState(false);
     const [registerParam, setRegisterParam] = useState<RegisterParam>({
@@ -81,29 +85,15 @@ function Register() {
             ConfirmPassword: confirmPassword,
         })
     }
-    const setUpload = () => {
-        console.log(isUploadAvatar)
-    }
     const saveAvatarDone = async (file: File | Blob) => {
-        if (file instanceof Blob) {
-            try {
-                await storeBlob("user_avatar", file as Blob)
-                const f = blobToFile(file, "avatar.png")
-                let formData = new FormData();
-                formData.append("file", f);
-            } catch (e) {
-                console.log(e)
-            }
-        } else if (file as any instanceof File) {
-            let formData = new FormData();
-            formData.append("file", file);
-            try {
-                const blob = await fileToBlob(file)
-                await storeBlob("user_avatar", blob)
-            } catch (e) {
-                console.log(e)
-            }
+        let avatar = GenAvatarName();
+        try {
+             await StoreImg(avatar, file)
+        } catch (e) {
+            console.log(e)
+            return
         }
+        setAvatarUrl(avatar);
         setIsUploadAvatar(true);
     }
     useEffect(() => {
@@ -264,17 +254,17 @@ function Register() {
                     try {
                         let hp = hashPassword(registerParam.Password);
                         let hpc = hashPassword(registerParam.ConfirmPassword);
-                        let userAvatar = storage().get("user_avatar");
+                        let userAvatar =await GetImg(avatarUrl);
                         if (!userAvatar) {
                             console.log("no avatar")
                         }
-                        let file = await blobToFile(userAvatar.value, "avatar.png");
+                        let file=dataUrlToFile(userAvatar, avatarUrl)
                         let formData = new FormData();
                         formData.append("file", file);
                         let res = await uploadAvatar(formData);
                         let user = ParseJwt<User>(res.token);
                         console.log(user)
-                        const resp = await register({
+                        await register({
                             avatar_url: user.avatar,
                             nick_name: registerParam.Name,
                             password: hp as string,

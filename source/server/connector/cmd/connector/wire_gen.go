@@ -11,6 +11,7 @@ import (
 	"connector/internal/components/broker"
 	"connector/internal/components/cache"
 	"connector/internal/components/client"
+	"connector/internal/components/endpoints"
 	"connector/internal/components/logger"
 	"connector/internal/components/mysql"
 	"connector/internal/components/redis"
@@ -38,6 +39,7 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 		return nil, nil, err
 	}
 	connectorRegistry := registry.NewConnectorRegistry(bootstrap, clientv3Client)
+	v := endpoints.NewEndPoints(bootstrap)
 	redisRedis := redis.NewRedisClient(bootstrap, helper)
 	db := mysql.NewMysql(bootstrap)
 	dataData, cleanup, err := data.NewData(redisRedis, db, helper)
@@ -58,7 +60,7 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 	connectorServiceService := service.NewConnectorServiceService(connectorServiceBiz, helper)
 	grpcServer := server.NewGRPCServer(bootstrap, connectorServiceService, helper)
 	httpServer := server.NewHTTPServer(bootstrap, connectorServiceService)
-	app := newApp(logLogger, bootstrap, connectorRegistry, grpcServer, httpServer)
+	app := newApp(logLogger, bootstrap, connectorRegistry, v, grpcServer, httpServer)
 	return app, func() {
 		cleanup()
 	}, nil

@@ -57,3 +57,7 @@ export const CurrentDealFriendRequest = atom<FriendRequest | null>(
         default: null
     }
 )
+export const RegisterAvatar = atom<string>({
+    key: "RegisterAvatar",
+    default: ""
+})

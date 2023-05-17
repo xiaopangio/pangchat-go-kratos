@@ -2,6 +2,7 @@ package components
 
 import (
 	"github.com/google/wire"
+	"logic/internal/components/endpoints"
 	"logic/internal/components/loadbalance"
 	"logic/internal/components/logger"
 	"logic/internal/components/redis"
@@ -15,4 +16,5 @@ var ProviderSet = wire.NewSet(
 	registry.NewEtcdLogicRegistry,
 	registry.NewEtcdConnectorRegistry,
 	loadbalance.NewRandomLoadBalance,
+	endpoints.NewEndPoints,
 )

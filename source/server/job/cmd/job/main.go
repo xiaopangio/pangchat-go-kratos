@@ -6,6 +6,7 @@ import (
 	"github.com/tx7do/kratos-transport/transport/kafka"
 	"job/internal/components/registry"
 	"job/internal/conf"
+	"net/url"
 	"os"
 	"strings"
 
@@ -32,7 +33,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, cf *conf.Bootstrap, registry *registry.JobRegistry, kafkaServer *kafka.Server) *kratos.App {
+func newApp(logger log.Logger, cf *conf.Bootstrap, registry *registry.JobRegistry, endpoints []*url.URL, kafkaServer *kafka.Server) *kratos.App {
 	server := cf.Server
 	port := strings.Split(server.Grpc.Addr, ":")[1]
 	return kratos.New(
@@ -45,6 +46,7 @@ func newApp(logger log.Logger, cf *conf.Bootstrap, registry *registry.JobRegistr
 		kratos.Server(
 			kafkaServer,
 		),
+		kratos.Endpoint(endpoints...),
 	)
 }
 

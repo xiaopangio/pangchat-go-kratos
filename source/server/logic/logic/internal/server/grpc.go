@@ -10,12 +10,13 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server, logger log.Logger, service *service.LogicService) *grpc.Server {
+func NewGRPCServer(cf *conf.Bootstrap, logger log.Logger, service *service.LogicService) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
 		),
 	}
+	c := cf.Server
 	if c.Grpc.Network != "" {
 		opts = append(opts, grpc.Network(c.Grpc.Network))
 	}

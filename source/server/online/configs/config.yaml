@@ -1,9 +1,11 @@
 server:
   http:
     addr: 0.0.0.0:8010
+    endpoint: 192.168.37.1:8010
     timeout: 1s
   grpc:
     addr: 0.0.0.0:9010
+    endpoint: 192.168.37.1:9010
     timeout: 1s
   name: online
   version: "1.0"
@@ -16,21 +18,21 @@ service:
 discovery:
   etcd:
     addrs:
-      - 127.0.0.1:2379
+      - 43.143.137.232:2379
 registry:
   etcd:
     addrs:
-      - 127.0.0.1:2379
+      - 43.143.137.232:2379
 data:
   database:
     driver: mysql
-    source: pangchat:password@tcp(127.0.0.1:3307)/pangchat
+    source: pangchat:password@tcp(43.143.137.232:3307)/pangchat
   redis:
-    addr: 127.0.0.1:6379
+    addr: 43.143.137.232:6379
     password: password
     db: 0
     pool_size: 100
     min_idle_conns: 10
     max_retries: 3
-    read_timeout: 0.2s
-    write_timeout: 0.2s
+    read_timeout: 1s
+    write_timeout: 1s
