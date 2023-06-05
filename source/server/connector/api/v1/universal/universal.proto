@@ -39,3 +39,20 @@ message Group{
   int64 group_leader_id = 5;
   string create_at = 6;
 }
+message GroupMember{
+  string group_id = 1;
+  string member_id = 2;
+  string member_note_name = 3; //申请为群成员时，不填写群昵称的话，默认就是用户的昵称
+  string member_avatar = 4;
+  string join_at = 5;
+  string member_role = 6; //群主，管理员，普通成员
+}
+message GroupRequest{
+  int64 request_id = 1;
+  int64 requester_id = 2;
+  string group_id = 5;
+  string desc = 7;
+  string status = 8;
+  string create_at = 9;
+  string update_at = 10;
+}

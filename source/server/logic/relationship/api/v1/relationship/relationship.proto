@@ -33,6 +33,12 @@ service relationShip {
     rpc GetGroupRequest (GetGroupRequestRequest) returns (GetGroupRequestResponse) {}
     rpc GetGroupRequests (GetGroupRequestsRequest) returns (GetGroupRequestsResponse) {}
     rpc DealGroupRequest (DealGroupRequestRequest) returns (DealGroupRequestResponse) {}
+    //  群聊管理员
+    rpc CreateGroupAdmin (CreateGroupAdminRequest) returns (CreateGroupAdminResponse) {}
+    rpc DeleteGroupAdmin (DeleteGroupAdminRequest) returns (DeleteGroupAdminResponse) {}
+    rpc GetGroupAdminList (GetGroupAdminListRequest) returns (GetGroupAdminListResponse) {}
+    rpc GetGroupAdminInfo (GetGroupAdminInfoRequest) returns (GetGroupAdminInfoResponse) {}
+    rpc UpdateGroupAdminInfo (UpdateGroupAdminInfoRequest) returns (UpdateGroupAdminInfoResponse) {}
 }
 message GetFriendsByIDSRequest{
     repeated int64 friend_ids = 1;
@@ -167,4 +173,103 @@ message UpdateGroupInfoRequest{
     string group_name = 2;
     string group_avatar = 3;
     string group_desc = 4;
+}
+message UpdateGroupInfoResponse{
+}
+message DeleteGroupRequest{
+    string group_id = 1;
+}
+message DeleteGroupResponse{
+}
+message GetGroupMemberListRequest{
+    string group_id = 1;
+}
+message GetGroupMemberListResponse{
+    repeated universal.GroupMember group_members = 1;
+}
+message GetGroupMemberInfoRequest{
+    string group_id = 1;
+    int64 user_id = 2;
+}
+message GetGroupMemberInfoResponse{
+    universal.GroupMember group_member = 1;
+}
+message UpdateGroupMemberInfoRequest{
+    string group_id = 1;
+    int64 user_id = 2;
+    string member_note_name = 3;
+    string member_group_name = 4;
+}
+message UpdateGroupMemberInfoResponse{
+}
+message DeleteGroupMemberRequest{
+    string group_id = 1;
+    int64 user_id = 2;
+}
+message DeleteGroupMemberResponse{
+}
+message SendGroupRequestRequest{
+    int64 requester_id = 1;
+    string group_id = 2;
+    string desc = 3;
+}
+message SendGroupRequestResponse{
+    universal.GroupRequest group_request = 1;
+}
+message GetGroupRequestListRequest{
+    string group_id = 1;
+}
+message GetGroupRequestListResponse{
+    repeated universal.GroupRequest group_requests = 1;
+}
+message GetGroupRequestRequest{
+    int64 request_id = 1;
+}
+message GetGroupRequestResponse{
+    universal.GroupRequest group_request = 1;
+}
+message GetGroupRequestsRequest{
+    repeated int64 request_ids = 1;
+}
+message GetGroupRequestsResponse{
+    repeated universal.GroupRequest group_requests = 1;
+}
+message DealGroupRequestRequest{
+    int64 request_id = 1;
+    string status = 2;
+}
+message DealGroupRequestResponse{
+}
+message CreateGroupAdminRequest{
+    string group_id = 1;
+    int64 user_id = 2;
+}
+message CreateGroupAdminResponse{
+}
+message DeleteGroupAdminRequest{
+    string group_id = 1;
+    int64 user_id = 2;
+}
+message DeleteGroupAdminResponse{
+}
+message GetGroupAdminListRequest{
+    string group_id = 1;
+}
+message GetGroupAdminListResponse{
+    repeated universal.GroupMember group_admins = 1;
+}
+message GetGroupAdminInfoRequest{
+    string group_id = 1;
+    int64 user_id = 2;
+}
+message GetGroupAdminInfoResponse{
+    universal.GroupMember group_admin = 1;
+}
+message UpdateGroupAdminInfoRequest{
+    string group_id = 1;
+    int64 user_id = 2;
+    string member_note_name = 3;
+    string member_group_name = 4;
+}
+message UpdateGroupAdminInfoResponse{
 }
