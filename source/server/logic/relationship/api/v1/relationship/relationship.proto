@@ -156,3 +156,15 @@ message GetGroupListRequest {
 message GetGroupListResponse {
     repeated universal.Group groups = 1;
 }
+message GetGroupInfoRequest{
+    string group_id = 1;
+}
+message GetGroupInfoResponse{
+    universal.Group group = 1;
+}
+message UpdateGroupInfoRequest{
+    string group_id = 1;
+    string group_name = 2;
+    string group_avatar = 3;
+    string group_desc = 4;
+}
