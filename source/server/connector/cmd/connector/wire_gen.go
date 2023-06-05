@@ -47,6 +47,12 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 		return nil, nil, err
 	}
 	connectorServiceRepo := data.NewConnectorRepoImpl(dataData, helper)
+	messageRegistry := registry.NewMessageRegistry(bootstrap, clientv3Client)
+	messageServiceClient, err := client.NewMessageClient(messageRegistry, helper, bootstrap)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
 	onlineRegistry := registry.NewOnlineRegistry(bootstrap, clientv3Client)
 	onlineClient, err := client.NewOnlineClient(onlineRegistry, helper, bootstrap)
 	if err != nil {
@@ -56,7 +62,7 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 	upgrader := websocket.NewUpgrader()
 	connectionCache := cache.NewConnectionCache()
 	kafkaBroker := broker.NewKafkaBroker(helper, bootstrap)
-	connectorServiceBiz := biz.NewConnectorServiceBiz(connectorServiceRepo, helper, onlineClient, upgrader, connectionCache, bootstrap, kafkaBroker, redisRedis)
+	connectorServiceBiz := biz.NewConnectorServiceBiz(connectorServiceRepo, messageServiceClient, helper, onlineClient, upgrader, connectionCache, bootstrap, kafkaBroker, redisRedis)
 	connectorServiceService := service.NewConnectorServiceService(connectorServiceBiz, helper)
 	grpcServer := server.NewGRPCServer(bootstrap, connectorServiceService, helper)
 	httpServer := server.NewHTTPServer(bootstrap, connectorServiceService)

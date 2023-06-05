@@ -15,9 +15,13 @@ var ProviderSet = wire.NewSet(
 	registry.NewEtcdConnectorRegistry,
 	registry.NewEtcdLogicRegistry,
 	registry.NewEtcdRelationshipRegistry,
+	registry.NewOnlineRegistry,
+	registry.NewMessageRegistry,
 	client.NewUserClient,
 	client.NewConnectorClient,
 	client.NewLogicClient,
 	client.NewRelationshipClient,
+	client.NewOnlineClient,
+	client.NewMessageClient,
 	auth.NewJwtManager,
 )

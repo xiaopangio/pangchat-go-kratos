@@ -7,6 +7,7 @@ import (
 	"model/component/mysql"
 	"model/service/connector"
 	"model/service/group"
+	"model/service/logic"
 	"model/service/message"
 	"model/service/relationship"
 	"model/service/user"
@@ -39,14 +40,16 @@ func Execute() {
 	switch workdir {
 	case "logic\\user":
 		user.GenerateUser(g)
-	case "history-message":
-		message.GenerateHistoryMessage(g)
 	case "group":
 		group.GenerateGroup(g)
 	case "connector":
 		connector.GenerateConnector(g)
 	case "logic\\relationship":
 		relationship.GenerateRelationship(g)
+	case "logic\\logic":
+		logic.GenerateLogic(g)
+	case "logic\\message":
+		message.GenerateMessage(g)
 	default:
 		panic("unknown workdir")
 	}

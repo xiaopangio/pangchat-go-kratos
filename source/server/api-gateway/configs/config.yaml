@@ -8,6 +8,8 @@ service:
   connector_service: "connector"
   logic_service: "logic_logic"
   relationship_service: "logic_relationship"
+  online_service: "online"
+  message_service: "logic_message"
 discovery:
   etcd:
     addrs:

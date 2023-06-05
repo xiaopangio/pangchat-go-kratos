@@ -6,5 +6,10 @@ import (
 )
 
 func RegisterLogicService(g *gin.RouterGroup, cs *LogicService) {
-	g.GET("/connectorUrl", middleware.Auth(cs.Jwt), cs.GetConnectorUrl)
+	g.Use(middleware.Auth(cs.Jwt))
+	g.GET("/connectorUrl", cs.GetConnectorUrl)
+	g.GET("/toolOptions", cs.GetToolOptions)
+	g.GET("/preEmojis", cs.GetPreEmojis)
+	g.POST("/uploadFile", cs.UploadFile)
+	g.GET("/downloadFile", cs.DownloadFile)
 }

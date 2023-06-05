@@ -3,7 +3,6 @@ syntax = "proto3";
 package api.v1.connector;
 import "v1/universal/universal.proto";
 option go_package = "./api/v1/connector;connector";
-
 message LoginRequest {
     int64 type= 1;
     string username = 2;
@@ -36,6 +35,15 @@ message LogoutRequest {
 }
 message LogoutResponse {
 }
+//message FriendRequest{
+//  int64 request_id = 1;
+//  int64 requester_id = 2;
+//  int64 receiver_id = 3;
+//  string desc = 5;
+//  string status = 6;
+//  string create_time = 7;
+//  string update_time = 8;
+//}
 message PushFriendRequestsRequest{
   int64 uid = 1;
   repeated universal.FriendRequest requests = 2;
@@ -43,8 +51,40 @@ message PushFriendRequestsRequest{
 message PushFriendRequestsResponse{
 
 }
+message PushFriendRequest{
+  int64 uid = 1;
+  repeated universal.Friend friends = 2;
+}
+message PushFriendResponse{
+
+}
+message PushMessageRequest{
+  int64 uid = 1;
+  universal.Message message = 2;
+}
+message PushMessageResponse{
+
+}
+message ReplyMessageRequest{
+  int64 uid = 1;
+  universal.Message message = 2;
+}
+message ReplyMessageResponse{
+
+}
+message PushUnreadMessageListRequest{
+  int64 uid = 1;
+  repeated universal.UnreadMessageInfo list = 2;
+}
+message PushUnreadMessageListResponse{
+
+}
 service ConnectorService {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);
   rpc PushFriendRequests(PushFriendRequestsRequest) returns (PushFriendRequestsResponse);
+  rpc PushFriend(PushFriendRequest) returns (PushFriendResponse);
+  rpc PushMessage(PushMessageRequest) returns (PushMessageResponse);
+  rpc ReplyMessage(ReplyMessageRequest) returns (ReplyMessageResponse);
+  rpc PushUnreadMessageList(PushUnreadMessageListRequest) returns (PushUnreadMessageListResponse);
 }

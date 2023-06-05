@@ -8,4 +8,8 @@ genConnector:
 	go run main.go -service connector
 genRelationship:
 	go run main.go -service logic.relationship
+genLogic:
+	go run main.go -service logic.logic
+genMessage:
+	go run main.go -service logic.message
 .PHONY: genUser genMessage genGroup

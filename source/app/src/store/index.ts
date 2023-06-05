@@ -1,7 +1,7 @@
-import {atom} from "recoil";
+import {atom, selector} from "recoil";
 import {User} from "@/declare/type";
 import {ProfileResponse} from "@/api/user/types";
-import {FriendRequest} from "@/store/db";
+import {Friend, FriendRequest, MessageCountType} from "@/store/db";
 
 export const currentUserState = atom<User | null>({
     key: 'currentUserState',
@@ -11,7 +11,7 @@ export const loginState = atom({
     key: 'loginState',
     default: false
 })
-export const AddUserState = atom<ProfileResponse | null>({
+export const SearchUserState = atom<ProfileResponse | null>({
     key: 'AddUserState',
     default: null
 })
@@ -39,17 +39,13 @@ export const UnreadFriendRequestCount = atom<number>({
     key: 'UnreadFriendRequestCount',
     default: 0
 })
-export const UnreadMessageCount = atom<number>({
-    key: 'UnreadMessageCount',
-    default: 0
-})
 export const UnreadFriendTextCount = atom<number>({
     key: 'UnreadFriendTextCount',
     default: 0
 })
-export const UnreadMessageCountMap = atom<Map<string, number>>({
+export const UnreadMessageCountMap = atom<Map<string, MessageCountType>>({
     key: 'UnreadMessageCountMap',
-    default: new Map<string, number>()
+    default: new Map<string, MessageCountType>()
 })
 export const CurrentDealFriendRequest = atom<FriendRequest | null>(
     {
@@ -57,7 +53,29 @@ export const CurrentDealFriendRequest = atom<FriendRequest | null>(
         default: null
     }
 )
+export const UnreadMessageCount = selector({
+    key: "UnreadMessageCount",
+    get: ({get}) => {
+        let count = 0
+        get(UnreadMessageCountMap).forEach((value) => {
+            count += value.unread_count
+        })
+        return count
+    }
+})
 export const RegisterAvatar = atom<string>({
     key: "RegisterAvatar",
     default: ""
+})
+export const currentDialogState = atom<string>({
+    key: "currentDialogState",
+    default: ""
+})
+export const AvatarMap = atom<Map<string, string>>({
+    key: "AvatarMap",
+    default: new Map<string, string>()
+})
+export const FriendsMap = atom<Map<string, Friend>>({
+    key: "FriendsMap",
+    default: new Map<string, Friend>()
 })

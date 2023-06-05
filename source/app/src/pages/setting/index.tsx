@@ -6,7 +6,7 @@ import SettingList from "@/components/SettingContent";
 import {settingGroupList} from "@/store/data";
 import React, {useState} from "react";
 import {useRecoilState, useRecoilValue} from "recoil";
-import {ConnectionState, currentUserState} from "@/store";
+import {ConnectionState, currentUserState, UnreadMessageCountMap} from "@/store";
 import {Logout} from "@/api/user";
 import storage from "@/utils/storage";
 import {closeConn} from "@/hooks/websocket";
@@ -19,6 +19,7 @@ export default function Setting() {
     const [popperClass, setPopperClass] = useState("popper");
     const [connection, setConnection] = useRecoilState(ConnectionState)
     const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
+    const [unreadMessageCountMap, setUnreadMessageCountMap] = useRecoilState(UnreadMessageCountMap)
     let user = useRecoilValue(currentUserState);
     const back = () => {
         navigate(MePrefix)
@@ -33,6 +34,7 @@ export default function Setting() {
             return
         }
         try {
+            closeConn(true)
             await Logout({uid: user.uid})
             storage().delete("token")
             storage().delete("user_avatar")
@@ -40,7 +42,7 @@ export default function Setting() {
             setPopperClass("popper popper-hide")
             setConnection(false)
             setCurrentUser(null)
-            closeConn()
+            setUnreadMessageCountMap(new Map())
             navigate(LoginPrefix)
         } catch (e) {
             console.log(e)

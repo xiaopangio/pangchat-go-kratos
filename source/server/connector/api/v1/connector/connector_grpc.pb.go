@@ -19,9 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	ConnectorService_Login_FullMethodName              = "/api.v1.connector.ConnectorService/Login"
-	ConnectorService_Logout_FullMethodName             = "/api.v1.connector.ConnectorService/Logout"
-	ConnectorService_PushFriendRequests_FullMethodName = "/api.v1.connector.ConnectorService/PushFriendRequests"
+	ConnectorService_Login_FullMethodName                 = "/api.v1.connector.ConnectorService/Login"
+	ConnectorService_Logout_FullMethodName                = "/api.v1.connector.ConnectorService/Logout"
+	ConnectorService_PushFriendRequests_FullMethodName    = "/api.v1.connector.ConnectorService/PushFriendRequests"
+	ConnectorService_PushFriend_FullMethodName            = "/api.v1.connector.ConnectorService/PushFriend"
+	ConnectorService_PushMessage_FullMethodName           = "/api.v1.connector.ConnectorService/PushMessage"
+	ConnectorService_ReplyMessage_FullMethodName          = "/api.v1.connector.ConnectorService/ReplyMessage"
+	ConnectorService_PushUnreadMessageList_FullMethodName = "/api.v1.connector.ConnectorService/PushUnreadMessageList"
 )
 
 // ConnectorServiceClient is the client API for ConnectorService service.
@@ -31,6 +35,10 @@ type ConnectorServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
 	PushFriendRequests(ctx context.Context, in *PushFriendRequestsRequest, opts ...grpc.CallOption) (*PushFriendRequestsResponse, error)
+	PushFriend(ctx context.Context, in *PushFriendRequest, opts ...grpc.CallOption) (*PushFriendResponse, error)
+	PushMessage(ctx context.Context, in *PushMessageRequest, opts ...grpc.CallOption) (*PushMessageResponse, error)
+	ReplyMessage(ctx context.Context, in *ReplyMessageRequest, opts ...grpc.CallOption) (*ReplyMessageResponse, error)
+	PushUnreadMessageList(ctx context.Context, in *PushUnreadMessageListRequest, opts ...grpc.CallOption) (*PushUnreadMessageListResponse, error)
 }
 
 type connectorServiceClient struct {
@@ -68,6 +76,42 @@ func (c *connectorServiceClient) PushFriendRequests(ctx context.Context, in *Pus
 	return out, nil
 }
 
+func (c *connectorServiceClient) PushFriend(ctx context.Context, in *PushFriendRequest, opts ...grpc.CallOption) (*PushFriendResponse, error) {
+	out := new(PushFriendResponse)
+	err := c.cc.Invoke(ctx, ConnectorService_PushFriend_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *connectorServiceClient) PushMessage(ctx context.Context, in *PushMessageRequest, opts ...grpc.CallOption) (*PushMessageResponse, error) {
+	out := new(PushMessageResponse)
+	err := c.cc.Invoke(ctx, ConnectorService_PushMessage_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *connectorServiceClient) ReplyMessage(ctx context.Context, in *ReplyMessageRequest, opts ...grpc.CallOption) (*ReplyMessageResponse, error) {
+	out := new(ReplyMessageResponse)
+	err := c.cc.Invoke(ctx, ConnectorService_ReplyMessage_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *connectorServiceClient) PushUnreadMessageList(ctx context.Context, in *PushUnreadMessageListRequest, opts ...grpc.CallOption) (*PushUnreadMessageListResponse, error) {
+	out := new(PushUnreadMessageListResponse)
+	err := c.cc.Invoke(ctx, ConnectorService_PushUnreadMessageList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ConnectorServiceServer is the server API for ConnectorService service.
 // All implementations must embed UnimplementedConnectorServiceServer
 // for forward compatibility
@@ -75,6 +119,10 @@ type ConnectorServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
 	PushFriendRequests(context.Context, *PushFriendRequestsRequest) (*PushFriendRequestsResponse, error)
+	PushFriend(context.Context, *PushFriendRequest) (*PushFriendResponse, error)
+	PushMessage(context.Context, *PushMessageRequest) (*PushMessageResponse, error)
+	ReplyMessage(context.Context, *ReplyMessageRequest) (*ReplyMessageResponse, error)
+	PushUnreadMessageList(context.Context, *PushUnreadMessageListRequest) (*PushUnreadMessageListResponse, error)
 	mustEmbedUnimplementedConnectorServiceServer()
 }
 
@@ -90,6 +138,18 @@ func (UnimplementedConnectorServiceServer) Logout(context.Context, *LogoutReques
 }
 func (UnimplementedConnectorServiceServer) PushFriendRequests(context.Context, *PushFriendRequestsRequest) (*PushFriendRequestsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PushFriendRequests not implemented")
+}
+func (UnimplementedConnectorServiceServer) PushFriend(context.Context, *PushFriendRequest) (*PushFriendResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PushFriend not implemented")
+}
+func (UnimplementedConnectorServiceServer) PushMessage(context.Context, *PushMessageRequest) (*PushMessageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PushMessage not implemented")
+}
+func (UnimplementedConnectorServiceServer) ReplyMessage(context.Context, *ReplyMessageRequest) (*ReplyMessageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReplyMessage not implemented")
+}
+func (UnimplementedConnectorServiceServer) PushUnreadMessageList(context.Context, *PushUnreadMessageListRequest) (*PushUnreadMessageListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PushUnreadMessageList not implemented")
 }
 func (UnimplementedConnectorServiceServer) mustEmbedUnimplementedConnectorServiceServer() {}
 
@@ -158,6 +218,78 @@ func _ConnectorService_PushFriendRequests_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ConnectorService_PushFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PushFriendRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectorServiceServer).PushFriend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ConnectorService_PushFriend_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectorServiceServer).PushFriend(ctx, req.(*PushFriendRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConnectorService_PushMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PushMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectorServiceServer).PushMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ConnectorService_PushMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectorServiceServer).PushMessage(ctx, req.(*PushMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConnectorService_ReplyMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReplyMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectorServiceServer).ReplyMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ConnectorService_ReplyMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectorServiceServer).ReplyMessage(ctx, req.(*ReplyMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConnectorService_PushUnreadMessageList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PushUnreadMessageListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectorServiceServer).PushUnreadMessageList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ConnectorService_PushUnreadMessageList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectorServiceServer).PushUnreadMessageList(ctx, req.(*PushUnreadMessageListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ConnectorService_ServiceDesc is the grpc.ServiceDesc for ConnectorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +308,22 @@ var ConnectorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PushFriendRequests",
 			Handler:    _ConnectorService_PushFriendRequests_Handler,
+		},
+		{
+			MethodName: "PushFriend",
+			Handler:    _ConnectorService_PushFriend_Handler,
+		},
+		{
+			MethodName: "PushMessage",
+			Handler:    _ConnectorService_PushMessage_Handler,
+		},
+		{
+			MethodName: "ReplyMessage",
+			Handler:    _ConnectorService_ReplyMessage_Handler,
+		},
+		{
+			MethodName: "PushUnreadMessageList",
+			Handler:    _ConnectorService_PushUnreadMessageList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

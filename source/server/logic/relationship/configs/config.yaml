@@ -9,12 +9,14 @@ server:
 service:
   user_service: logic_user
   relationship_service: logic_relationship
+  message_service: logic_message
 kafka:
   addrs:
-    - 192.168.37.1:9092
+    - 43.143.137.232:9092
 message_queue:
   friend_request_topic: friend_request
-
+  friend_topic: friend
+  message_topic: message
 discovery:
   etcd:
     addrs:

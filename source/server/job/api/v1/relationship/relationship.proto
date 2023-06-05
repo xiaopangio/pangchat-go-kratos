@@ -1,7 +1,6 @@
 syntax = "proto3";
-
-package api.v1.logic.relationship;
 import "v1/universal/universal.proto";
+package api.v1.logic.relationship;
 option go_package = "./api/v1/relationship;relationship";
 service relationShip {
     rpc SendFriendRequest (SendFriendRequestRequest) returns (SendFriendRequestResponse) {}
@@ -10,6 +9,8 @@ service relationShip {
     rpc GetFriendRequests (GetFriendRequestsRequest) returns (GetFriendRequestsResponse) {}
     rpc DealFriendRequest (DealFriendRequestRequest) returns (DealFriendRequestResponse) {}
     rpc GetFriendList (GetFriendListRequest) returns (GetFriendListResponse) {}
+    rpc GetOneFriend(GetOneFriendRequest) returns (GetONeFriendResponse) {}
+    rpc GetFriendsByIDS(GetFriendsByIDSRequest) returns (GetFriendsByIDSResponse) {}
     rpc DeleteFriend (DeleteFriendRequest) returns (DeleteFriendResponse) {}
     rpc GetFriendInfo (GetFriendInfoRequest) returns (GetFriendInfoResponse) {}
     rpc UpdateFriendInfo (UpdateFriendInfoRequest) returns (UpdateFriendInfoResponse) {}
@@ -17,6 +18,19 @@ service relationShip {
     rpc UpdateFriendGroup (UpdateFriendGroupRequest) returns (UpdateFriendGroupResponse) {}
     rpc DeleteFriendGroup (DeleteFriendGroupRequest) returns (DeleteFriendGroupResponse) {}
     rpc GetFriendGroupList (GetFriendGroupListRequest) returns (GetFriendGroupListResponse) {}
+}
+message GetFriendsByIDSRequest{
+    repeated int64 friend_ids = 1;
+}
+message GetFriendsByIDSResponse{
+    repeated universal.Friend friends = 1;
+}
+message GetOneFriendRequest{
+    int64 user_id = 1;
+    int64 friend_id = 2;
+}
+message GetONeFriendResponse{
+    universal.Friend friend = 1;
 }
 message SendFriendRequestRequest {
     int64 requester_id = 1;
@@ -63,24 +77,16 @@ message GetFriendRequestsResponse{
 message DealFriendRequestRequest {
     int64 request_id = 1;
     string status = 2;
+    string note_name = 3;
+    string group_name = 4;
 }
 message DealFriendRequestResponse {
 }
 message GetFriendListRequest {
     int64 user_id = 1;
 }
-message FriendGroup{
-    string group_name = 2;
-    repeated Friend friends = 3;
-}
-message Friend {
-    int64 friend_id = 1;
-    string nick_name = 3;
-    string note_name = 4;
-    string avatar = 5;
-}
 message GetFriendListResponse {
-    repeated FriendGroup friend_groups = 1;
+    repeated universal.Friend friends = 1;
 }
 message DeleteFriendRequest {
     int64 user_id = 1;
@@ -95,6 +101,7 @@ message GetFriendInfoResponse {
     string city_name = 1;
     string province_name = 2;
     string desc = 3;
+    string account_id = 4;
 }
 message UpdateFriendInfoRequest {
     int64 user_id = 1;

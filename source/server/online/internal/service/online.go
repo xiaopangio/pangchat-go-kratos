@@ -51,7 +51,7 @@ func (s *OnlineService) GetOnlineDevice(ctx context.Context, req *pb.GetOnlineDe
 		s.helper.Errorf("get online device failed: %v", err)
 		return nil, err
 	}
-	var resp *pb.GetOnlineDeviceResponse = &pb.GetOnlineDeviceResponse{}
+	var resp = &pb.GetOnlineDeviceResponse{}
 	if device != nil {
 		s.helper.Infof("get online device: %v", device)
 		resp = &pb.GetOnlineDeviceResponse{

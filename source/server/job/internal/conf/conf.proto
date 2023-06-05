@@ -19,6 +19,10 @@ message Message_queue{
   string friend_request_group = 2;
   string connect_topic = 3;
   string connect_group = 4;
+  string friend_topic = 5;
+  string friend_group = 6;
+  string message_topic = 7;
+  string message_group = 8;
 }
 message Kafka{
   repeated string addrs = 1;
@@ -30,6 +34,7 @@ message Service{
   string user_service = 4;
   string job_service = 5;
   string online_service = 6;
+  string message_service = 7;
 }
 message Aliyun {
   string access_key = 1;

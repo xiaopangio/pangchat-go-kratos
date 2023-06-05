@@ -38,7 +38,7 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 	onlineBiz := biz.NewOnlineBiz(helper, redisRedis)
 	onlineService := service.NewOnlineService(helper, onlineBiz)
 	grpcServer := server.NewGRPCServer(bootstrap, onlineService, logLogger)
-	app := newApp(logLogger, bootstrap, onlineRegistry, v, grpcServer)
+	app := newApp(logLogger, bootstrap, onlineRegistry, v, grpcServer, redisRedis)
 	return app, func() {
 	}, nil
 }

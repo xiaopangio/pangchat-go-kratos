@@ -16,6 +16,28 @@ type RelationshipRepoImpl struct {
 	uidGen *snowflake.Node
 }
 
+func (r *RelationshipRepoImpl) GetFriendsByIds(ctx context.Context, ids []int64) ([]*model.Friend, error) {
+	if err := pkg.ContextErr(ctx); err != nil {
+		return nil, err
+	}
+	friends, err := dal.Friend.WithContext(ctx).Where(dal.Friend.UserID.In(ids...)).Find()
+	if err != nil {
+		return nil, pkg.InternalError("get friends error: %v", err)
+	}
+	return friends, nil
+}
+
+func (r *RelationshipRepoImpl) GetFriend(ctx context.Context, uid, friendId int64) (*model.Friend, error) {
+	if err := pkg.ContextErr(ctx); err != nil {
+		return nil, err
+	}
+	friend, err := dal.Friend.WithContext(ctx).Where(dal.Friend.UserID.Eq(uid), dal.Friend.FriendID.Eq(friendId)).First()
+	if err != nil {
+		return nil, pkg.InternalError("get friend error: %v", err)
+	}
+	return friend, nil
+}
+
 func (r *RelationshipRepoImpl) FindFriendRequests(ctx context.Context, requestId []int64) ([]*model.FriendRequest, error) {
 	if err := pkg.ContextErr(ctx); err != nil {
 		return nil, err
@@ -170,29 +192,30 @@ func (r *RelationshipRepoImpl) CreateFriend(ctx context.Context, uid, friendId i
 	return nil
 }
 
-func (r *RelationshipRepoImpl) DealFriendRequest(ctx context.Context, requestId int64, status string) (int64, error) {
-	var userId int64
-	err := dal.Q.Transaction(func(tx *dal.Query) error {
+func (r *RelationshipRepoImpl) DealFriendRequest(ctx context.Context, requestId int64, status, noteName, groupName string) (*model.FriendRequest, error) {
+	var request *model.FriendRequest
+	var err error
+	err = dal.Q.Transaction(func(tx *dal.Query) error {
 		// check status is pending or not
 		if status == pkg.Pending {
 			return pkg.InvalidArgumentError("pending status is not allowed")
 		}
-		if err := pkg.ContextErr(ctx); err != nil {
+		if err = pkg.ContextErr(ctx); err != nil {
 			return err
 		}
 		//check request status is pending or not
-		res, err := tx.WithContext(ctx).Friend.Where(tx.FriendRequest.RequestID.Eq(requestId)).First()
+		request, err = tx.WithContext(ctx).FriendRequest.Where(tx.FriendRequest.RequestID.Eq(requestId)).First()
 		if err = pkg.IsNotRecordNotFoundError(err); err != nil {
 			return err
 		}
-		if status == pkg.Agreed || status == pkg.Refused {
+		if request.Status == pkg.Agreed || request.Status == pkg.Refused {
 			return pkg.InvalidArgumentError("request is already dealt")
 		}
-		if err := pkg.ContextErr(ctx); err != nil {
+		if err = pkg.ContextErr(ctx); err != nil {
 			return err
 		}
 		// update request status
-		_, err = tx.WithContext(ctx).Friend.Where(tx.FriendRequest.RequestID.Eq(requestId)).Update(tx.FriendRequest.Status, status)
+		_, err = tx.WithContext(ctx).FriendRequest.Where(tx.FriendRequest.RequestID.Eq(requestId)).Update(tx.FriendRequest.Status, status)
 		if err != nil {
 			return pkg.InternalError("update friend request status error: %v", err)
 		}
@@ -200,26 +223,35 @@ func (r *RelationshipRepoImpl) DealFriendRequest(ctx context.Context, requestId 
 		if status == pkg.Refused {
 			return nil
 		}
+		var friends []*model.Friend
 		// create friend
-		m := model.Friend{
-			UserID:       res.UserID,
-			FriendID:     res.FriendID,
-			NoteName:     res.NoteName,
-			GroupName:    res.GroupName,
+		friends = append(friends, &model.Friend{
+			UserID:       request.RequesterID,
+			FriendID:     request.ReceiverID,
+			NoteName:     request.NoteName,
+			GroupName:    request.GroupName,
 			LastAckMsgID: "",
 			BecomeAt:     time.Now(),
-		}
-		if err := pkg.ContextErr(ctx); err != nil {
+		})
+		friends = append(friends, &model.Friend{
+			UserID:       request.ReceiverID,
+			FriendID:     request.RequesterID,
+			NoteName:     noteName,
+			GroupName:    groupName,
+			LastAckMsgID: "",
+			BecomeAt:     time.Now(),
+		})
+
+		if err = pkg.ContextErr(ctx); err != nil {
 			return err
 		}
-		err = tx.WithContext(ctx).Friend.Create(&m)
+		err = tx.WithContext(ctx).Friend.CreateInBatches(friends, 10)
 		if err != nil {
-			return pkg.InternalError("create friend error: %v", err)
+			return err
 		}
-		userId = m.UserID
 		return nil
 	})
-	return userId, err
+	return request, err
 }
 
 func (r *RelationshipRepoImpl) UpdateFriendRequestStatus(ctx context.Context, requestId int64, status string) error {

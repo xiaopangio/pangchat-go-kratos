@@ -42,3 +42,14 @@ func NewOnlineRegistry(cf *conf.Bootstrap, client *clientv3.Client) *OnlineRegis
 		Registry: etcd.New(client, etcd.Namespace(service.OnlineService)),
 	}
 }
+
+type MessageRegistry struct {
+	*etcd.Registry
+}
+
+func NewMessageRegistry(cf *conf.Bootstrap, client *clientv3.Client) *MessageRegistry {
+	service := cf.Service
+	return &MessageRegistry{
+		Registry: etcd.New(client, etcd.Namespace(service.MessageService)),
+	}
+}

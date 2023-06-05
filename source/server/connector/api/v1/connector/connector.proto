@@ -51,8 +51,40 @@ message PushFriendRequestsRequest{
 message PushFriendRequestsResponse{
 
 }
+message PushFriendRequest{
+  int64 uid = 1;
+  repeated universal.Friend friends = 2;
+}
+message PushFriendResponse{
+
+}
+message PushMessageRequest{
+  int64 uid = 1;
+  universal.Message message = 2;
+}
+message PushMessageResponse{
+
+}
+message ReplyMessageRequest{
+  int64 uid = 1;
+  universal.Message message = 2;
+}
+message ReplyMessageResponse{
+
+}
+message PushUnreadMessageListRequest{
+  int64 uid = 1;
+  repeated universal.UnreadMessageInfo list = 2;
+}
+message PushUnreadMessageListResponse{
+
+}
 service ConnectorService {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);
   rpc PushFriendRequests(PushFriendRequestsRequest) returns (PushFriendRequestsResponse);
+  rpc PushFriend(PushFriendRequest) returns (PushFriendResponse);
+  rpc PushMessage(PushMessageRequest) returns (PushMessageResponse);
+  rpc ReplyMessage(ReplyMessageRequest) returns (ReplyMessageResponse);
+  rpc PushUnreadMessageList(PushUnreadMessageListRequest) returns (PushUnreadMessageListResponse);
 }

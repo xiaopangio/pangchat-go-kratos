@@ -12,13 +12,13 @@ import {GetImg, StoreImg} from "@/utils/store";
 import DefaultImg from "@img/default.jpg";
 import {GenAvatarName} from "@/utils/gen";
 import SettingHeader from "@/components/SettingHeader";
+import {isNull} from "lodash";
 
 
 function Me() {
     const [currentUser, setCurrentUser] = useRecoilState(currentUserState)
     const [avatarData, setAvatarData] = useState(DefaultImg);
     const [isTakePhoto, setIsTakePhoto] = useState(false);
-    // 拿到当前路由
     useEffect(() => {
         //检查当前用户信息
         if (currentUser) {
@@ -29,40 +29,33 @@ function Me() {
             setCurrentUser(user)
         }
     }, []);
-
-    useEffect(() => {
-        //检查当前用户信息
-        if (!currentUser) {
+    const initAvatar = async () => {
+        if (isNull(currentUser)) {
             return
         }
-        console.log(currentUser.avatar)
-        //从indexedDB中获取用户头像
-        GetImg(currentUser.avatar).then((res) => {
+        let res = await GetImg(currentUser.avatar)
+        // 设置头像
+        setAvatarData(res)
+        // 如果头像已经缓存，就不再请求
+        if (res !== "") {
+            return
+        }
+        try {
+            res = await GetAvatar({avatar_url: currentUser.avatar})
+            res = await StoreImg(currentUser.avatar, res)
             // 设置头像
             setAvatarData(res)
-            // 如果头像已经缓存，就不再请求
-            if (res !== "") {
-                return
-            }
-            // 如果头像没有缓存，就请求头像
-            GetAvatar({avatar_url: currentUser.avatar}).then((res) => {
-                console.log(res)
-                // 将头像存入indexedDB
-                StoreImg(currentUser.avatar, res).then((value) => {
-                    // 设置头像
-                    setAvatarData(value)
-                })
-            })
-        }, () => {
-            // 如果头像没有缓存，就请求头像
-            GetAvatar({avatar_url: currentUser.avatar}).then((res) => {
-                // 将头像存入indexedDB
-                StoreImg(currentUser.avatar, res).then((value) => {
-                    // 设置头像
-                    setAvatarData(value)
-                })
-            })
-        })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    useEffect(() => {
+        //检查当前用户信息
+        if (isNull(currentUser)) {
+            return
+        }
+        initAvatar().then()
+
     }, [currentUser?.avatar]);
     const toTakePhoto = () => {
         setIsTakePhoto(true);
@@ -73,7 +66,7 @@ function Me() {
         }
         let avatar = GenAvatarName();
         try {
-             await StoreImg(avatar, file)
+            await StoreImg(avatar, file)
         } catch (e) {
             console.log(e)
             return

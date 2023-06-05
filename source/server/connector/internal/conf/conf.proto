@@ -33,6 +33,7 @@ message Service{
   string relationship_service = 3;
   string user_service = 4;
   string online_service = 5;
+  string message_service = 6;
 }
 message Aliyun {
   string access_key = 1;

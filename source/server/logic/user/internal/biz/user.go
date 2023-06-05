@@ -407,12 +407,12 @@ func (u *UserBiz) GetProfiles(ctx context.Context, uids []int64) ([]*model.User,
 	return profiles, nil
 }
 
-func (u *UserBiz) GetAddressAndDesc(ctx context.Context, uid int64) (string, *user.UserAddress, error) {
+func (u *UserBiz) GetAddressAndDesc(ctx context.Context, uid int64) (*model.User, *user.UserAddress, error) {
 	us, err := u.repo.FindUserByUID(ctx, uid)
 	address, err := u.repo.GetAddress(ctx, us.CityID)
 	if err != nil {
 		u.helper.Error("获取用户信息失败: %s", err)
-		return "", nil, err
+		return us, nil, err
 	}
-	return us.PersonalDesc, address, nil
+	return us, address, nil
 }

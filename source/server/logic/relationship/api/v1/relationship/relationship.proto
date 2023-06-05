@@ -9,6 +9,8 @@ service relationShip {
     rpc GetFriendRequests (GetFriendRequestsRequest) returns (GetFriendRequestsResponse) {}
     rpc DealFriendRequest (DealFriendRequestRequest) returns (DealFriendRequestResponse) {}
     rpc GetFriendList (GetFriendListRequest) returns (GetFriendListResponse) {}
+    rpc GetOneFriend(GetOneFriendRequest) returns (GetONeFriendResponse) {}
+    rpc GetFriendsByIDS(GetFriendsByIDSRequest) returns (GetFriendsByIDSResponse) {}
     rpc DeleteFriend (DeleteFriendRequest) returns (DeleteFriendResponse) {}
     rpc GetFriendInfo (GetFriendInfoRequest) returns (GetFriendInfoResponse) {}
     rpc UpdateFriendInfo (UpdateFriendInfoRequest) returns (UpdateFriendInfoResponse) {}
@@ -16,6 +18,34 @@ service relationShip {
     rpc UpdateFriendGroup (UpdateFriendGroupRequest) returns (UpdateFriendGroupResponse) {}
     rpc DeleteFriendGroup (DeleteFriendGroupRequest) returns (DeleteFriendGroupResponse) {}
     rpc GetFriendGroupList (GetFriendGroupListRequest) returns (GetFriendGroupListResponse) {}
+    // 群组
+    rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse) {}
+    rpc GetGroupList (GetGroupListRequest) returns (GetGroupListResponse) {}
+    rpc GetGroupInfo (GetGroupInfoRequest) returns (GetGroupInfoResponse) {}
+    rpc UpdateGroupInfo (UpdateGroupInfoRequest) returns (UpdateGroupInfoResponse) {}
+    rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse) {}
+    rpc GetGroupMemberList (GetGroupMemberListRequest) returns (GetGroupMemberListResponse) {}
+    rpc GetGroupMemberInfo (GetGroupMemberInfoRequest) returns (GetGroupMemberInfoResponse) {}
+    rpc UpdateGroupMemberInfo (UpdateGroupMemberInfoRequest) returns (UpdateGroupMemberInfoResponse) {}
+    rpc DeleteGroupMember (DeleteGroupMemberRequest) returns (DeleteGroupMemberResponse) {}
+    rpc SendGroupRequest (SendGroupRequestRequest) returns (SendGroupRequestResponse) {}
+    rpc GetGroupRequestList (GetGroupRequestListRequest) returns (GetGroupRequestListResponse) {}
+    rpc GetGroupRequest (GetGroupRequestRequest) returns (GetGroupRequestResponse) {}
+    rpc GetGroupRequests (GetGroupRequestsRequest) returns (GetGroupRequestsResponse) {}
+    rpc DealGroupRequest (DealGroupRequestRequest) returns (DealGroupRequestResponse) {}
+}
+message GetFriendsByIDSRequest{
+    repeated int64 friend_ids = 1;
+}
+message GetFriendsByIDSResponse{
+    repeated universal.Friend friends = 1;
+}
+message GetOneFriendRequest{
+    int64 user_id = 1;
+    int64 friend_id = 2;
+}
+message GetONeFriendResponse{
+    universal.Friend friend = 1;
 }
 message SendFriendRequestRequest {
     int64 requester_id = 1;
@@ -32,17 +62,6 @@ message GetFriendRequestListRequest {
     int64 page_number = 2;
     int64 page_size = 3;
 }
-//message FriendRequest{
-//    int64 request_id = 1;
-//    int64 requester_id = 2;
-//    int64 receiver_id = 3;
-//    string desc = 5;
-//    string status = 6;
-//    string create_time = 7;
-//    string update_time = 8;
-//    string nick_name = 9;
-//    string avatar = 10;
-//}
 message GetFriendRequestListResponse {
     repeated universal.FriendRequest friend_requests = 1;
     int64 total = 2;
@@ -62,24 +81,16 @@ message GetFriendRequestsResponse{
 message DealFriendRequestRequest {
     int64 request_id = 1;
     string status = 2;
+    string note_name = 3;
+    string group_name = 4;
 }
 message DealFriendRequestResponse {
 }
 message GetFriendListRequest {
     int64 user_id = 1;
 }
-message FriendGroup{
-    string group_name = 2;
-    repeated Friend friends = 3;
-}
-message Friend {
-    int64 friend_id = 1;
-    string nick_name = 3;
-    string note_name = 4;
-    string avatar = 5;
-}
 message GetFriendListResponse {
-    repeated FriendGroup friend_groups = 1;
+    repeated universal.Friend friends = 1;
 }
 message DeleteFriendRequest {
     int64 user_id = 1;
@@ -94,6 +105,7 @@ message GetFriendInfoResponse {
     string city_name = 1;
     string province_name = 2;
     string desc = 3;
+    string account_id = 4;
 }
 message UpdateFriendInfoRequest {
     int64 user_id = 1;
@@ -127,4 +139,20 @@ message GetFriendGroupListRequest {
 }
 message GetFriendGroupListResponse {
     repeated string group_names = 1;
+}
+//群组
+message CreateGroupRequest {
+    string group_name = 1;
+    string group_avatar = 2;
+    string group_desc = 3;
+    int64  group_leader_id = 4;
+}
+message CreateGroupResponse {
+    universal.Group group = 1;
+}
+message GetGroupListRequest {
+    int64 user_id = 1;
+}
+message GetGroupListResponse {
+    repeated universal.Group groups = 1;
 }

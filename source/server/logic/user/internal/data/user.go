@@ -125,7 +125,7 @@ func (u *UserRepoImpl) UpdateUser(ctx context.Context, user *model.User) error {
 
 func (u *UserRepoImpl) GetAddress(ctx context.Context, cityId string) (*v1.UserAddress, error) {
 	if cityId == "" {
-		return nil, nil
+		return &v1.UserAddress{}, nil
 	}
 	if err := pkg.ContextErr(ctx); err != nil {
 		return nil, err

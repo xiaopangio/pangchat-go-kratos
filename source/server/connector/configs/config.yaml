@@ -15,6 +15,7 @@ service:
   user_service: logic_user
   relationship_service: logic_relationship
   online_service: online
+  message_service: logic_message
 kafka:
   addrs:
     - 43.143.137.232:9092

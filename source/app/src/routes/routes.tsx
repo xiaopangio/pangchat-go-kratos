@@ -82,8 +82,8 @@ const routes: RouteObject[] = [
         element: lazyLoadPage("addFriend/addSearch")
     },
     {
-        path: "/searchTarget",
-        element: lazyLoadPage("addFriend/searchTarget"),
+        path: "/Profile",
+        element: lazyLoadPage("Profile"),
     },
     {
         path: "/addDetail",
@@ -104,6 +104,10 @@ const routes: RouteObject[] = [
     {
         path: "/showFriendRequestDetail",
         element: lazyLoadPage("contact/showFriendRequestDetail")
+    },
+    {
+        path: "/dialogue",
+        element: lazyLoadPage("chat/dialogue"),
     }
 ]
 const router = createBrowserRouter(routes);

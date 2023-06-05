@@ -11,8 +11,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
 
-func NewOnlineClient(registry *registry.OnlineRegistry, logger *log.Helper, cf *conf.Bootstrap) (online.OnlineClient, error) {
-	service := cf.Service
+func NewOnlineClient(registry *registry.OnlineRegistry, logger *log.Helper, service *conf.Service) (online.OnlineClient, error) {
 	version := filter.Version("1.0")
 	conn, err := grpc.DialInsecure(
 		context.Background(),

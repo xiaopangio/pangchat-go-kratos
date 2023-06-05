@@ -13,6 +13,7 @@ service:
   relationship_service: logic_relationship
   online_service: online
   user_service: logic_user
+  message_service: logic_message
 kafka:
   addrs:
     - 43.143.137.232:9092
@@ -29,6 +30,10 @@ message_queue:
   friend_request_group: friend_request_group
   connect_topic: connect
   connect_group: connect_group
+  friend_topic: friend
+  friend_group: friend_group
+  message_topic: message
+  message_group: message_group
 data:
   redis:
     addr: 43.143.137.232:6379
@@ -37,5 +42,5 @@ data:
     pool_size: 100
     min_idle_conns: 10
     max_retries: 3
-    read_timeout: 0.2s
-    write_timeout: 0.2s
+    read_timeout: 0.6s
+    write_timeout: 0.6s

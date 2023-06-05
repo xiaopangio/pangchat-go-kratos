@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"net/url"
+	"online/internal/components/redis"
 	"online/internal/components/registry"
 	"online/internal/conf"
 	"os"
@@ -32,7 +33,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, cf *conf.Bootstrap, registry *registry.OnlineRegistry, endpoints []*url.URL, grpcSrv *grpc.Server) *kratos.App {
+func newApp(logger log.Logger, cf *conf.Bootstrap, registry *registry.OnlineRegistry, endpoints []*url.URL, grpcSrv *grpc.Server, redis *redis.Redis) *kratos.App {
 	server := cf.Server
 	port := strings.Split(server.Grpc.Addr, ":")[1]
 	return kratos.New(
@@ -46,19 +47,15 @@ func newApp(logger log.Logger, cf *conf.Bootstrap, registry *registry.OnlineRegi
 			grpcSrv,
 		),
 		kratos.Endpoint(endpoints...),
+		kratos.AfterStop(redis.ResetOnlineDevices),
 	)
 }
 
 func main() {
 	flag.Parse()
 	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
+		"ts", log.Timestamp("2006-01-02 15:04:05.000"),
 		"caller", log.DefaultCaller,
-		//"service.id", id,
-		//"service.name", Name,
-		//"service.version", Version,
-		//"trace.id", tracing.TraceID(),
-		//"span.id", tracing.SpanID(),
 	)
 	c := config.New(
 		config.WithSource(
@@ -86,4 +83,5 @@ func main() {
 	if err := app.Run(); err != nil {
 		panic(err)
 	}
+
 }

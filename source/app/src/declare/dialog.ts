@@ -1,0 +1,1 @@
+export const MessagePageSize = 18;

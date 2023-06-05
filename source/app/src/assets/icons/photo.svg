@@ -1,13 +1,16 @@
-<svg width="20.000000" height="20.000000" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<desc>
-			Created with Pixso.
-	</desc>
-	<g clip-path="url(#clip327_5220)">
-		<path id="Icon" d="M4 3C2.89543 3 2 3.89543 2 5L2 15C2 16.1046 2.89543 17 4 17L16 17C17.1046 17 18 16.1046 18 15L18 5C18 3.89543 17.1046 3 16 3L4 3ZM16 15L4 15L8 7L11 13L13 9L16 15Z" fill-rule="evenodd" fill="#57B77D"/>
-	</g>
-	<defs>
-		<clipPath id="clip327_5220">
-			<rect id="Icon/Solid/photograph" width="20.000000" height="20.000000" fill="white"/>
-		</clipPath>
-	</defs>
+<svg width="20.000000" height="20.000000" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"
+>
+    <desc>
+        Created with Pixso.
+    </desc>
+    <g clip-path="url(#clip327_5220)">
+        <path id="Icon"
+              d="M4 3C2.89543 3 2 3.89543 2 5L2 15C2 16.1046 2.89543 17 4 17L16 17C17.1046 17 18 16.1046 18 15L18 5C18 3.89543 17.1046 3 16 3L4 3ZM16 15L4 15L8 7L11 13L13 9L16 15Z"
+              fill-rule="evenodd"/>
+    </g>
+    <defs>
+        <clipPath id="clip327_5220">
+            <rect id="Icon/Solid/photograph" width="20.000000" height="20.000000"/>
+        </clipPath>
+    </defs>
 </svg>

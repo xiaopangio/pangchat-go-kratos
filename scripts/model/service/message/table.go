@@ -3,9 +3,8 @@ package message
 
 import "gorm.io/gen"
 
-func GenerateHistoryMessage(g *gen.Generator) {
-	message := g.GenerateModel("message")
-	groupMessage := g.GenerateModel("group_message")
-	g.ApplyBasic(message, groupMessage)
+func GenerateMessage(g *gen.Generator) {
+	message := g.GenerateModel("messages")
+	g.ApplyBasic(message)
 	g.Execute()
 }

@@ -15,6 +15,8 @@ import {User} from "@/declare/type";
 import {checkPhone} from "@/utils/check";
 import message from "@/utils/message";
 import {useRegister} from "@/hooks/registerHooks";
+import {websocketInit} from "@/hooks/websocket";
+import {Connect} from "@/service/service";
 
 function Login() {
     const [loginType, setLoginType] = useState("phone");
@@ -93,6 +95,13 @@ function Login() {
             console.log(user)
             setCurrentUser(user)
             setLoginS(true)
+            try {
+                await Connect(function (cUrl: string) {
+                    websocketInit(cUrl)
+                })
+            } catch (e) {
+                console.log(e)
+            }
             navigate(HomePrefix + "/chat")
         } catch (e) {
             console.log(e)

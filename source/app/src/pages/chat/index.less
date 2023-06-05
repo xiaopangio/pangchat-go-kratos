@@ -1,0 +1,68 @@
+.chat__message__list {
+  width: 100%;
+  height: 100vh;
+
+  .chat__message__item {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    box-sizing: border-box;
+    --text_gray: #9a9a9a;
+    --line_gray: #e6e6e6;
+
+    .chat__message__item__avatar {
+      margin-left: 10px;
+
+      img {
+        width: 60px;
+        height: 60px;
+        border-radius: 6px;
+        background-color: #ccc;
+        margin-right: 10px;
+      }
+    }
+
+    .chat__message__item__mid {
+      flex: 1;
+      height: 100%;
+      border-bottom: 1px solid var(--line_gray);
+
+      .chat__message__item__name {
+        margin-bottom: 6px;
+        font-size: 18px;
+        font-family: 微软雅黑, serif;
+
+      }
+
+      .chat__message__item__content {
+        color: var(--text_gray);
+      }
+    }
+
+    .chat__message__item__right {
+      height: 100%;
+      margin-right: 10px;
+      border-bottom: 1px solid var(--line_gray);
+
+      .chat__message__item__time {
+        margin-bottom: 6px;
+        font-size: 14px;
+        color: var(--text_gray);
+      }
+
+      .chat__message__item__unread__count {
+        width: 20px;
+        height: 20px;
+        background-color: red;
+        border-radius: 50%;
+        color: #fff;
+        text-align: center;
+        line-height: 20px;
+        font-size: 12px;
+        margin-left: auto;
+      }
+    }
+  }
+}

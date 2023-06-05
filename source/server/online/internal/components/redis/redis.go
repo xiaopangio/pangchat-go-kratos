@@ -15,6 +15,10 @@ type Redis struct {
 	helper *log.Helper
 }
 
+const (
+	OnlineDeviceKey = "online:device:"
+)
+
 func NewRedisClient(cf *conf.Bootstrap, helper *log.Helper) *Redis {
 	redisCf := cf.Data.Redis
 	client := redis.NewClient(&redis.Options{
@@ -50,5 +54,20 @@ func (r *Redis) Exists(key string) (int64, error) {
 	return r.client.Exists(context.Background(), key).Result()
 }
 func (r *Redis) GetPrefix(prefix string) ([]string, error) {
-	return r.client.Keys(context.Background(), prefix).Result()
+	return r.client.Keys(context.Background(), prefix+"*").Result()
+}
+func (r *Redis) ResetOnlineDevices(ctx context.Context) error {
+	keys, err := r.GetPrefix(OnlineDeviceKey)
+	if err != nil {
+		r.helper.Errorf("redis get prefix failed: %v", err)
+		return err
+	}
+	for _, key := range keys {
+		err = r.Del(key)
+		if err != nil {
+			r.helper.Errorf("redis del failed: %v", err)
+			return err
+		}
+	}
+	return nil
 }

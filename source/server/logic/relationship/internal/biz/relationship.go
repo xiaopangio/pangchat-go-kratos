@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
-	"relationship/api/v1/relationship"
+	"relationship/api/v1/message"
 	"relationship/api/v1/universal"
 	"relationship/api/v1/user"
 	"relationship/internal/components/broker"
@@ -22,7 +22,7 @@ type RelationshipRepo interface {
 	FindFriendRequests(ctx context.Context, requestId []int64) ([]*model.FriendRequest, error)
 	UpdateFriendRequestStatus(ctx context.Context, requestId int64, status string) error
 	CreateFriend(ctx context.Context, uid, friendId int64, noteName, groupName string) error
-	DealFriendRequest(ctx context.Context, requestId int64, status string) (int64, error)
+	DealFriendRequest(ctx context.Context, requestId int64, status, noteName, groupName string) (*model.FriendRequest, error)
 	GetFriendGroups(ctx context.Context, uid int64) ([]*model.FriendGroup, error)
 	GetFriendsByGroup(ctx context.Context, uid int64, groupName string) ([]*model.Friend, error)
 	GetFriends(ctx context.Context, uid int64) ([]*model.Friend, error)
@@ -31,18 +31,21 @@ type RelationshipRepo interface {
 	CreateFriendGroup(ctx context.Context, uid int64, groupName string) error
 	UpdateFriendGroup(ctx context.Context, uid int64, groupName, newGroupName string) error
 	DeleteFriendGroup(ctx context.Context, uid int64, groupName string) error
+	GetFriend(ctx context.Context, uid, friendId int64) (*model.Friend, error)
+	GetFriendsByIds(ctx context.Context, ids []int64) ([]*model.Friend, error)
 }
 type RelationshipBiz struct {
-	helper     *log.Helper
-	repo       RelationshipRepo
-	userClient user.UserClient
-	broker     *broker.KafkaBroker
-	mqConfig   *conf.MessageQueue
-	mysql      *gorm.DB
+	helper        *log.Helper
+	repo          RelationshipRepo
+	userClient    user.UserClient
+	messageClient message.MessageServiceClient
+	broker        *broker.KafkaBroker
+	mqConfig      *conf.MessageQueue
+	mysql         *gorm.DB
 }
 
-func NewRelationshipBiz(helper *log.Helper, userClient user.UserClient, broker *broker.KafkaBroker, cf *conf.Bootstrap, repo RelationshipRepo, mysql *gorm.DB) *RelationshipBiz {
-	return &RelationshipBiz{helper: helper, userClient: userClient, broker: broker, mqConfig: cf.MessageQueue, repo: repo, mysql: mysql}
+func NewRelationshipBiz(helper *log.Helper, userClient user.UserClient, messageClient message.MessageServiceClient, broker *broker.KafkaBroker, cf *conf.Bootstrap, repo RelationshipRepo, mysql *gorm.DB) *RelationshipBiz {
+	return &RelationshipBiz{helper: helper, userClient: userClient, messageClient: messageClient, broker: broker, mqConfig: cf.MessageQueue, repo: repo, mysql: mysql}
 }
 
 func (b *RelationshipBiz) SendFriendRequest(ctx context.Context, requesterId, receiverId int64, noteName, groupName, desc string) (*universal.FriendRequest, error) {
@@ -104,31 +107,45 @@ func (b *RelationshipBiz) GetFriendRequest(ctx context.Context, id int64) (*mode
 	return friendRequest, nil
 }
 
-func (b *RelationshipBiz) DealFriendRequest(ctx context.Context, id int64, status string) error {
-	userId, err := b.repo.DealFriendRequest(ctx, id, status)
+func (b *RelationshipBiz) DealFriendRequest(ctx context.Context, id int64, status, noteName, groupName string) error {
+	req, err := b.repo.DealFriendRequest(ctx, id, status, noteName, groupName)
 	if err != nil {
 		b.helper.Errorf("deal friend request error: %v", err)
 		return err
 	}
-	message := &model.FriendRequestMessage{
+	m := &model.FriendRequestMessage{
 		RequestId: id,
-		UserId:    userId,
+		UserId:    req.RequesterID,
 		PublishAt: time.Now(),
 	}
-	err = b.broker.Publish(b.mqConfig.FriendRequestTopic, message)
+	err = b.broker.Publish(b.mqConfig.FriendRequestTopic, m)
 	if err != nil {
 		b.helper.Errorf("send deal friend request to mq error: %v", err)
+		return err
+	}
+	if status == pkg.Refused {
+		return nil
+	}
+	friendMsg := &model.FriendMessage{
+		UserId:   req.RequesterID,
+		FriendId: req.ReceiverID,
+	}
+	err = b.broker.Publish(b.mqConfig.FriendTopic, friendMsg)
+	if err != nil {
+		b.helper.Errorf("send friend m to mq error: %v", err)
+		return err
+	}
+	if _, err = b.messageClient.InitUnreadMessage(ctx, &message.InitUnreadMessageRequest{
+		Uid:      pkg.FormatInt(req.RequesterID),
+		FriendId: pkg.FormatInt(req.ReceiverID),
+	}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (b *RelationshipBiz) GetFriendList(ctx context.Context, userId int64) ([]*relationship.FriendGroup, error) {
-	friendGroups, err := b.repo.GetFriendGroups(ctx, userId)
-	if err != nil {
-		b.helper.Errorf("get friend groups error: %v", err)
-		return nil, err
-	}
+func (b *RelationshipBiz) GetFriendList(ctx context.Context, userId int64) ([]*universal.Friend, error) {
+	b.helper.Infof("get friend list, userId: %d", userId)
 	friends, err := b.repo.GetFriends(ctx, userId)
 	var uids []int64
 	for _, friend := range friends {
@@ -143,22 +160,19 @@ func (b *RelationshipBiz) GetFriendList(ctx context.Context, userId int64) ([]*r
 	for _, profile := range users.Profiles {
 		m[profile.Uid] = profile
 	}
-	var res []*relationship.FriendGroup
-	for _, group := range friendGroups {
-		var fs []*relationship.Friend
-		for _, friend := range friends {
-			fs = append(fs, &relationship.Friend{
-				FriendId: friend.FriendID,
-				NickName: m[friend.FriendID].NickName,
-				NoteName: friend.NoteName,
-				Avatar:   m[friend.FriendID].Avatar,
-			})
-		}
-		res = append(res, &relationship.FriendGroup{
-			GroupName: group.GroupName,
-			Friends:   fs,
+	var res []*universal.Friend
+	for _, friend := range friends {
+		profile := m[friend.FriendID]
+		res = append(res, &universal.Friend{
+			FriendId:  pkg.FormatInt(friend.FriendID),
+			NoteName:  friend.NoteName,
+			GroupName: friend.GroupName,
+			NickName:  profile.NickName,
+			Avatar:    profile.Avatar,
 		})
 	}
+	b.helper.Infof("get friend list, userId: %d success", userId)
+
 	return res, nil
 }
 
@@ -264,6 +278,62 @@ func (b *RelationshipBiz) GetFriendRequests(ctx context.Context, requestIds []in
 			UpdateTime:  pkg.FormatTime(request.UpdateAt),
 			NickName:    shortProfiles[index].NickName,
 			Avatar:      shortProfiles[index].Avatar,
+		})
+	}
+	return res, nil
+}
+
+func (b *RelationshipBiz) GetOneFriend(ctx context.Context, userId int64, friendId int64) (*universal.Friend, error) {
+	friend, err := b.repo.GetFriend(ctx, userId, friendId)
+	if err != nil {
+		b.helper.Errorf("get one friend error: %v", err)
+		return nil, err
+	}
+	profile, err := b.userClient.GetProfiles(ctx, &user.GetProfilesRequest{
+		Uids: []int64{friend.FriendID},
+	})
+	if err != nil {
+		b.helper.Errorf("get profiles error: %v", err)
+		return nil, err
+	}
+	res := &universal.Friend{
+		FriendId:  pkg.FormatInt(friend.FriendID),
+		NickName:  profile.Profiles[0].NickName,
+		NoteName:  friend.NoteName,
+		Avatar:    profile.Profiles[0].Avatar,
+		GroupName: friend.GroupName,
+	}
+	return res, nil
+}
+
+func (b *RelationshipBiz) GetFriendsByIDS(ctx context.Context, friendIds []int64) ([]*universal.Friend, error) {
+	friends, err := b.repo.GetFriendsByIds(ctx, friendIds)
+	if err != nil {
+		b.helper.Errorf("get friends by ids error: %v", err)
+		return nil, err
+	}
+	var uids []int64
+	for _, friend := range friends {
+		uids = append(uids, friend.FriendID)
+	}
+	profiles, err := b.userClient.GetProfiles(ctx, &user.GetProfilesRequest{Uids: uids})
+	if err != nil {
+		b.helper.Errorf("get profiles error: %v", err)
+		return nil, err
+	}
+	m := make(map[int64]*user.ShortProfile)
+	for _, profile := range profiles.Profiles {
+		m[profile.Uid] = profile
+	}
+	var res []*universal.Friend
+	for _, friend := range friends {
+		profile := m[friend.FriendID]
+		res = append(res, &universal.Friend{
+			FriendId:  pkg.FormatInt(friend.FriendID),
+			NoteName:  friend.NoteName,
+			GroupName: friend.GroupName,
+			NickName:  profile.NickName,
+			Avatar:    profile.Avatar,
 		})
 	}
 	return res, nil

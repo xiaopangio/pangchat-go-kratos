@@ -9,9 +9,10 @@ import {CurrentDealFriendRequest, currentUserState, UnreadFriendRequestCount} fr
 import {useEffect, useState} from "react";
 import {FriendRequest} from "@/store/db";
 import storage from "@/utils/storage";
-import {GetFriendRequests, GetImgList} from "@/utils/store";
+import {DexieGetImgList, GetFriendRequests, StoreImg} from "@/utils/store";
 import {isNull} from "lodash";
 import {RefreshCurrentUser} from "@/utils/util";
+import {GetAvatar} from "@/api/user";
 
 function NewFriends() {
     let navigate = useNavigate();
@@ -29,6 +30,9 @@ function NewFriends() {
             return
         }
     }, []);
+    useEffect(() => {
+        console.log("unreadFriendRequestCount", unreadFriendRequestCount)
+    }, [unreadFriendRequestCount]);
 
     useEffect(() => {
         if (!currentUser) {
@@ -53,16 +57,26 @@ function NewFriends() {
             requestBeforeThreeDays.forEach((item) => {
                 avatarUrls.push(item.avatar)
             })
-            GetImgList(avatarUrls).then((res) => {
+            DexieGetImgList(avatarUrls).then((res) => {
                 res.forEach((item) => {
                     map.set(item.name, item.blob)
                 })
                 setAvatarMap(map)
+            }).catch((diff) => {
+                diff.forEach((item: any) => {
+                    GetAvatar({avatar_url: item}).then((res) => {
+                        StoreImg(item, res).then((res) => {
+                            map.set(item, res)
+                        }).catch((err) => {
+                            console.log(err)
+                        })
+                    })
+                })
             })
         }, () => {
 
         })
-    }, [currentUser])
+    }, [currentUser, unreadFriendRequestCount])
     const showAvatar = (avatar: string) => {
         return avatarMap?.get(avatar) as string || DefaultImg
     }

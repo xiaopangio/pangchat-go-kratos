@@ -52,13 +52,8 @@ func newApp(logger log.Logger, cf *conf.Bootstrap, gs *grpc.Server, endpoints []
 func main() {
 	flag.Parse()
 	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
+		"ts", log.Timestamp("2006-01-02 15:04:05.000"),
 		"caller", log.DefaultCaller,
-		//"service.id", id,
-		//"service.name", Name,
-		//"service.version", Version,
-		//"trace.id", tracing.TraceID(),
-		//"span.id", tracing.SpanID(),
 	)
 	c := config.New(
 		config.WithSource(

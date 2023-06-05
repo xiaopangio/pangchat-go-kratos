@@ -53,7 +53,7 @@ func newApp(logger log.Logger, cf *conf.Bootstrap, registry *registry.JobRegistr
 func main() {
 	flag.Parse()
 	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
+		"ts", log.Timestamp("2006-01-02 15:04:05.000"),
 		"caller", log.DefaultCaller,
 		//"service.id", id,
 		//"service.name", Name,

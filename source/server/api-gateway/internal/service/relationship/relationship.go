@@ -71,7 +71,7 @@ func (r *Relationship) GetFriendRequestList(ctx *gin.Context) {
 }
 func (r *Relationship) GetFriendRequest(ctx *gin.Context) {
 	var req GetFriendRequestRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	if err := ctx.ShouldBindQuery(&req); err != nil {
 		pkg.Validator(ctx, err)
 		return
 	}
@@ -94,7 +94,10 @@ func (r *Relationship) DealFriendRequest(ctx *gin.Context) {
 	}
 	_, err := r.client.DealFriendRequest(ctx, &relationship.DealFriendRequestRequest{
 		RequestId: pkg.ParseInt64(req.RequestId),
-		Status:    strconv.Itoa(req.Status),
+		Status: strconv.Itoa(
+			req.Status),
+		NoteName:  req.NoteName,
+		GroupName: req.GroupName,
 	})
 	if err = pkg.HandlerError(ctx, err); err != nil {
 		return
@@ -103,20 +106,18 @@ func (r *Relationship) DealFriendRequest(ctx *gin.Context) {
 }
 func (r *Relationship) GetFriendList(ctx *gin.Context) {
 	var req GetFriendListRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	if err := ctx.ShouldBindQuery(&req); err != nil {
 		pkg.Validator(ctx, err)
 		return
 	}
 	reply, err := r.client.GetFriendList(ctx, &relationship.GetFriendListRequest{
 		UserId: pkg.ParseInt64(req.UserId),
 	})
+	r.helper.Info("GetFriendList", "reply", reply)
 	if err = pkg.HandlerError(ctx, err); err != nil {
 		return
 	}
-	resp := &GetFriendListResponse{
-		GetFriendListResponse: reply,
-	}
-	pkg.Ok(ctx, resp)
+	pkg.Ok(ctx, reply)
 }
 func (r *Relationship) DeleteFriend(ctx *gin.Context) {
 	var req DeleteFriendRequest
@@ -135,7 +136,7 @@ func (r *Relationship) DeleteFriend(ctx *gin.Context) {
 }
 func (r *Relationship) GetFriendInfo(ctx *gin.Context) {
 	var req GetFriendInfoRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	if err := ctx.ShouldBindQuery(&req); err != nil {
 		pkg.Validator(ctx, err)
 		return
 	}
@@ -149,6 +150,7 @@ func (r *Relationship) GetFriendInfo(ctx *gin.Context) {
 		CityName:     reply.CityName,
 		ProvinceName: reply.ProvinceName,
 		Desc:         reply.Desc,
+		AccountId:    reply.AccountId,
 	}
 	pkg.Ok(ctx, resp)
 }
@@ -203,7 +205,7 @@ func (r *Relationship) UpdateFriendGroup(ctx *gin.Context) {
 }
 func (r *Relationship) DeleteFriendGroup(ctx *gin.Context) {
 	var req DeleteFriendGroupRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	if err := ctx.ShouldBindQuery(&req); err != nil {
 		pkg.Validator(ctx, err)
 		return
 	}

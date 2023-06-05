@@ -1,24 +1,32 @@
 .setting-header {
+  --header-color: #ededed;
   width: 100%;
   height: 44px;
-  background: rgb(237, 237, 237);
+  background: var(--header-color);
   position: sticky;
   top: 0;
   z-index: 100;
+  display: flex;
+  align-items: center;
 
   .setting-header__back {
-    position: absolute;
-    top: 8px;
-    left: 10px;
+    margin-left: 10px;
     width: 25px;
     height: 25px;
   }
 
   .setting-header__title {
+    margin: 0 auto;
     //居中
     font-size: 20px;
     color: #000000;
     line-height: 44px;
     text-align: center;
+  }
+
+  .setting-header__menu {
+    margin-right: 10px;
+    width: 25px;
+    height: 25px;
   }
 }

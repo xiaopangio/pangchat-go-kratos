@@ -25,6 +25,8 @@ const (
 	RelationShip_GetFriendRequests_FullMethodName    = "/api.v1.logic.relationship.relationShip/GetFriendRequests"
 	RelationShip_DealFriendRequest_FullMethodName    = "/api.v1.logic.relationship.relationShip/DealFriendRequest"
 	RelationShip_GetFriendList_FullMethodName        = "/api.v1.logic.relationship.relationShip/GetFriendList"
+	RelationShip_GetOneFriend_FullMethodName         = "/api.v1.logic.relationship.relationShip/GetOneFriend"
+	RelationShip_GetFriendsByIDS_FullMethodName      = "/api.v1.logic.relationship.relationShip/GetFriendsByIDS"
 	RelationShip_DeleteFriend_FullMethodName         = "/api.v1.logic.relationship.relationShip/DeleteFriend"
 	RelationShip_GetFriendInfo_FullMethodName        = "/api.v1.logic.relationship.relationShip/GetFriendInfo"
 	RelationShip_UpdateFriendInfo_FullMethodName     = "/api.v1.logic.relationship.relationShip/UpdateFriendInfo"
@@ -44,6 +46,8 @@ type RelationShipClient interface {
 	GetFriendRequests(ctx context.Context, in *GetFriendRequestsRequest, opts ...grpc.CallOption) (*GetFriendRequestsResponse, error)
 	DealFriendRequest(ctx context.Context, in *DealFriendRequestRequest, opts ...grpc.CallOption) (*DealFriendRequestResponse, error)
 	GetFriendList(ctx context.Context, in *GetFriendListRequest, opts ...grpc.CallOption) (*GetFriendListResponse, error)
+	GetOneFriend(ctx context.Context, in *GetOneFriendRequest, opts ...grpc.CallOption) (*GetONeFriendResponse, error)
+	GetFriendsByIDS(ctx context.Context, in *GetFriendsByIDSRequest, opts ...grpc.CallOption) (*GetFriendsByIDSResponse, error)
 	DeleteFriend(ctx context.Context, in *DeleteFriendRequest, opts ...grpc.CallOption) (*DeleteFriendResponse, error)
 	GetFriendInfo(ctx context.Context, in *GetFriendInfoRequest, opts ...grpc.CallOption) (*GetFriendInfoResponse, error)
 	UpdateFriendInfo(ctx context.Context, in *UpdateFriendInfoRequest, opts ...grpc.CallOption) (*UpdateFriendInfoResponse, error)
@@ -109,6 +113,24 @@ func (c *relationShipClient) DealFriendRequest(ctx context.Context, in *DealFrie
 func (c *relationShipClient) GetFriendList(ctx context.Context, in *GetFriendListRequest, opts ...grpc.CallOption) (*GetFriendListResponse, error) {
 	out := new(GetFriendListResponse)
 	err := c.cc.Invoke(ctx, RelationShip_GetFriendList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) GetOneFriend(ctx context.Context, in *GetOneFriendRequest, opts ...grpc.CallOption) (*GetONeFriendResponse, error) {
+	out := new(GetONeFriendResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetOneFriend_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) GetFriendsByIDS(ctx context.Context, in *GetFriendsByIDSRequest, opts ...grpc.CallOption) (*GetFriendsByIDSResponse, error) {
+	out := new(GetFriendsByIDSResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetFriendsByIDS_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -188,6 +210,8 @@ type RelationShipServer interface {
 	GetFriendRequests(context.Context, *GetFriendRequestsRequest) (*GetFriendRequestsResponse, error)
 	DealFriendRequest(context.Context, *DealFriendRequestRequest) (*DealFriendRequestResponse, error)
 	GetFriendList(context.Context, *GetFriendListRequest) (*GetFriendListResponse, error)
+	GetOneFriend(context.Context, *GetOneFriendRequest) (*GetONeFriendResponse, error)
+	GetFriendsByIDS(context.Context, *GetFriendsByIDSRequest) (*GetFriendsByIDSResponse, error)
 	DeleteFriend(context.Context, *DeleteFriendRequest) (*DeleteFriendResponse, error)
 	GetFriendInfo(context.Context, *GetFriendInfoRequest) (*GetFriendInfoResponse, error)
 	UpdateFriendInfo(context.Context, *UpdateFriendInfoRequest) (*UpdateFriendInfoResponse, error)
@@ -219,6 +243,12 @@ func (UnimplementedRelationShipServer) DealFriendRequest(context.Context, *DealF
 }
 func (UnimplementedRelationShipServer) GetFriendList(context.Context, *GetFriendListRequest) (*GetFriendListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFriendList not implemented")
+}
+func (UnimplementedRelationShipServer) GetOneFriend(context.Context, *GetOneFriendRequest) (*GetONeFriendResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOneFriend not implemented")
+}
+func (UnimplementedRelationShipServer) GetFriendsByIDS(context.Context, *GetFriendsByIDSRequest) (*GetFriendsByIDSResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFriendsByIDS not implemented")
 }
 func (UnimplementedRelationShipServer) DeleteFriend(context.Context, *DeleteFriendRequest) (*DeleteFriendResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFriend not implemented")
@@ -358,6 +388,42 @@ func _RelationShip_GetFriendList_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RelationShipServer).GetFriendList(ctx, req.(*GetFriendListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_GetOneFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOneFriendRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetOneFriend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetOneFriend_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetOneFriend(ctx, req.(*GetOneFriendRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_GetFriendsByIDS_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFriendsByIDSRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetFriendsByIDS(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetFriendsByIDS_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetFriendsByIDS(ctx, req.(*GetFriendsByIDSRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -518,6 +584,14 @@ var RelationShip_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetFriendList",
 			Handler:    _RelationShip_GetFriendList_Handler,
+		},
+		{
+			MethodName: "GetOneFriend",
+			Handler:    _RelationShip_GetOneFriend_Handler,
+		},
+		{
+			MethodName: "GetFriendsByIDS",
+			Handler:    _RelationShip_GetFriendsByIDS_Handler,
 		},
 		{
 			MethodName: "DeleteFriend",

@@ -6,13 +6,11 @@ import router from '@/routes/routes'
 import 'virtual:svg-icons-register'
 import {RecoilRoot} from "recoil";
 import "./service/service"
+import {InitConnection} from "@/service/service";
 
+InitConnection()
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <RecoilRoot>
         <RouterProvider router={router}/>
     </RecoilRoot>
 )
-
-// PubSub.subscribe("test", (msg, data) => {
-//     console.log(msg, data)
-// })

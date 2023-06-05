@@ -32,7 +32,7 @@ type FriendRequest struct {
 
 // GetFriendRequestListRequest 获取好友请求列表请求
 type GetFriendRequestListRequest struct {
-	UserId     string `json:"user_id"`
+	UserId     string `json:"user_id" form:"user_id" binding:"required" label:"用户ID"`
 	PageNumber int    `json:"page_number"`
 	PageSize   int    `json:"page_size"`
 }
@@ -45,7 +45,7 @@ type GetFriendRequestListResponse struct {
 
 // GetFriendRequestRequest 获取好友请求请求
 type GetFriendRequestRequest struct {
-	RequestId string `json:"request_id"`
+	RequestId string `json:"request_id" form:"request_id" binding:"required" label:"请求ID"`
 }
 
 // GetFriendRequestResponse 获取好友请求响应
@@ -55,8 +55,10 @@ type GetFriendRequestResponse struct {
 
 // DealFriendRequestRequest 处理好友请求请求
 type DealFriendRequestRequest struct {
-	RequestId string `json:"request_id"`
-	Status    int    `json:"status"`
+	RequestId string `json:"request_id" binding:"required" label:"请求ID"`
+	Status    int    `json:"status" binding:"required" label:"处理状态"`
+	NoteName  string `json:"note_name" label:"备注名"`
+	GroupName string `json:"group_name" label:"分组名"`
 }
 
 // DealFriendRequestResponse 处理好友请求响应
@@ -65,7 +67,7 @@ type DealFriendRequestResponse struct {
 
 // GetFriendListRequest 获取好友列表请求
 type GetFriendListRequest struct {
-	UserId string `json:"user_id"`
+	UserId string `json:"user_id" form:"user_id"`
 }
 
 // GetFriendListResponse 获取好友列表响应
@@ -75,8 +77,8 @@ type GetFriendListResponse struct {
 
 // DeleteFriendRequest 删除好友请求
 type DeleteFriendRequest struct {
-	UserId   string `json:"user_id"`
-	FriendId string `json:"friend_id"`
+	UserId   string `json:"user_id" form:"user_id" binding:"required" label:"用户ID"`
+	FriendId string `json:"friend_id" form:"friend_id" binding:"required" label:"好友ID"`
 }
 
 // DeleteFriendResponse 删除好友响应
@@ -85,7 +87,7 @@ type DeleteFriendResponse struct {
 
 // GetFriendInfoRequest 获取好友信息请求
 type GetFriendInfoRequest struct {
-	FriendId string `json:"friend_id"`
+	FriendId string `json:"friend_id" form:"friend_id" binding:"required" label:"好友ID"`
 }
 
 // GetFriendInfoResponse 获取好友信息响应
@@ -93,6 +95,7 @@ type GetFriendInfoResponse struct {
 	CityName     string `json:"city_name"`
 	ProvinceName string `json:"province_name"`
 	Desc         string `json:"desc"`
+	AccountId    string `json:"account_id"`
 }
 
 // UpdateFriendInfoRequest 更新好友信息请求
@@ -130,8 +133,8 @@ type UpdateFriendGroupResponse struct {
 
 // DeleteFriendGroupRequest 删除好友分组请求
 type DeleteFriendGroupRequest struct {
-	UserId    string `json:"user_id"`
-	GroupName string `json:"group_name"`
+	UserId    string `json:"user_id" form:"user_id" binding:"required" label:"用户ID"`
+	GroupName string `json:"group_name" form:"group_name" binding:"required" label:"分组名"`
 }
 
 // DeleteFriendGroupResponse 删除好友分组响应

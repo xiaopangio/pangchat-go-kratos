@@ -12,11 +12,12 @@ import (
 	"logic/internal/biz"
 	"logic/internal/components"
 	"logic/internal/conf"
+	"logic/internal/data"
 	"logic/internal/server"
 	"logic/internal/service"
 )
 
 // wireApp init kratos application.
 func wireApp(*conf.Bootstrap, log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(biz.ProviderSet, components.ProviderSet, server.ProviderSet, service.ProviderSet, newApp))
+	panic(wire.Build(biz.ProviderSet, components.ProviderSet, data.ProviderSet, server.ProviderSet, service.ProviderSet, newApp))
 }

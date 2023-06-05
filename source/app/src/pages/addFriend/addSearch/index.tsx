@@ -5,12 +5,12 @@ import {debounce, isUndefined} from "lodash";
 import AddFriendImg from "@img/add-friend.png"
 import {useNavigate} from "react-router";
 import {useRecoilState} from "recoil";
-import {AddUserState} from "@/store";
+import {SearchUserState} from "@/store";
 import {Profile} from "@/api/user";
 
 function AddSearch() {
     const [value, setValue] = useState("");
-    const [profile, setProfile] = useRecoilState(AddUserState)
+    const [profile, setProfile] = useRecoilState(SearchUserState)
     const [isUserNull, setIsUserNull] = useState(false);
     let navigate = useNavigate();
     const inputDebounce = debounce((e: FormEvent<HTMLInputElement>) => {
@@ -29,7 +29,7 @@ function AddSearch() {
                 return
             }
             setProfile(res)
-            navigate(`/searchTarget`)
+            navigate(`/profile`)
         } catch (e) {
         }
     }

@@ -11,6 +11,7 @@ message Bootstrap {
   Discovery discovery=3;
   Registry registry=4;
   Service service = 5;
+  Aliyun aliyun = 6;
 }
 message Service{
   string logic_service = 1;

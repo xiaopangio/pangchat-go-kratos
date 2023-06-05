@@ -5,12 +5,12 @@ import "@/components/TabBar/index.less"
 import {SetFunc} from "@/declare/type";
 import {useLocation} from "react-router";
 import {UnreadFriendRequestCount, UnreadFriendTextCount, UnreadMessageCount} from "@/store";
-import {useRecoilState} from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 
 function TabBar({onchange, className}: { onchange: SetFunc, className?: string }) {
     let location = useLocation();
     const [unreadFriendRequestCount, setUnreadFriendRequestCount] = useRecoilState(UnreadFriendRequestCount)
-    const [unreadMessageCount, setUnreadMessageCount] = useRecoilState(UnreadMessageCount)
+    let unreadMessageCount = useRecoilValue(UnreadMessageCount)
     const [unreadFriendTextCount, setUnreadFriendTextCount] = useRecoilState(UnreadFriendTextCount)
     const name = location.pathname.split("/")[2]
     let [path, setPath] = useState("/" + name);
@@ -40,7 +40,12 @@ function TabBar({onchange, className}: { onchange: SetFunc, className?: string }
     useEffect(() => {
         PubSub.unsubscribe("unreadFriendRequestsCount")
         PubSub.subscribe("unreadFriendRequestsCount", (message, data) => {
+            console.log(data)
             setUnreadFriendRequestCount(data)
+        })
+        PubSub.unsubscribe("unreadMessageCount")
+        PubSub.subscribe("unreadMessageCount", (message, data) => {
+            console.log(data)
         })
     }, []);
     return (
@@ -49,7 +54,7 @@ function TabBar({onchange, className}: { onchange: SetFunc, className?: string }
                 setPath(newValue)
                 onchange(newValue);
                 checkBtn(newValue)
-            }} showLabels className={"bottomNavigation"}>
+            }} showLabels className="bottomNavigation">
                 {btns.map((btn, index) => {
                     return (
                         <BottomNavigationAction defaultChecked={btn.name === checked}

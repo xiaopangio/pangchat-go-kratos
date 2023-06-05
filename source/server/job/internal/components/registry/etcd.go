@@ -73,3 +73,14 @@ func NewEtcdUserRegistry(cf *conf.Bootstrap, client *clientv3.Client) *UserRegis
 		Registry: etcd.New(client, etcd.Namespace(cf.Service.UserService)),
 	}
 }
+
+type MessageRegistry struct {
+	*etcd.Registry
+}
+
+func NewMessageRegistry(cf *conf.Bootstrap, client *clientv3.Client) *MessageRegistry {
+	service := cf.Service
+	return &MessageRegistry{
+		Registry: etcd.New(client, etcd.Namespace(service.MessageService)),
+	}
+}

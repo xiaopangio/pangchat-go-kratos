@@ -9,6 +9,53 @@ message GetConnectorUrlResponse {
   string host = 1;
   string  port = 2;
 }
+message GetToolOptionsRequest {
+}
+message ToolOption  {
+  string name = 1;
+  string icon = 2;
+}
+message GetToolOptionsResponse {
+  repeated ToolOption options = 1;
+}
+message GetPreEmojisRequest {
+}
+message Emoji  {
+  string e_id = 1;
+  string e_name = 2;
+  string e_content = 3;
+}
+message GetPreEmojisResponse {
+  repeated Emoji emojis = 1;
+}
+message FileInfo {
+  string name = 1;
+  string path = 2;
+  int64 size = 3;
+  string type = 4;
+}
+message UploadFileRequest {
+  oneof data {
+    FileInfo file_info = 1;
+    bytes chunk_data = 2;
+  }
+}
+message UploadFileResponse {
+  string file_path = 2;
+  string file_name = 3;
+  int64 file_size = 4;
+  string file_type = 5;
+}
+message DownloadFileRequest {
+  string file_path = 1;
+}
+message DownloadFileResponse {
+    bytes chunk_data = 1;
+}
 service Logic {
   rpc GetConnectorUrl(GetConnectorUrlRequest)returns(GetConnectorUrlResponse);
+  rpc GetToolOptions(GetToolOptionsRequest)returns(GetToolOptionsResponse);
+  rpc GetPreEmojis(GetPreEmojisRequest)returns(GetPreEmojisResponse);
+  rpc UploadFile(stream UploadFileRequest)returns(UploadFileResponse);
+  rpc DownloadFile(DownloadFileRequest)returns(stream DownloadFileResponse);
 }

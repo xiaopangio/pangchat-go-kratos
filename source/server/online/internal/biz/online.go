@@ -10,10 +10,6 @@ import (
 	"online/pkg"
 )
 
-const (
-	OnlineDeviceKey = "online:device:"
-)
-
 type OnlineBiz struct {
 	helper   *log.Helper
 	redisCli *redis.Redis
@@ -30,7 +26,7 @@ func (o *OnlineBiz) RegisterDevice(ctx context.Context, uid int64, url string) e
 		o.helper.Errorf("json marshal failed: %v", err)
 		return err
 	}
-	err = o.redisCli.Set(OnlineDeviceKey+pkg.FormatInt(uid), string(bytes), 0)
+	err = o.redisCli.Set(redis.OnlineDeviceKey+pkg.FormatInt(uid), string(bytes), 0)
 	if err != nil {
 		o.helper.Errorf("redis set failed: %v", err)
 		return err
@@ -39,7 +35,7 @@ func (o *OnlineBiz) RegisterDevice(ctx context.Context, uid int64, url string) e
 }
 
 func (o *OnlineBiz) UnregisterDevice(ctx context.Context, uid int64) error {
-	err := o.redisCli.Del(OnlineDeviceKey + pkg.FormatInt(uid))
+	err := o.redisCli.Del(redis.OnlineDeviceKey + pkg.FormatInt(uid))
 	if err != nil {
 		o.helper.Errorf("redis del failed: %v", err)
 		return err
@@ -48,13 +44,9 @@ func (o *OnlineBiz) UnregisterDevice(ctx context.Context, uid int64) error {
 }
 
 func (o *OnlineBiz) GetOnlineDevice(ctx context.Context, uid int64) (*model.Device, error) {
-	v, err := o.redisCli.Get(OnlineDeviceKey + pkg.FormatInt(uid))
+	v, err := o.redisCli.Get(redis.OnlineDeviceKey + pkg.FormatInt(uid))
 	if err != nil {
-		if err != redis.Nil {
-			o.helper.Errorf("redis get failed: %v", err)
-			return nil, err
-		}
-		return nil, nil
+		return nil, err
 	}
 	var m model.Device
 	err = json.Unmarshal([]byte(v), &m)
@@ -66,7 +58,7 @@ func (o *OnlineBiz) GetOnlineDevice(ctx context.Context, uid int64) (*model.Devi
 }
 
 func (o *OnlineBiz) GetOnlineDevices(ctx context.Context) ([]*online.OnlineDevice, error) {
-	values, err := o.redisCli.GetPrefix(OnlineDeviceKey)
+	values, err := o.redisCli.GetPrefix(redis.OnlineDeviceKey)
 	if err != nil {
 		o.helper.Errorf("redis get prefix failed: %v", err)
 		return nil, err

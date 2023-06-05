@@ -84,7 +84,7 @@ func (s *RelationShipService) DealFriendRequest(ctx context.Context, req *pb.Dea
 		s.helper.Errorf("invalid status: %d", req.Status)
 		return nil, pkg.InvalidArgumentError("invalid status: %d", req.Status)
 	}
-	err := s.biz.DealFriendRequest(ctx, req.RequestId, req.Status)
+	err := s.biz.DealFriendRequest(ctx, req.RequestId, req.Status, req.NoteName, req.GroupName)
 	if err != nil {
 		s.helper.Errorf("deal friend request error: %v", err)
 		return nil, err
@@ -98,7 +98,7 @@ func (s *RelationShipService) GetFriendList(ctx context.Context, req *pb.GetFrie
 		return nil, err
 	}
 	return &pb.GetFriendListResponse{
-		FriendGroups: list,
+		Friends: list,
 	}, nil
 }
 func (s *RelationShipService) DeleteFriend(ctx context.Context, req *pb.DeleteFriendRequest) (*pb.DeleteFriendResponse, error) {
@@ -119,6 +119,7 @@ func (s *RelationShipService) GetFriendInfo(ctx context.Context, req *pb.GetFrie
 		CityName:     reply.CityName,
 		ProvinceName: reply.ProvinceName,
 		Desc:         reply.Desc,
+		AccountId:    reply.AccountId,
 	}, nil
 }
 func (s *RelationShipService) UpdateFriendInfo(ctx context.Context, req *pb.UpdateFriendInfoRequest) (*pb.UpdateFriendInfoResponse, error) {
@@ -177,5 +178,27 @@ func (s *RelationShipService) GetFriendRequests(ctx context.Context, req *pb.Get
 	}
 	return &pb.GetFriendRequestsResponse{
 		FriendRequests: requests,
+	}, nil
+}
+func (s *RelationShipService) GetOneFriend(ctx context.Context, req *pb.GetOneFriendRequest) (*pb.GetONeFriendResponse, error) {
+	s.helper.Info("get one friend")
+	friend, err := s.biz.GetOneFriend(ctx, req.UserId, req.FriendId)
+	if err != nil {
+		s.helper.Errorf("get one friend error: %v", err)
+		return nil, err
+	}
+	return &pb.GetONeFriendResponse{
+		Friend: friend,
+	}, nil
+}
+func (s *RelationShipService) GetFriendsByIDS(ctx context.Context, req *pb.GetFriendsByIDSRequest) (*pb.GetFriendsByIDSResponse, error) {
+	s.helper.Info("get friends by ids")
+	friends, err := s.biz.GetFriendsByIDS(ctx, req.FriendIds)
+	if err != nil {
+		s.helper.Errorf("get friends by ids error: %v", err)
+		return nil, err
+	}
+	return &pb.GetFriendsByIDSResponse{
+		Friends: friends,
 	}, nil
 }

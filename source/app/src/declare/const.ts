@@ -5,3 +5,10 @@ export const LoginPrefix = "/login"
 export const RegisterPrefix = "/register/"
 export const AddFriendPrefix = "/addFriend"
 export const AddSearchPrefix = "/addSearch"
+
+export enum MessageType {
+    Text = "1",
+    Image = "2",
+    Video = "3",
+    File = "4",
+}

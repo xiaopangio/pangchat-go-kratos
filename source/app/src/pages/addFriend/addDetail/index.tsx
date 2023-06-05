@@ -3,35 +3,32 @@ import "@/pages/addFriend/addDetail/index.less"
 import SvgIcon from "@/components/Icon";
 import {useNavigate} from "react-router";
 import {useRecoilState, useRecoilValue} from "recoil";
-import {AddUserState, currentUserState, GroupName, GroupNames} from "@/store";
+import {currentUserState, GroupName, GroupNames, SearchUserState} from "@/store";
 import {useEffect, useState} from "react";
 import {GetFriendGroupList, SendFriendRequest} from "@/api/friend";
 import {db, FriendGroup} from "@/store/db";
 import {GetFriendGroup} from "@/utils/store";
+import {useRefreshUser} from "@/hooks/refreshUser";
+
+export function GetGroupNames(uid: string, onSuccess: (res: string[]) => void) {
+    GetFriendGroupList({user_id: uid}).then(res => {
+        let groups = res.group_names.map((item: string) => {
+            return {name: item, uid: uid} as FriendGroup
+        })
+        db.friendGroups.bulkAdd(groups)
+        onSuccess(res.group_names)
+    })
+}
 
 function AddDetail() {
     let navigate = useNavigate();
-    let profile = useRecoilValue(AddUserState);
+    let profile = useRecoilValue(SearchUserState);
     let currentUser = useRecoilValue(currentUserState);
     const [groupNames, setGroupNames] = useRecoilState(GroupNames);
     const [groupName, setGroupName] = useRecoilState(GroupName);
     const [desc, setDesc] = useState("");
     const [noteName, setNoteName] = useState("");
-
-    function GetGroupNames() {
-        if (!currentUser) {
-            return
-        }
-        GetFriendGroupList({user_id: currentUser.uid}).then(res => {
-            let groups = res.group_names.map((item: string) => {
-                return {name: item, uid: currentUser?.uid} as FriendGroup
-            })
-            db.friendGroups.bulkAdd(groups)
-            setGroupNames(res.group_names)
-            setGroupName(res.group_names[0])
-        })
-    }
-
+    useRefreshUser()
     useEffect(() => {
         if (!currentUser) {
             return
@@ -45,13 +42,16 @@ function AddDetail() {
                 setGroupName(res[0])
                 return
             } else {
-                GetGroupNames()
+                GetGroupNames(currentUser?.uid as string, (res) => {
+                    setGroupNames(res)
+                    setGroupName(res[0])
+                })
             }
         })
     }, []);
 
     const back = () => {
-        navigate("/searchTarget")
+        navigate("/Profile")
     }
     const chooseGroup = () => {
         navigate("/chooseGroup")

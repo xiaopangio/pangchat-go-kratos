@@ -49,3 +49,9 @@ func (r *Redis) Del(key string) error {
 func (r *Redis) Exists(key string) (int64, error) {
 	return r.client.Exists(context.Background(), key).Result()
 }
+func (r *Redis) SAdd(key string, members ...any) error {
+	return r.client.SAdd(context.Background(), key, members...).Err()
+}
+func (r *Redis) SMember(key string) ([]string, error) {
+	return r.client.SMembers(context.Background(), key).Result()
+}

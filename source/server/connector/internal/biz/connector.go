@@ -2,6 +2,7 @@ package biz
 
 import (
 	"connector/api/v1/connector"
+	"connector/api/v1/message"
 	"connector/api/v1/online"
 	"connector/api/v1/universal"
 	"connector/internal/components/broker"
@@ -16,6 +17,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/gorilla/websocket"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 )
 
 const (
@@ -23,19 +25,20 @@ const (
 )
 
 type ConnectorServiceBiz struct {
-	repo         ConnectorServiceRepo
-	helper       *log.Helper
-	upgrader     *websocket.Upgrader
-	cache        *cache.ConnectionCache
-	onlineClient online.OnlineClient
-	serverCf     *conf.Server
-	kafkaBroker  *broker.KafkaBroker
-	mqCf         *conf.MessageQueue
-	redisCli     *redis.Redis
+	repo          ConnectorServiceRepo
+	helper        *log.Helper
+	upgrader      *websocket.Upgrader
+	cache         *cache.ConnectionCache
+	onlineClient  online.OnlineClient
+	messageClient message.MessageServiceClient
+	serverCf      *conf.Server
+	kafkaBroker   *broker.KafkaBroker
+	mqCf          *conf.MessageQueue
+	redisCli      *redis.Redis
 }
 
-func NewConnectorServiceBiz(connectorServiceRepo ConnectorServiceRepo, helper *log.Helper, onlineClient online.OnlineClient, upgrader *websocket.Upgrader, cache *cache.ConnectionCache, cf *conf.Bootstrap, kafkaBroker *broker.KafkaBroker, redisCli *redis.Redis) *ConnectorServiceBiz {
-	return &ConnectorServiceBiz{repo: connectorServiceRepo, helper: helper, onlineClient: onlineClient, upgrader: upgrader, cache: cache, serverCf: cf.Server, kafkaBroker: kafkaBroker, mqCf: cf.MessageQueue, redisCli: redisCli}
+func NewConnectorServiceBiz(connectorServiceRepo ConnectorServiceRepo, messageClient message.MessageServiceClient, helper *log.Helper, onlineClient online.OnlineClient, upgrader *websocket.Upgrader, cache *cache.ConnectionCache, cf *conf.Bootstrap, kafkaBroker *broker.KafkaBroker, redisCli *redis.Redis) *ConnectorServiceBiz {
+	return &ConnectorServiceBiz{repo: connectorServiceRepo, helper: helper, messageClient: messageClient, onlineClient: onlineClient, upgrader: upgrader, cache: cache, serverCf: cf.Server, kafkaBroker: kafkaBroker, mqCf: cf.MessageQueue, redisCli: redisCli}
 }
 
 type ConnectorServiceRepo interface {
@@ -136,55 +139,15 @@ func (c *ConnectorServiceBiz) Serve(conn *websocket.Conn, uid string) {
 	if err != nil {
 		c.helper.Errorf("Publish error: %v", err)
 	}
-	for {
-		_, bytes, err := conn.ReadMessage()
-		if err != nil {
-			if websocket.IsCloseError(err) {
-				c.cache.RemoveConn(WsPrefix + uid)
-				return
-			} else {
-				err := conn.Close()
-				if err != nil {
-					c.helper.Errorf("close error: %v", err)
-				}
-				c.cache.RemoveConn(WsPrefix + uid)
-				return
-			}
-		}
-		msg := &model.UniversalMessage{}
-		json.Unmarshal(bytes, msg)
-		if msg.T == "ping" {
-			c.helper.Infof("HeartCheck: %v", msg)
-			if err != nil {
-				c.helper.Errorf("HeartCheck error: %v", err)
-				c.cache.RemoveConn(WsPrefix + uid)
-				return
-			}
-			message := &model.UniversalMessage{
-				T:    "pong",
-				Data: "pond",
-			}
-			bytes, err = json.Marshal(message)
-			err := conn.WriteMessage(websocket.TextMessage, bytes)
-			if err != nil {
-				c.cache.RemoveConn(WsPrefix + uid)
-				return
-			}
-		}
-	}
-
+	//维持心跳
+	go c.HeartCheck(conn, uid)
 }
 
 func (c *ConnectorServiceBiz) Connect(ctx *gin.Context, uid string) error {
 	c.helper.Infof("Connect: %v", uid)
 	conn, ok := c.cache.GetConn(WsPrefix + uid) //判断是否已经存在连接
 	if ok {
-		err := conn.Close() //关闭连接
-		if err != nil {
-			c.helper.Errorf("close error: %v", err)
-			return err
-		}
-		return nil
+		c.CloseConn(conn, uid)
 	}
 	ws, err := c.upgrader.Upgrade(ctx.Writer, ctx.Request, nil) //重新升级为websocket连接
 	if err != nil {
@@ -254,4 +217,198 @@ func (c *ConnectorServiceBiz) PushFriendRequests(ctx context.Context, uid string
 		return err
 	}
 	return nil
+}
+
+func (c *ConnectorServiceBiz) HeartCheck(conn *websocket.Conn, uid string) {
+	for {
+		//设置读取超时时间
+		err := conn.SetReadDeadline(time.Now().Add(time.Second * 11))
+		if err != nil {
+			c.helper.Errorf("HeartCheck error: %v", err)
+			c.CloseConn(conn, uid)
+			return
+		}
+		//读取消息
+		_, bytes, err := conn.ReadMessage()
+		if err != nil {
+			//判断连接是否关闭
+			if websocket.IsCloseError(err) {
+				//关闭连接
+				c.CloseConn(conn, uid)
+				return
+			} else {
+				//关闭连接
+				c.CloseConn(conn, uid)
+				return
+			}
+		}
+		//解析消息
+		msg := &model.UniversalMessage{}
+		err = json.Unmarshal(bytes, msg)
+		if err != nil {
+			c.helper.Errorf("HeartCheck error: %v", err)
+			//关闭连接
+			c.CloseConn(conn, uid)
+			return
+		}
+		//判断消息类型
+		if msg.T == "ping" {
+			//回复心跳
+			m := &model.UniversalMessage{
+				T:    "pong",
+				Data: "pong",
+			}
+			bytes, err = json.Marshal(m)
+			err := conn.WriteMessage(websocket.TextMessage, bytes)
+			if err != nil {
+				c.CloseConn(conn, uid)
+				return
+			}
+		} else if msg.T == "single_message" {
+			c.ProcessSingleMessage(conn, uid, msg)
+		}
+	}
+}
+func (c *ConnectorServiceBiz) ProcessSingleMessage(conn *websocket.Conn, uid string, msg *model.UniversalMessage) {
+	c.helper.Infof("msg: %v", msg)
+	res := msg.Data.(map[string]interface{})
+	m := &universal.Message{
+		MessageId:  res["message_id"].(string),
+		Type:       pkg.ParseInt64(res["type"].(string)),
+		Content:    res["content"].(string),
+		SenderId:   res["sender_id"].(string),
+		ReceiverId: res["receiver_id"].(string),
+		SendAt:     res["send_at"].(string),
+	}
+	c.helper.Infof("ProcessSingleMessage: %v", m)
+	if _, err := c.messageClient.DealSingleMessage(context.Background(), &message.DealSingleMessageRequest{
+		Message: m,
+	}); err != nil {
+		//消息处理失败
+		reply := &model.UniversalMessage{
+			T:    "single_message_reply_error",
+			Data: err.Error(),
+		}
+		bytes, err := json.Marshal(reply)
+		err = conn.WriteMessage(websocket.TextMessage, bytes)
+		if err != nil {
+			c.CloseConn(conn, uid)
+			return
+		}
+		return
+	}
+}
+func (c *ConnectorServiceBiz) CloseConn(conn *websocket.Conn, uid string) {
+	err := conn.Close()
+	if err != nil {
+		c.helper.Errorf("close error: %v", err)
+	}
+	c.cache.RemoveConn(WsPrefix + uid)
+	_, err = c.onlineClient.UnregisterDevice(context.Background(), &online.UnregisterDeviceRequest{
+		Uid: pkg.ParseInt64(uid),
+	})
+	if err != nil {
+		c.helper.Errorf("UnregisterDevice error: %v", err)
+	}
+}
+
+func (c *ConnectorServiceBiz) PushFriend(ctx context.Context, uid string, friends []*universal.Friend) error {
+	if err := pkg.ContextErr(ctx); err != nil {
+		return err
+	}
+	conn, ok := c.cache.GetConn(WsPrefix + uid)
+	if !ok {
+		return pkg.InternalError("用户不在线")
+	}
+	msg := &model.UniversalMessage{
+		T:    "friend",
+		Data: friends,
+	}
+	if bytes, err := json.Marshal(msg); err != nil {
+		return err
+	} else {
+		if err = conn.WriteMessage(websocket.TextMessage, bytes); err != nil {
+			c.helper.Errorf("PushFriend error: %v", err)
+			return err
+		}
+		return nil
+	}
+}
+
+func (c *ConnectorServiceBiz) PushMessage(ctx context.Context, uid string, m *universal.Message) error {
+	if err := pkg.ContextErr(ctx); err != nil {
+		return err
+	}
+	conn, ok := c.cache.GetConn(WsPrefix + uid)
+	if !ok {
+		return pkg.InternalError("用户不在线")
+	}
+	msg := &model.UniversalMessage{
+		T:    "message",
+		Data: m,
+	}
+	if bytes, err := json.Marshal(msg); err != nil {
+		c.helper.Errorf("marshal error: %v", err)
+		return err
+	} else {
+		if err = conn.WriteMessage(websocket.TextMessage, bytes); err != nil {
+			c.helper.Errorf("PushMessage error: %v", err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (c *ConnectorServiceBiz) ReplyMessage(ctx context.Context, uid string, m *universal.Message) error {
+	if err := pkg.ContextErr(ctx); err != nil {
+		return nil
+	}
+	conn, ok := c.cache.GetConn(WsPrefix + uid)
+	if !ok {
+		return pkg.InternalError("用户不在线")
+	}
+	m.Content = ""
+	m.Type = 0
+	msg := &model.UniversalMessage{
+		T:    "single_message_reply",
+		Data: m,
+	}
+	if bytes, err := json.Marshal(msg); err != nil {
+		c.helper.Errorf("marshal error: %v", err)
+		return err
+	} else {
+		if err = conn.WriteMessage(websocket.TextMessage, bytes); err != nil {
+			c.helper.Errorf("ReplyMessage error: %v", err)
+			return err
+		}
+		return nil
+	}
+}
+
+func (c *ConnectorServiceBiz) PushUnreadMessageList(ctx context.Context, uid string, list []*universal.UnreadMessageInfo) error {
+	if err := pkg.ContextErr(ctx); err != nil {
+		return err
+	}
+	conn, ok := c.cache.GetConn(WsPrefix + uid)
+	if !ok {
+		return pkg.InternalError("用户不在线")
+	}
+	data := &model.UnreadMessageResponse{
+		List: list,
+	}
+	msg := &model.UniversalMessage{
+		T:    "unread_message_list",
+		Data: data,
+	}
+	if bytes, err := json.Marshal(msg); err != nil {
+		c.helper.Errorf("marshal error: %v", err)
+		return err
+	} else {
+		if err = conn.WriteMessage(websocket.TextMessage, bytes); err != nil {
+			c.helper.Errorf("PushUnreadMessageList error: %v", err)
+			return err
+		}
+		return nil
+	}
 }

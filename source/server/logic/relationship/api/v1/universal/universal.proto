@@ -12,3 +12,30 @@ message FriendRequest{
   string nick_name = 9;
   string avatar = 10;
 }
+message Friend {
+  string friend_id = 1;
+  string nick_name = 3;
+  string note_name = 4;
+  string avatar = 5;
+  string group_name = 6;
+}
+message Message{
+  string message_id = 1;
+  int64 type = 2;
+  string content = 3;
+  string sender_id = 4;
+  string receiver_id = 5;
+  string send_at = 6;
+}
+message UnreadMessageInfo{
+  Message latest_message = 1;
+  int64 unread_count = 2;
+}
+message Group{
+  string group_id = 1;
+  string group_name = 2;
+  string group_avatar = 3;
+  string group_desc = 4;
+  int64 group_leader_id = 5;
+  string create_at = 6;
+}

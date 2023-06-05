@@ -64,9 +64,18 @@ type OnlineRegistry struct {
 	*etcd.Registry
 }
 
-func NewOnlineRegistry(cf *conf.Bootstrap, client *clientv3.Client) *OnlineRegistry {
-	service := cf.Service
+func NewOnlineRegistry(service *conf.Service, client *clientv3.Client) *OnlineRegistry {
 	return &OnlineRegistry{
 		Registry: etcd.New(client, etcd.Namespace(service.OnlineService)),
+	}
+}
+
+type MessageRegistry struct {
+	*etcd.Registry
+}
+
+func NewMessageRegistry(service *conf.Service, client *clientv3.Client) *MessageRegistry {
+	return &MessageRegistry{
+		Registry: etcd.New(client, etcd.Namespace(service.MessageService)),
 	}
 }

@@ -160,7 +160,7 @@ func (u *UserService) GetProfiles(ctx context.Context, req *pb.GetProfilesReques
 	}, nil
 }
 func (u *UserService) GetAddressAndDesc(ctx context.Context, req *pb.GetAddressAndDescRequest) (*pb.GetAddressAndDescReply, error) {
-	desc, address, err := u.bz.GetAddressAndDesc(ctx, req.Uid)
+	us, address, err := u.bz.GetAddressAndDesc(ctx, req.Uid)
 	if err != nil {
 		u.helper.Error(err.Error())
 		return nil, err
@@ -168,6 +168,7 @@ func (u *UserService) GetAddressAndDesc(ctx context.Context, req *pb.GetAddressA
 	return &pb.GetAddressAndDescReply{
 		CityName:     address.City,
 		ProvinceName: address.Province,
-		Desc:         desc,
+		Desc:         us.PersonalDesc,
+		AccountId:    us.AccountID,
 	}, nil
 }

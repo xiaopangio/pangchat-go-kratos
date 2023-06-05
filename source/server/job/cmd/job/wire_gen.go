@@ -36,6 +36,11 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 	jobRegistry := registry.NewEtcdJobRegistry(bootstrap, clientv3Client)
 	v := endpoints.NewEndPoints(bootstrap)
 	redisRedis := redis.NewRedisClient(bootstrap, helper)
+	messageRegistry := registry.NewMessageRegistry(bootstrap, clientv3Client)
+	messageServiceClient, err := client.NewMessageClient(messageRegistry, helper, bootstrap)
+	if err != nil {
+		return nil, nil, err
+	}
 	onlineRegistry := registry.NewOnlineRegistry(bootstrap, clientv3Client)
 	onlineClient, err := client.NewOnlineClient(onlineRegistry, helper, bootstrap)
 	if err != nil {
@@ -51,7 +56,7 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 	if err != nil {
 		return nil, nil, err
 	}
-	jobBiz := biz.NewJobBiz(helper, redisRedis, onlineClient, relationShipClient, userClient)
+	jobBiz := biz.NewJobBiz(helper, redisRedis, messageServiceClient, onlineClient, relationShipClient, userClient)
 	jobService := service.NewJobService(helper, jobBiz)
 	kafkaServer, cleanup := server.NewKafkaConsumerServer(bootstrap, jobService)
 	app := newApp(logLogger, bootstrap, jobRegistry, v, kafkaServer)

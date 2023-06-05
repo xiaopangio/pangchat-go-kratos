@@ -10,7 +10,7 @@ function ChooseGroup() {
     const [groupName, setGroupName] = useRecoilState(GroupName);
     let navigate = useNavigate();
     const back = () => {
-        navigate("/addDetail")
+        navigate(-1)
     }
     const chooseGroup = (item: string) => {
         setGroupName(item)

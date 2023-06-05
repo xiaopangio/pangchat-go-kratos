@@ -15,6 +15,8 @@ import (
 	"api-gateway/internal/server"
 	"api-gateway/internal/service/connector"
 	"api-gateway/internal/service/logic"
+	"api-gateway/internal/service/message"
+	"api-gateway/internal/service/online"
 	"api-gateway/internal/service/relationship"
 	"api-gateway/internal/service/user"
 	"github.com/go-kratos/kratos/v2"
@@ -30,16 +32,22 @@ import (
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, confRegistry *conf.Registry, service *conf.Service, jwt *conf.Jwt, logLogger log.Logger) (*kratos.App, func(), error) {
 	helper := logger.NewHelper(logLogger)
+	jwtManager := auth.NewJwtManager(jwt)
 	clientv3Client, err := registry.NewEtcdClient(confRegistry, confServer, helper)
 	if err != nil {
 		return nil, nil, err
 	}
+	messageRegistry := registry.NewMessageRegistry(service, clientv3Client)
+	messageServiceClient, err := client.NewMessageClient(messageRegistry, helper, service)
+	if err != nil {
+		return nil, nil, err
+	}
+	message := service_message.NewMessage(helper, jwtManager, messageServiceClient)
 	userRegistry := registry.NewEtcdUserRegistry(service, clientv3Client)
 	userClient, err := client.NewUserClient(userRegistry, helper, service)
 	if err != nil {
 		return nil, nil, err
 	}
-	jwtManager := auth.NewJwtManager(jwt)
 	userService := service_user.NewUserService(userClient, helper, jwtManager)
 	connectorRegistry := registry.NewEtcdConnectorRegistry(service, clientv3Client)
 	connectorServiceClient, err := client.NewConnectorClient(connectorRegistry, helper, service)
@@ -59,7 +67,13 @@ func wireApp(confServer *conf.Server, confRegistry *conf.Registry, service *conf
 		return nil, nil, err
 	}
 	relationship := service_relationship.NewRelationship(helper, relationShipClient, jwtManager)
-	httpServer := server.NewHTTPServer(confServer, userService, connectorService, logicService, relationship)
+	onlineRegistry := registry.NewOnlineRegistry(service, clientv3Client)
+	onlineClient, err := client.NewOnlineClient(onlineRegistry, helper, service)
+	if err != nil {
+		return nil, nil, err
+	}
+	online := service_online.NewOnline(helper, jwtManager, onlineClient)
+	httpServer := server.NewHTTPServer(confServer, message, userService, connectorService, logicService, relationship, online)
 	app := newApp(logLogger, httpServer)
 	return app, func() {
 	}, nil

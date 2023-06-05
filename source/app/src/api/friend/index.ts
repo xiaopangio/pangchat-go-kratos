@@ -1,5 +1,6 @@
 import {http} from "@/utils/request";
 import {
+    DealFriendRequestData,
     GetFriendGroupListRequest,
     GetFriendGroupListResponse, GetFriendInfoResponse, GetFriendListResponse,
     GetFriendRequestListRequest,
@@ -27,11 +28,8 @@ export function GetFriendGroupList(data: GetFriendGroupListRequest) {
         params: data
     });
 }
-export function DealFriendRequest(id: string, status: number) {
-    return http.put(FriendRequestPrefix ,{
-        request_id: id,
-        status: status
-    } );
+export function DealFriendRequestApi(data:DealFriendRequestData) {
+    return http.put(FriendRequestPrefix ,data);
 }
 export function GetFriendList(id: string){
     return http.get<GetFriendListResponse>(FriendPrefix + "/list",{

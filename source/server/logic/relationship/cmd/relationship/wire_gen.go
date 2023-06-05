@@ -41,11 +41,16 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 	if err != nil {
 		return nil, nil, err
 	}
+	messageRegistry := registry.NewEtcdMessageRegistry(bootstrap, clientv3Client)
+	messageServiceClient, err := client.NewMessageClient(messageRegistry, helper, bootstrap)
+	if err != nil {
+		return nil, nil, err
+	}
 	kafkaBroker := broker.NewKafkaBroker(helper, bootstrap)
 	node := uid.NewUidGenerator(bootstrap, helper)
 	relationshipRepo := data.NewRelationshipRepoImpl(helper, node)
 	db := mysql.NewMysql(bootstrap)
-	relationshipBiz := biz.NewRelationshipBiz(helper, userClient, kafkaBroker, bootstrap, relationshipRepo, db)
+	relationshipBiz := biz.NewRelationshipBiz(helper, userClient, messageServiceClient, kafkaBroker, bootstrap, relationshipRepo, db)
 	relationShipService := service.NewRelationShipService(relationshipBiz, helper)
 	grpcServer := server.NewGRPCServer(bootstrap, logLogger, relationShipService)
 	v := endpoints.NewEndPoints(bootstrap)
