@@ -4,9 +4,9 @@ import mysql.connector
 import requests
 from bs4 import BeautifulSoup
 
-# 热门歌手列表  已完成'邓紫棋', '周杰伦','张学友', '王菲', '林忆莲', '张靓颖', '范晓萱', '陈奕迅',
-singers = ['林俊杰', '罗志祥', '蔡依林',
-           '范玮琪', '韩红', '徐佳莹', '李宇春', '华晨宇', '刘若英', '曲婉婷', '陈慧娴', '许嵩']
+# 热门歌手列表  已完成'邓紫棋', '周杰伦','张学友', '王菲', '林忆莲', '张靓颖', '范晓萱', '陈奕迅','林俊杰', '罗志祥', '蔡依林',
+# '范玮琪', '韩红', '徐佳莹', '李宇春', '华晨宇', '刘若英', '曲婉婷', '陈慧娴', '许嵩'
+singers = []
 # 查找热门歌手的所有歌曲，search_url=http://www.dsod.cn/e/search/ 请求为POST，请求体为 {keyboard: '歌手名', show: 'title,newstext',
 # tempid: 1, tbname: 'lrc', mid: 1, dopost: 'search'}
 search_url = 'http://www.dsod.cn/e/search/'
@@ -19,8 +19,8 @@ port = 3307
 database = 'pangchat'
 conn = mysql.connector.connect(user=user, password=password, host=host, port=port, database=database)
 cursor = conn.cursor()
-last_unfinished_singer_name = '林俊杰'
-last_unfinished_song_count = 55
+last_unfinished_singer_name = ''
+last_unfinished_song_count = 0
 # 遍历热门歌手列表
 for singer in singers:
     resp = requests.post(search_url,

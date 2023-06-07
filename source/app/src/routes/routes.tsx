@@ -108,6 +108,10 @@ const routes: RouteObject[] = [
     {
         path: "/dialogue",
         element: lazyLoadPage("chat/dialogue"),
+    },
+    {
+        path: "/musicPlayer",
+        element: lazyLoadPage("musicPlayer"),
     }
 ]
 const router = createBrowserRouter(routes);
