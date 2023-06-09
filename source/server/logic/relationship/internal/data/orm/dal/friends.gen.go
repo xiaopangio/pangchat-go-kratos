@@ -31,8 +31,8 @@ func newFriend(db *gorm.DB, opts ...gen.DOOption) friend {
 	_friend.FriendID = field.NewInt64(tableName, "friend_id")
 	_friend.NoteName = field.NewString(tableName, "note_name")
 	_friend.GroupName = field.NewString(tableName, "group_name")
-	_friend.LastAckMsgID = field.NewString(tableName, "last_ack_msg_id")
 	_friend.BecomeAt = field.NewTime(tableName, "become_at")
+	_friend.IsDeleted = field.NewInt32(tableName, "is_deleted")
 
 	_friend.fillFieldMap()
 
@@ -42,13 +42,13 @@ func newFriend(db *gorm.DB, opts ...gen.DOOption) friend {
 type friend struct {
 	friendDo friendDo
 
-	ALL          field.Asterisk
-	UserID       field.Int64  // 好友1uid
-	FriendID     field.Int64  // 好友2uid
-	NoteName     field.String // 好友1给好友2的备注
-	GroupName    field.String // 好友2所处好友1的分组
-	LastAckMsgID field.String // 最后接受消息的id
-	BecomeAt     field.Time   // 成为好友的时间
+	ALL       field.Asterisk
+	UserID    field.Int64  // 好友1uid
+	FriendID  field.Int64  // 好友2uid
+	NoteName  field.String // 好友1给好友2的备注
+	GroupName field.String // 好友2所处好友1的分组
+	BecomeAt  field.Time   // 成为好友的时间
+	IsDeleted field.Int32
 
 	fieldMap map[string]field.Expr
 }
@@ -69,8 +69,8 @@ func (f *friend) updateTableName(table string) *friend {
 	f.FriendID = field.NewInt64(table, "friend_id")
 	f.NoteName = field.NewString(table, "note_name")
 	f.GroupName = field.NewString(table, "group_name")
-	f.LastAckMsgID = field.NewString(table, "last_ack_msg_id")
 	f.BecomeAt = field.NewTime(table, "become_at")
+	f.IsDeleted = field.NewInt32(table, "is_deleted")
 
 	f.fillFieldMap()
 
@@ -98,8 +98,8 @@ func (f *friend) fillFieldMap() {
 	f.fieldMap["friend_id"] = f.FriendID
 	f.fieldMap["note_name"] = f.NoteName
 	f.fieldMap["group_name"] = f.GroupName
-	f.fieldMap["last_ack_msg_id"] = f.LastAckMsgID
 	f.fieldMap["become_at"] = f.BecomeAt
+	f.fieldMap["is_deleted"] = f.IsDeleted
 }
 
 func (f friend) clone(db *gorm.DB) friend {

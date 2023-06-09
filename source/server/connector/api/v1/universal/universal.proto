@@ -41,7 +41,7 @@ message Group{
 }
 message GroupMember{
   string group_id = 1;
-  string member_id = 2;
+  int64 member_id = 2;
   string member_note_name = 3; //申请为群成员时，不填写群昵称的话，默认就是用户的昵称
   string member_avatar = 4;
   string join_at = 5;
@@ -55,4 +55,6 @@ message GroupRequest{
   string status = 8;
   string create_at = 9;
   string update_at = 10;
+  string nick_name = 11;
+  string avatar = 12;
 }

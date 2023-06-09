@@ -20,6 +20,10 @@ var (
 	Friend        *friend
 	FriendGroup   *friendGroup
 	FriendRequest *friendRequest
+	Group         *group
+	GroupAdmin    *groupAdmin
+	GroupMember   *groupMember
+	GroupRequest  *groupRequest
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
@@ -27,6 +31,10 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	Friend = &Q.Friend
 	FriendGroup = &Q.FriendGroup
 	FriendRequest = &Q.FriendRequest
+	Group = &Q.Group
+	GroupAdmin = &Q.GroupAdmin
+	GroupMember = &Q.GroupMember
+	GroupRequest = &Q.GroupRequest
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
@@ -35,6 +43,10 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		Friend:        newFriend(db, opts...),
 		FriendGroup:   newFriendGroup(db, opts...),
 		FriendRequest: newFriendRequest(db, opts...),
+		Group:         newGroup(db, opts...),
+		GroupAdmin:    newGroupAdmin(db, opts...),
+		GroupMember:   newGroupMember(db, opts...),
+		GroupRequest:  newGroupRequest(db, opts...),
 	}
 }
 
@@ -44,6 +56,10 @@ type Query struct {
 	Friend        friend
 	FriendGroup   friendGroup
 	FriendRequest friendRequest
+	Group         group
+	GroupAdmin    groupAdmin
+	GroupMember   groupMember
+	GroupRequest  groupRequest
 }
 
 func (q *Query) Available() bool { return q.db != nil }
@@ -54,6 +70,10 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		Friend:        q.Friend.clone(db),
 		FriendGroup:   q.FriendGroup.clone(db),
 		FriendRequest: q.FriendRequest.clone(db),
+		Group:         q.Group.clone(db),
+		GroupAdmin:    q.GroupAdmin.clone(db),
+		GroupMember:   q.GroupMember.clone(db),
+		GroupRequest:  q.GroupRequest.clone(db),
 	}
 }
 
@@ -71,6 +91,10 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		Friend:        q.Friend.replaceDB(db),
 		FriendGroup:   q.FriendGroup.replaceDB(db),
 		FriendRequest: q.FriendRequest.replaceDB(db),
+		Group:         q.Group.replaceDB(db),
+		GroupAdmin:    q.GroupAdmin.replaceDB(db),
+		GroupMember:   q.GroupMember.replaceDB(db),
+		GroupRequest:  q.GroupRequest.replaceDB(db),
 	}
 }
 
@@ -78,6 +102,10 @@ type queryCtx struct {
 	Friend        *friendDo
 	FriendGroup   *friendGroupDo
 	FriendRequest *friendRequestDo
+	Group         *groupDo
+	GroupAdmin    *groupAdminDo
+	GroupMember   *groupMemberDo
+	GroupRequest  *groupRequestDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
@@ -85,6 +113,10 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		Friend:        q.Friend.WithContext(ctx),
 		FriendGroup:   q.FriendGroup.WithContext(ctx),
 		FriendRequest: q.FriendRequest.WithContext(ctx),
+		Group:         q.Group.WithContext(ctx),
+		GroupAdmin:    q.GroupAdmin.WithContext(ctx),
+		GroupMember:   q.GroupMember.WithContext(ctx),
+		GroupRequest:  q.GroupRequest.WithContext(ctx),
 	}
 }
 

@@ -23,6 +23,7 @@ var ProviderSet = wire.NewSet(
 	client.NewMessageClient,
 	mysql.NewMysql,
 	broker.NewKafkaBroker,
-	uid.NewUidGenerator,
+	uid.NewFriendRequestUidGenerator,
+	uid.NewGroupUidGenerator,
 	endpoints.NewEndPoints,
 )

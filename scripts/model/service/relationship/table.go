@@ -9,6 +9,11 @@ func GenerateRelationship(g *gen.Generator) {
 	friends := g.GenerateModel("friends")
 	friendGroups := g.GenerateModel("friend_groups")
 	friendRequests := g.GenerateModel("friend_requests")
+	groups := g.GenerateModel("groups")
+	groupMembers := g.GenerateModel("group_members")
+	groupRequests := g.GenerateModel("group_requests")
+	groupAdmins := g.GenerateModel("group_admins")
+	g.ApplyBasic(groups, groupMembers, groupRequests, groupAdmins)
 	g.ApplyBasic(friends, friendRequests, friendGroups)
 	g.Execute()
 }

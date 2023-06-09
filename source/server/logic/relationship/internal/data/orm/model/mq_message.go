@@ -11,3 +11,7 @@ type FriendMessage struct {
 	UserId   int64 `json:"user_id"`
 	FriendId int64 `json:"friend_id"`
 }
+type GroupRequestMessage struct {
+	RequestId   int64 `json:"request_id"`
+	RequesterId int64 `json:"requester_id"`
+}

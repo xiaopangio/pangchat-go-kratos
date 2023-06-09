@@ -47,8 +47,9 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 		return nil, nil, err
 	}
 	kafkaBroker := broker.NewKafkaBroker(helper, bootstrap)
-	node := uid.NewUidGenerator(bootstrap, helper)
-	relationshipRepo := data.NewRelationshipRepoImpl(helper, node)
+	friendRequestUidGenerator := uid.NewFriendRequestUidGenerator(bootstrap, helper)
+	groupRequestUidGenerator := uid.NewGroupUidGenerator(bootstrap, helper)
+	relationshipRepo := data.NewRelationshipRepoImpl(helper, friendRequestUidGenerator, groupRequestUidGenerator)
 	db := mysql.NewMysql(bootstrap)
 	relationshipBiz := biz.NewRelationshipBiz(helper, userClient, messageServiceClient, kafkaBroker, bootstrap, relationshipRepo, db)
 	relationShipService := service.NewRelationShipService(relationshipBiz, helper)

@@ -17,6 +17,7 @@ message_queue:
   friend_request_topic: friend_request
   friend_topic: friend
   message_topic: message
+  group_request_topic: group_request
 discovery:
   etcd:
     addrs:

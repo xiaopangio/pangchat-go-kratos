@@ -221,7 +221,7 @@ function MusicPlayer() {
             audio.removeEventListener("timeupdate", updateProgress);
         };
 
-    }, []);
+    }, [progressBarWidth, lrcItemHeight, containerHeight]);
 
     return (
         <div className="music_play_box">

@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"context"
+	"errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
@@ -64,4 +65,9 @@ func UnauthenticatedError(msg string, a ...any) error {
 		return status.Errorf(codes.Unauthenticated, msg)
 	}
 	return status.Errorf(codes.Unauthenticated, msg, a)
+}
+
+// GenFuncError 根据函数名生成函数执行错误
+func GenFuncError(funcName string) error {
+	return errors.New(GenFuncErrorFormat(funcName))
 }

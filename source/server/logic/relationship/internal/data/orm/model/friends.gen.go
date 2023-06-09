@@ -12,12 +12,12 @@ const TableNameFriend = "friends"
 
 // Friend mapped from table <friends>
 type Friend struct {
-	UserID       int64     `gorm:"column:user_id;primaryKey" json:"user_id"`      // 好友1uid
-	FriendID     int64     `gorm:"column:friend_id;primaryKey" json:"friend_id"`  // 好友2uid
-	NoteName     string    `gorm:"column:note_name" json:"note_name"`             // 好友1给好友2的备注
-	GroupName    string    `gorm:"column:group_name" json:"group_name"`           // 好友2所处好友1的分组
-	LastAckMsgID string    `gorm:"column:last_ack_msg_id" json:"last_ack_msg_id"` // 最后接受消息的id
-	BecomeAt     time.Time `gorm:"column:become_at" json:"become_at"`             // 成为好友的时间
+	UserID    int64     `gorm:"column:user_id;primaryKey" json:"user_id"`     // 好友1uid
+	FriendID  int64     `gorm:"column:friend_id;primaryKey" json:"friend_id"` // 好友2uid
+	NoteName  string    `gorm:"column:note_name;not null" json:"note_name"`   // 好友1给好友2的备注
+	GroupName string    `gorm:"column:group_name;not null" json:"group_name"` // 好友2所处好友1的分组
+	BecomeAt  time.Time `gorm:"column:become_at;not null" json:"become_at"`   // 成为好友的时间
+	IsDeleted int32     `gorm:"column:is_deleted" json:"is_deleted"`
 }
 
 // TableName Friend's table name
