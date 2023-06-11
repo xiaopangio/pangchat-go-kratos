@@ -25,6 +25,7 @@ function SwitchButton({onChange, size = 50}: SwitchButtonProps) {
             labelRef.current.classList.remove("switch-label-active")
             labelRef.current.classList.add("switch-label-inactive")
         }
+        onChange(!check);
         setCheck(!check);
     }
     const generateStyle = () => {
