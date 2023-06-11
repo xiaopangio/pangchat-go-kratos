@@ -59,7 +59,7 @@ func (o *OnlineBiz) GetOnlineDevice(ctx context.Context, uid int64) (*model.Devi
 
 func (o *OnlineBiz) GetOnlineDevices(ctx context.Context) ([]*online.OnlineDevice, error) {
 	values, err := o.redisCli.GetPrefix(redis.OnlineDeviceKey)
-	if err != nil {
+	if err != nil && err != redis.Nil {
 		o.helper.Errorf("redis get prefix failed: %v", err)
 		return nil, err
 	}
