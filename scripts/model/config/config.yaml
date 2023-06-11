@@ -1,5 +1,0 @@
-mysql:
-  root: pangchat
-  password: password
-  host: 43.143.137.232:3307
-  dbName: pangchat
