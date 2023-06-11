@@ -45,7 +45,7 @@ func (o *OnlineBiz) UnregisterDevice(ctx context.Context, uid int64) error {
 
 func (o *OnlineBiz) GetOnlineDevice(ctx context.Context, uid int64) (*model.Device, error) {
 	v, err := o.redisCli.Get(redis.OnlineDeviceKey + pkg.FormatInt(uid))
-	if err != nil {
+	if err != nil && err != redis.Nil {
 		return nil, err
 	}
 	var m model.Device
