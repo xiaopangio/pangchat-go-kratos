@@ -2,9 +2,10 @@ import type {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Inter
 import axios from 'axios'
 import {checkToken} from "@/utils/check";
 import message from './message';
+import AppConfig from "@/config";
 
 const service: AxiosInstance = axios.create({
-    baseURL: 'http://127.0.0.1:8081/api/v1',
+    baseURL: AppConfig.api_base_url,
     timeout: 30000
 })
 
