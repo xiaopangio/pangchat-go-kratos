@@ -80,11 +80,11 @@ export class PangChatDatabase extends Dexie {
 
     constructor() {
         super('pangchat');
-        this.version(1).stores({
-            friendGroups: '++,name,uid',
+        this.version(3).stores({
+            friendGroups: '++,name,uid,[uid+name]',
             friendRequests: '++,uid,&request_id',
             images: "&name",
-            friends: '++,&[uid+friend_id],uid,friend_id',
+            friends: '++,&[uid+friend_id],uid,friend_id,[uid+group_name]',
             toolOptions: '++',
             messages: '++,[sender_id+receiver_id],[sender_id+receiver_id+send_at],&message_id',
             unreadMessageCounts: '++,&[uid+friend_id],uid,friend_id'

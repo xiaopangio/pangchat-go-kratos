@@ -1,0 +1,44 @@
+.data-set {
+  width: 100%;
+  height: 100vh;
+
+  .data-set-container {
+    height: 100%;
+    padding: 0 20px;
+    --item-height: 60px;
+
+    .data-set-item {
+      height: var(--item-height);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      border-bottom: 2px solid #ebebeb;
+
+      .data-set-item-title {
+        font-size: 17px;
+      }
+
+      .data-set-item-option {
+        height: 100%;
+      }
+
+      .inner-option {
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+        height: 100%;
+
+        .label {
+          height: 100%;
+          line-height: var(--item-height);
+        }
+
+        .arrow {
+          width: 30px;
+          height: 30px;
+        }
+      }
+    }
+  }
+}

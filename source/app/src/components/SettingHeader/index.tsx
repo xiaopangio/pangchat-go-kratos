@@ -1,14 +1,21 @@
 import "@/components/SettingHeader/index.less";
 import SvgIcon from "@/components/Icon";
 import {useEffect, useRef} from "react";
+import {useNavigate} from "react-router";
 
 type Props = {
-    back: () => void;
+    back?: () => void;
     title: string;
     color?: string;
     menu?: () => void;
 }
 export default function SettingHeader({title, back, menu, color = "#ededed"}: Props) {
+    let navigate = useNavigate();
+    if (!back) {
+        back = () => {
+            navigate(-1);
+        }
+    }
     const headerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         if (headerRef.current) {

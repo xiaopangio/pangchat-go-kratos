@@ -1,16 +1,18 @@
 import React from 'react'
-import ReactDOM from 'react-dom/client'
+import {createRoot} from 'react-dom/client'
 import "@/index.less"
-import {RouterProvider} from 'react-router-dom'
-import router from '@/routes/routes'
 import 'virtual:svg-icons-register'
-import {RecoilRoot} from "recoil";
 import "./service/service"
 import {InitConnection} from "@/service/service";
+import {RouterProvider} from "react-router-dom";
+import Router from "@/routes/routes";
+import {RecoilRoot} from "recoil";
 
 InitConnection()
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+let rootDom = document.getElementById('root') as HTMLElement
+let root = createRoot(rootDom)
+root.render(
     <RecoilRoot>
-        <RouterProvider router={router}/>
+        <RouterProvider router={Router}/>
     </RecoilRoot>
 )

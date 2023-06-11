@@ -38,8 +38,6 @@ service.interceptors.response.use((response: AxiosResponse) => {
         // 将组件用的数据返回
         return body
     } else {
-        // 处理业务错误。
-        message.error({content: message, duration: 2000})
         return Promise.reject(new Error(message))
     }
 }, (error: AxiosError) => {
@@ -64,7 +62,7 @@ service.interceptors.response.use((response: AxiosResponse) => {
         default:
             m = '网络连接故障'
     }
-    message.error({content: error.message, duration: 2000})
+    message.error({content: m, duration: 2000})
     return Promise.reject(error)
 })
 /* 导出封装的请求方法 */

@@ -1,0 +1,179 @@
+.group-manager {
+  height: 768px;
+  background: #f6f7fb;
+
+  .group-manager-add {
+    padding: 0 20px 0;
+    height: 54px;
+    background: #ffffff;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-bottom: 1px solid #ebebeb;
+
+
+    .group-manager-add-icon {
+      width: 40px;
+      height: 40px;
+      border: 1px dashed #959595;
+      border-radius: 10px;
+      color: #959595;
+      font-size: 30px;
+      margin-right: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .group-manager-add-text {
+      font-weight: 500;
+    }
+  }
+
+  .group-manager-item {
+    background: #ffffff;
+    padding: 0 20px 0;
+    box-sizing: border-box;
+    width: 100%;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ebebeb;
+
+    .group-manager-remove {
+      width: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+    }
+
+    .group-manager-item-content {
+      flex: 1;
+    }
+
+    .group-manager-item-drag {
+      width: 40px;
+      position: relative;
+
+      .group-manager-item-remove {
+        width: 0;
+        height: 30px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        //  禁止换行
+        white-space: nowrap;
+        overflow: hidden;
+        background: #fa6255;
+        color: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        line-height: 30px;
+        border-radius: 4px;
+        animation-duration: 0.5s;
+        animation-fill-mode: forwards;
+
+        .text {
+          position: absolute;
+          top: 50%;
+          right: 10px;
+          transform: translateY(-50%);
+        }
+      }
+
+      .group-manager-item-remove-active {
+        animation-name: expand;
+      }
+
+      .group-manager-item-remove-inactive {
+        animation-name: shrink;
+      }
+
+      @keyframes shrink {
+        0% {
+          width: 50px;
+          right: 0;
+        }
+        100% {
+          width: 0;
+          right: 0;
+        }
+      }
+      @keyframes expand {
+        0% {
+          width: 0;
+          right: 0;
+        }
+        100% {
+          width: 50px;
+          right: 0;
+        }
+      }
+    }
+  }
+
+  .group-manager-popper {
+    width: 260px;
+    border: none;
+    outline: none;
+    margin-top: 200px;
+    text-align: center;
+    border-radius: 10px;
+
+    .group-manager-popper-title {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .group-manager-add-popper-input {
+
+
+      margin-bottom: 20px;
+
+      label {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+
+      input {
+        width: 100%;
+        height: 40px;
+        outline: none;
+        border: 1px solid #ebebeb;
+        border-radius: 4px;
+        padding: 0 10px 0;
+        box-sizing: border-box;
+      }
+    }
+
+    .group-manager-popper-btn {
+      width: 100%;
+      height: 40px;
+      color: #ffffff;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      cursor: pointer;
+      margin-top: 20px;
+
+      .group-manager-popper-btn-cancel, .group-manager-popper-btn-ok {
+        width: 80px;
+        height: 30px;
+        background: #fa6255;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .group-manager-popper-btn-ok {
+        background: #4d7fff;
+      }
+    }
+  }
+}

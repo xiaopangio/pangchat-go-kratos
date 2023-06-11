@@ -31,6 +31,7 @@ import message from "@/utils/message";
 import ReactPullLoad, {STATS} from "react-pullload";
 import {MessagePageSize} from "@/declare/dialog";
 import {GetUnLoadMessageBefore} from "@/api/message";
+import {SlideInAnimation, SlideOutAnimation} from "@/utils/animation";
 
 function Dialogue() {
     let [friendId, setFriendId] = useRecoilState(currentDialogState)
@@ -56,6 +57,7 @@ function Dialogue() {
     const inputRef = useRef<HTMLDivElement>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const contentRef = useRef<HTMLDivElement>(null);
+    const dialogueRef = useRef<HTMLDivElement>(null);
     const [pullLoadAction] = useState(STATS.init);
     const [hasMore, setHasMore] = useState(true);
     const [isReloadMessage, setIsReloadMessage] = useState(false);
@@ -66,6 +68,10 @@ function Dialogue() {
     const [messageHeight, setMessageHeight] = useState(0);
     // scrollTop
     const [scrollTop, setScrollTop] = useState(1);
+    // slideIn动画
+    const slideInAnimation = SlideInAnimation();
+    // slideOut动画
+    const slideOutAnimation = SlideOutAnimation();
 
     enum LoadingMessage {
         Init = "",
@@ -312,7 +318,15 @@ function Dialogue() {
     }
     const back = () => {
         setFriendId("")
-        navigate(-1)
+        if (isNull(dialogueRef.current)) {
+            return
+        }
+        dialogueRef.current.animate(slideOutAnimation.keyframes, slideOutAnimation.options)
+        let duration = slideOutAnimation.options.duration as number
+        console.log(duration)
+        setTimeout(() => {
+            navigate(-1)
+        }, duration)
     }
     const menu = () => {
         console.log("menu")
@@ -440,7 +454,6 @@ function Dialogue() {
                 setIsReloadMessage(true)
                 break
         }
-
     }
     // 初始化current_user
     useEffect(() => {
@@ -450,6 +463,17 @@ function Dialogue() {
         InitOptions().then()
         ListenMsg()
     }, [])
+    // 添加进场动画
+    useEffect(() => {
+        if (isNull(dialogueRef.current)) {
+            return
+        }
+        dialogueRef.current.animate(
+            slideInAnimation.keyframes,
+            slideInAnimation.options
+        )
+    }, [dialogueRef]);
+
     // 初始化好友信息
     useEffect(() => {
         getFriendProfile().then()
@@ -471,7 +495,7 @@ function Dialogue() {
         initAvatar().then()
     }, [profile])
     return (
-        <div className="dialogue">
+        <div className="dialogue" ref={dialogueRef}>
             <SettingHeader title={getName()} back={back} color={"#ededed"} menu={menu}/>
             <div className="dialogue__content" onClick={CloseMore} ref={contentRef}>
                 <ReactPullLoad

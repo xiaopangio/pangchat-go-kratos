@@ -6,7 +6,7 @@ import SvgIcon from "@/components/Icon";
 import {GetAvatar} from "@/api/user";
 import {isNull, isUndefined} from "lodash";
 import {useRecoilState, useRecoilValue} from "recoil";
-import {currentDialogState, currentUserState, SearchUserState} from "@/store";
+import {currentDialogState, currentUserState, DataSetFriend, SearchUserState} from "@/store";
 import {DexieGetFriend, GetImg, StoreImg} from "@/utils/store";
 import {RefreshCurrentUser} from "@/utils/util";
 import {Friend} from "@/store/db";
@@ -19,6 +19,7 @@ function Profile() {
     const [isFriend, setIsFriend] = useState(false);
     const [friend, setFriend] = useState<Friend>();
     const [dialogState, setDialogState] = useRecoilState(currentDialogState)
+    const [, setDataSetFriend] = useRecoilState(DataSetFriend)
     const CheckIsFriend = async (uid: string, otherId: string) => {
         try {
             const res = await DexieGetFriend(uid, otherId)
@@ -87,9 +88,16 @@ function Profile() {
         setDialogState(profile?.user_id as string)
         navigate("/dialogue")
     }
+    const goToDataSet = () => {
+        if (isUndefined(friend)) {
+            return
+        }
+        setDataSetFriend(friend)
+        navigate("/dataSet")
+    }
     return (
         <div className="search-target">
-            <SettingHeader back={back} title=""/>
+            <SettingHeader back={back} title="" menu={goToDataSet}/>
             <div className="target-profile">
                 <img className="target-profile__avatar" alt="" src={imageData}/>
                 <div className="target-profile__box">

@@ -5,7 +5,7 @@ import Group from "@img/Group.png"
 import {useNavigate} from "react-router";
 import {useRecoilState} from "recoil";
 import {currentUserState, SearchUserState, UnreadFriendRequestCount} from "@/store";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {isNull, isUndefined} from "lodash";
 import {RefreshCurrentUser} from "@/utils/util";
 import {DexieAddFriends, DexieGetFriends, DexieGetImgList, DexieUpdateFriendInfo, StoreImg} from "@/utils/store";
@@ -26,7 +26,13 @@ function Contact() {
     const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
     const [friendGroups, setFriendGroups] = useState<FriendGroup[]>([]);
     const [avatarMap, setAvatarMap] = useState<Map<string, string>>(new Map<string, string>());
-    const [, setProfile] = useRecoilState(SearchUserState)
+    const [, setProfile] = useRecoilState(SearchUserState);
+    const longPressInterval = 600;
+    const longPressTimer = useRef<any>(null);
+    const [isShowPopper, setIsShowPopper] = useState(false);
+    const [pressGroupName, setPressGroupName] = useState("");
+    const dialogRef = useRef<HTMLDialogElement>(null);
+    let pressStartTime = 0;
     const InitData = async () => {
         if (isNull(currentUser)) {
             return
@@ -142,6 +148,55 @@ function Contact() {
         )
         navigate("/profile")
     }
+    //长按事件，弹出一个选项框，可以跳转到分组管理
+    const longPress = (group_name: string) => {
+        setPressGroupName(group_name)
+        dialogRef.current?.showModal()
+        dialogRef.current?.animate([
+            {transform: "translateY(100%)"},
+            {transform: "translateY(0)"}
+        ], {
+            duration: 200,
+            fill: "forwards"
+        })
+    }
+    const itemTouchStart = (group_name: string) => {
+        pressStartTime = new Date().getTime()
+        longPressTimer.current = setTimeout(() => {
+            longPress(group_name)
+        }, longPressInterval)
+    }
+    const itemTouchEnd = () => {
+        let endTime = new Date().getTime()
+        if (endTime - pressStartTime < longPressInterval) {
+            clearTimeout(longPressTimer.current)
+        }
+    }
+    const gotoFriendGroupManage = () => {
+        dialogRef.current?.close()
+        navigate("/groupManager")
+    }
+    const closePopper = () => {
+        if (isNull(dialogRef.current)) {
+            return
+        }
+        dialogRef.current.animate([
+            {transform: "translateY(0)"},
+            {transform: "translateY(100%)"}
+        ], {
+            duration: 200,
+            fill: "forwards"
+        })
+        setTimeout(() => {
+            dialogRef.current?.close()
+        }, 200)
+    }
+    const handleClose = (event: any) => {
+        event.preventDefault();
+        if (event.target === dialogRef.current) {
+            closePopper()
+        }
+    }
     return (
         <div className="contact">
             <HomeHeader title="通讯录"/>
@@ -171,7 +226,9 @@ function Contact() {
                 friendGroups.map((group) => {
                     return (
                         <div className="contact-list" key={group.group_name}>
-                            <div className="contact-header">
+                            <div className="contact-header" onTouchStart={() => {
+                                itemTouchStart(group.group_name)
+                            }} onTouchEnd={itemTouchEnd}>
                                 {group.group_name}
                             </div>
                             {
@@ -194,6 +251,17 @@ function Contact() {
                     )
                 })
             }
+            <dialog ref={dialogRef} className="contact-popper" onClick={handleClose}>
+                <div className="contact-popper-item gray">
+                    设置好友权限"{pressGroupName}"
+                </div>
+                <div className="contact-popper-item">设置好友权限</div>
+
+                <div className="contact-popper-item bottom-shadow" onClick={gotoFriendGroupManage}>
+                    分组管理
+                </div>
+                <div className="contact-popper-item mt" onClick={closePopper}>取消</div>
+            </dialog>
         </div>
     )
 }

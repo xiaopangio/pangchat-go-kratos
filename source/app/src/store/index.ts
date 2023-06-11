@@ -79,3 +79,7 @@ export const FriendsMap = atom<Map<string, Friend>>({
     key: "FriendsMap",
     default: new Map<string, Friend>()
 })
+export const DataSetFriend = atom<Friend | null>({
+    key: "ProfileSettingInfo",
+    default: null
+})

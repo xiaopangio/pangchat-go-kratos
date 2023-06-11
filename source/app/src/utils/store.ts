@@ -1,5 +1,5 @@
 import {User} from "@/declare/type";
-import {db, Friend, FriendRequest, image, Message, MessageCountType, ToolOption} from "@/store/db";
+import {db, Friend, FriendGroup, FriendRequest, image, Message, MessageCountType, ToolOption} from "@/store/db";
 import storage from "@/utils/storage";
 import {isEmpty} from "fast-glob/out/utils/string";
 
@@ -72,7 +72,7 @@ export async function DexieGetImgList(names: string[]) {
     })
 }
 
-export async function GetFriendGroup(uid: string) {
+export async function DexieGetFriendGroup(uid: string) {
     return new Promise<string[]>((resolve, reject) => {
         db.friendGroups.where('uid').equals(uid).toArray().then((res) => {
             if (res) {
@@ -82,6 +82,16 @@ export async function GetFriendGroup(uid: string) {
             } else {
                 reject("没有找到")
             }
+        }, () => {
+            reject("")
+        })
+    })
+}
+
+export async function DexieStoreFriendGroups(groups: FriendGroup[]) {
+    return new Promise<string>((resolve, reject) => {
+        db.friendGroups.bulkPut(groups).then((res) => {
+            resolve("添加成功")
         }, () => {
             reject("")
         })
@@ -418,4 +428,34 @@ export async function DexieGetUnreadMessagesCounts(uid: string) {
             reject("没有找到")
         })
     })
+}
+
+export async function DexieStoreFriendGroup(uid: string, groupName: string) {
+    return new Promise<string>((resolve, reject) => {
+        db.friendGroups.add({uid: uid, name: groupName}).then(() => {
+            resolve("添加成功")
+        }, () => {
+            reject("添加失败")
+        })
+    })
+}
+
+export async function DexieUpdateFriendGroup(uid: string, oldGroupName: string, newGroupName: string) {
+    try {
+        await db.friendGroups.where('[uid+name]').equals([uid, oldGroupName]).modify({name: newGroupName})
+        await db.friends.where('[uid+group_name]').equals([uid, oldGroupName]).modify({group_name: newGroupName})
+        return "更新成功"
+    } catch (e) {
+        return "更新失败"
+    }
+}
+
+export async function DexieDeleteFriendGroup(uid: string, groupName: string) {
+    try {
+        await db.friendGroups.where('[uid+name]').equals([uid, groupName]).delete()
+        await db.friends.where('[uid+group_name]').equals([uid, groupName]).modify({group_name: "我的好友"})
+        return "删除成功"
+    } catch (e) {
+        return "删除失败"
+    }
 }

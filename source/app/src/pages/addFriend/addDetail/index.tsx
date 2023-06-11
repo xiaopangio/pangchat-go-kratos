@@ -7,7 +7,7 @@ import {currentUserState, GroupName, GroupNames, SearchUserState} from "@/store"
 import {useEffect, useState} from "react";
 import {GetFriendGroupList, SendFriendRequest} from "@/api/friend";
 import {db, FriendGroup} from "@/store/db";
-import {GetFriendGroup} from "@/utils/store";
+import {DexieGetFriendGroup} from "@/utils/store";
 import {useRefreshUser} from "@/hooks/refreshUser";
 
 export function GetGroupNames(uid: string, onSuccess: (res: string[]) => void) {
@@ -36,7 +36,7 @@ function AddDetail() {
         if (groupNames.length > 0) {
             return
         }
-        GetFriendGroup(currentUser.uid).then((res) => {
+        DexieGetFriendGroup(currentUser.uid).then((res) => {
             if (res && res.length > 0) {
                 setGroupNames(res)
                 setGroupName(res[0])

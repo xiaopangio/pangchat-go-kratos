@@ -43,7 +43,7 @@ const routes: RouteObject[] = [
         ]
     },
     {
-        path: "setting",
+        path: "/setting",
         element: lazyLoadPage("setting"),
         children: [
             {
@@ -94,6 +94,10 @@ const routes: RouteObject[] = [
         element: lazyLoadPage("addFriend/chooseGroup"),
     },
     {
+        path: "/groupManager",
+        element: lazyLoadPage("contact/groupManager"),
+    },
+    {
         path: "/newFriends",
         element: lazyLoadPage("contact/newFriends"),
     },
@@ -112,7 +116,12 @@ const routes: RouteObject[] = [
     {
         path: "/musicPlayer",
         element: lazyLoadPage("musicPlayer"),
+    },
+    {
+        path: "/dataSet",
+        element: lazyLoadPage("Profile/dataSet"),
     }
+
 ]
-const router = createBrowserRouter(routes);
-export default router;
+const Router = createBrowserRouter(routes);
+export default Router;

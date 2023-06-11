@@ -5,16 +5,15 @@ import SettingHeader from "@/components/SettingHeader";
 import {useNavigate} from "react-router";
 import SvgIcon from "@/components/Icon";
 import {useEffect, useState} from "react";
-import {GetFriendGroup, UpdateFriendRequestStatus} from "@/utils/store";
+import {DexieGetFriendGroup, UpdateFriendRequestStatus} from "@/utils/store";
 import {GetGroupNames} from "@/pages/addFriend/addDetail";
 import {useRefreshUser} from "@/hooks/refreshUser";
 import {DealFriendRequestData} from "@/api/friend/types";
 import {DealFriendRequestApi} from "@/api/friend";
-import { db } from "@/store/db";
 import {isNull} from "lodash";
 
 function DealFriendRequest() {
-    const [currentDealFriendRequest, ] = useRecoilState(CurrentDealFriendRequest)
+    const [currentDealFriendRequest,] = useRecoilState(CurrentDealFriendRequest)
     let navigate = useNavigate();
     const [friendsPermissions, setFriendsPermissions] = useState("all");
     const [noteName, setNoteName] = useState("");
@@ -29,7 +28,7 @@ function DealFriendRequest() {
         if (groupName) {
             return
         }
-        GetFriendGroup(currentUser.uid).then((res) => {
+        DexieGetFriendGroup(currentUser.uid).then((res) => {
             if (res && res.length > 0) {
                 setGroupNames(res)
                 setGroupName(res[0])
@@ -51,9 +50,9 @@ function DealFriendRequest() {
     const chooseGroup = () => {
         navigate("/chooseGroup")
     }
-    const handleDealFriendRequest = async (status:number) => {
+    const handleDealFriendRequest = async (status: number) => {
         // 1:同意 2:拒绝
-        let data:DealFriendRequestData = {
+        let data: DealFriendRequestData = {
             request_id: currentDealFriendRequest?.request_id as string,
             status: 0,
             note_name: "",
@@ -61,9 +60,9 @@ function DealFriendRequest() {
         }
         if (status === 1) {
             data.status = 1
-            if (noteName){
+            if (noteName) {
                 data.note_name = noteName
-            }else {
+            } else {
                 data.note_name = currentDealFriendRequest?.nick_name as string
             }
             data.group_name = groupName
@@ -72,13 +71,13 @@ function DealFriendRequest() {
         }
         try {
             await DealFriendRequestApi(data)
-            if (isNull(currentDealFriendRequest)){
+            if (isNull(currentDealFriendRequest)) {
                 return
             }
-            const res=await UpdateFriendRequestStatus(currentDealFriendRequest.request_id,status)
+            const res = await UpdateFriendRequestStatus(currentDealFriendRequest.request_id, status)
             console.log(res)
             navigate("/newFriends")
-        }catch (e){
+        } catch (e) {
             console.log(e)
         }
     }
@@ -94,7 +93,8 @@ function DealFriendRequest() {
                 </div>
                 <div className="list margin-bottom">
                     <div className="item">
-                        <input type="text" placeholder={currentDealFriendRequest?.nick_name} value={noteName} onInput={inputNoteName}/>
+                        <input type="text" placeholder={currentDealFriendRequest?.nick_name} value={noteName}
+                               onInput={inputNoteName}/>
                     </div>
                     <div className="text-box">
                         <span className="text1">{`"${currentDealFriendRequest?.desc}"`}</span>
@@ -135,10 +135,14 @@ function DealFriendRequest() {
                 </div>
             </div>
             <div className="footer">
-                <div className="footer-btn red" onClick={async ()=>{await handleDealFriendRequest(2)}}>
+                <div className="footer-btn red" onClick={async () => {
+                    await handleDealFriendRequest(2)
+                }}>
                     拒绝
                 </div>
-                <div className="footer-btn" onClick={async ()=>{await handleDealFriendRequest(1)}}>
+                <div className="footer-btn" onClick={async () => {
+                    await handleDealFriendRequest(1)
+                }}>
                     完成
                 </div>
             </div>
