@@ -2,7 +2,7 @@ build:
 	#保存bin目录
 	mkdir -p bin
 	#变量保存bin目录路径
-	BIN_DIR=$(shell pwd)/bin
+	BIN_DIR=$(shell pwd)/bin/
 	cd api-gateway/cmd/api-gateway/ && go build . && mv api-gateway $(BIN_DIR)
 	cd connector/cmd/connector/ && go build . && mv connector $(BIN_DIR)
 	cd job/cmd/job/ && go build . && mv job $(BIN_DIR)
