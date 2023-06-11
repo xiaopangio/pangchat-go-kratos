@@ -14,20 +14,20 @@ from bs4 import BeautifulSoup
 singers = ['蔡徐坤', '周杰伦', '张学友', '王菲', '林忆莲', '张靓颖', '范晓萱', '陈奕迅', '林俊杰', '罗志祥', '蔡依林']
 search_url = "http://www.44h4.com/so/"  # 标准格式 "http://www.44h4.com/so/邓紫棋.html"
 base_url = "http://www.44h4.com"
-access_key = "LTAI5t5wsegQbfbzDqCiAKzC"
-access_secret = "Frip75apOT2kdzhXW3SfWWUZVWOkv4"
-role_arn = "acs:ram::1853932617531012:role/ramoss"
-role_session_name = "pangchat-sts"
-oss_endpoint = "oss-cn-beijing.aliyuncs.com"
-sts_endpoint = "sts.cn-beijing.aliyuncs.com"
+access_key = "xxx"
+access_secret = "xxx"
+role_arn = "xxx"
+role_session_name = "xxxx"
+oss_endpoint = "xxxxxx"
+sts_endpoint = "xxxxxx"
 oss_bucket_name = "pangchat-media"
 # 定义全局bucket对象
 bucket = None
-user = 'root'
-password = 'password'
-host = '43.143.137.232'
-port = 3307
-database = 'pangchat'
+user = 'xxxxx'
+password = 'xxx'
+host = 'xxxxx'
+port = xxxxx
+database = 'xxxxxx'
 cursor = None
 conn = None
 
