@@ -31,7 +31,13 @@ make run 会打包并运行所有服务。
 make stop 会停止所有服务。
 make start 会重启所有服务。
 ```
-
+### 前端构建
+前端使用vite构建
+```
+yarn add 
+vite dev 使用开发环境运行
+vite build 进行打包
+```
 
 
 
