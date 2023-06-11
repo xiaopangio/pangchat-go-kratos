@@ -45,7 +45,7 @@ func (o *OnlineBiz) UnregisterDevice(ctx context.Context, uid int64) error {
 
 func (o *OnlineBiz) GetOnlineDevice(ctx context.Context, uid int64) (*model.Device, error) {
 	v, err := o.redisCli.Get(redis.OnlineDeviceKey + pkg.FormatInt(uid))
-	if err != nil && err != redis.Nil {
+	if err != nil {
 		return nil, err
 	}
 	var m model.Device
@@ -59,7 +59,7 @@ func (o *OnlineBiz) GetOnlineDevice(ctx context.Context, uid int64) (*model.Devi
 
 func (o *OnlineBiz) GetOnlineDevices(ctx context.Context) ([]*online.OnlineDevice, error) {
 	values, err := o.redisCli.GetPrefix(redis.OnlineDeviceKey)
-	if err != nil && err != redis.Nil {
+	if err != nil {
 		o.helper.Errorf("redis get prefix failed: %v", err)
 		return nil, err
 	}
