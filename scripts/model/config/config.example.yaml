@@ -1,0 +1,5 @@
+mysql:
+  root: xxx
+  password: xxx
+  host: xxx:port
+  dbName: xxx
