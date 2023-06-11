@@ -14,11 +14,11 @@ build:
 run:
 	make build
 	#运行
-	$(BIN_DIR)/api-gateway -conf ./api-gateway/config/config.yaml&
-	$(BIN_DIR)/connector -conf ./connector/config/config.yaml&
-	$(BIN_DIR)/job -conf ./job/config/config.yaml&
-	$(BIN_DIR)/logic -conf ./logic/logic/config/config.yaml&
-	$(BIN_DIR)/message -conf ./logic/message/config/config.yaml&
-	$(BIN_DIR)/relationship -conf ./logic/relationship/config/config.yaml&
-	$(BIN_DIR)/user -conf ./logic/user/config/config.yaml&
-	$(BIN_DIR)/online -conf ./online/config/config.yaml&
+	$(BIN_DIR)/api-gateway -conf ./api-gateway/configs/config.yaml&
+	$(BIN_DIR)/connector -conf ./connector/configs/config.yaml&
+	$(BIN_DIR)/job -conf ./job/configs/config.yaml&
+	$(BIN_DIR)/logic -conf ./logic/logic/configs/config.yaml&
+	$(BIN_DIR)/message -conf ./logic/message/configs/config.yaml&
+	$(BIN_DIR)/relationship -conf ./logic/relationship/configs/config.yaml&
+	$(BIN_DIR)/user -conf ./logic/user/configs/config.yaml&
+	$(BIN_DIR)/online -conf ./online/configs/config.yaml&
