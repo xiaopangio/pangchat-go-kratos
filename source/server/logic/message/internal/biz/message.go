@@ -49,6 +49,18 @@ func BuildMessageKeyPrefix(uid string) string {
 func (b *MessageBiz) DealSingleMessage(ctx context.Context, msg *universal.Message) error {
 	messageId := b.snowSlakeNode.Generate()
 	msg.MessageId = messageId.String()
+	key := BuildMessageKey(msg.ReceiverId, msg.SenderId)
+	if _, err := b.redisCli.Get(key); err != nil {
+		if err == redis.Nil {
+			//之前的消息确认由于异常原因丢失，构建redis key
+			s := BuildMessage(msg.SenderId, pkg.FormatInt(messageId.Int64()-1))
+			if err := b.redisCli.Set(key, s, 0); err != nil {
+				return err
+			}
+		} else {
+			b.helper.Errorf("get redis message error: %v", err)
+		}
+	}
 	if err := b.broker.Publish(b.mqConfig.MessageTopic, msg); err != nil {
 		b.helper.Errorf("publish message error: %v", err)
 		return pkg.InternalError("publish message error")
