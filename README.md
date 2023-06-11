@@ -12,8 +12,8 @@ pangchat是一款仿微信的聊天应用，但是也不仅只是一个聊天工
 ```
 cd build/docker #进入docker目录
 docker-compose up -d #docker-compose启动
-#搭建mysql数据库
-cd 
+#进入mysql容器，搭建库环境
+pangchat.sql为sql源文件。
 ```
 ### 服务配置
 source/server 目录下为各服务的源码，需要进入到每个服务代码中，将config.yaml配置好，例如
@@ -21,7 +21,16 @@ source/server 目录下为各服务的源码，需要进入到每个服务代码
 cd source/server/api-gateway/configs
 cp config.example.yaml config.yaml 
 vim config.yaml 
-
+........
+```
+### 服务启动
+```
+cd source/server
+make build 会打包所有服务，放在bin目录下。
+make run 会打包并运行所有服务。
+make stop 会停止所有服务。
+make start 会重启所有服务。
+```
 
 
 
