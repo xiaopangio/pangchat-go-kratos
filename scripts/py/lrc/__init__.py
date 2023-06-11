@@ -11,12 +11,11 @@ singers = []
 # tempid: 1, tbname: 'lrc', mid: 1, dopost: 'search'}
 search_url = 'http://www.dsod.cn/e/search/'
 # 初始化数据库连接
-# pangchat:password@tcp(43.143.137.232:3307)/pangchat
-user = 'root'
-password = 'password'
-host = '43.143.137.232'
-port = 3307
-database = 'pangchat'
+user = 'xxxx'
+password = 'xxxx'
+host = 'xxxx'
+port = xx
+database = 'xxxxxx'
 conn = mysql.connector.connect(user=user, password=password, host=host, port=port, database=database)
 cursor = conn.cursor()
 last_unfinished_singer_name = ''
