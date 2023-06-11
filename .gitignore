@@ -1,2 +1,4 @@
 .idea/
 build/docker/data/
+#忽略所有目录下config.yaml
+**/config.yaml
