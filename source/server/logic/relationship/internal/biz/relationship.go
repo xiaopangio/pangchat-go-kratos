@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
 	"relationship/api/v1/message"
@@ -252,15 +253,29 @@ func (b *RelationshipBiz) CreateFriendGroup(ctx context.Context, id int64, name 
 }
 
 func (b *RelationshipBiz) UpdateFriendGroup(ctx context.Context, id int64, name, newName string) error {
+	if name == newName {
+		err := fmt.Errorf("新旧分组名不能相同, name: %s, newName: %s", name, newName)
+		b.helper.Errorf(err.Error())
+		return pkg.InvalidArgumentError(err.Error())
+	}
+	if name == pkg.DefaultFriendGroup {
+		err := fmt.Errorf("默认分组不可修改")
+		b.helper.Errorf(err.Error())
+		return pkg.InvalidArgumentError(err.Error())
+	}
 	err := b.repo.UpdateFriendGroup(ctx, id, name, newName)
 	if err != nil {
-		b.helper.Errorf("update friend group error: %v", err)
-		return err
+		return pkg.InternalError(err.Error())
 	}
 	return nil
 }
 
 func (b *RelationshipBiz) DeleteFriendGroup(ctx context.Context, userId int64, groupName string) error {
+	if groupName == pkg.DefaultFriendGroup {
+		err := fmt.Errorf("默认分组不可删除")
+		b.helper.Errorf(err.Error())
+		return pkg.InvalidArgumentError(err.Error())
+	}
 	err := b.repo.DeleteFriendGroup(ctx, userId, groupName)
 	if err != nil {
 		b.helper.Errorf("delete friend group error: %v", err)

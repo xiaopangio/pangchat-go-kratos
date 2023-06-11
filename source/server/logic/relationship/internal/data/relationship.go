@@ -631,26 +631,24 @@ func (r *RelationshipRepoImpl) UpdateFriendGroup(ctx context.Context, uid int64,
 				tx.FriendGroup.UserID.Eq(uid),
 				tx.FriendGroup.GroupName.Eq(groupName),
 			).
-			Updates(&model.FriendGroup{
-				GroupName: newGroupName,
-			})
+			Update(tx.FriendGroup.GroupName, newGroupName)
 		if err != nil {
 			r.helper.Errorf(pkg.SqlErrorFormat, err)
 			return pkg.GenFuncError("data.UpdateFriendGroup")
 		}
+		r.helper.Infof("更新好友表中的分组名,uid:%d,groupName:%s,newGroupName:%s", uid, groupName, newGroupName)
 		//更新好友表中的分组名
 		_, err = tx.Friend.WithContext(ctx).
 			Where(
 				tx.Friend.UserID.Eq(uid),
 				tx.Friend.GroupName.Eq(groupName),
 			).
-			Updates(&model.Friend{
-				GroupName: newGroupName,
-			})
+			Update(tx.FriendGroup.GroupName, newGroupName)
 		if err != nil {
 			r.helper.Errorf(pkg.SqlErrorFormat, err)
 			return pkg.GenFuncError("data.UpdateFriendGroup")
 		}
+		r.helper.Info("更新好友表中的分组名成功")
 		return nil
 	})
 	if err != nil {
