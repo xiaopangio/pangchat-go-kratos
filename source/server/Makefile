@@ -12,12 +12,13 @@ build:
 	cd logic/user/cmd/user/ && go build . && mv user $(BIN_DIR)
 	cd online/cmd/online/ && go build . && mv online $(BIN_DIR)
 run:
+	make build
 	#运行
-	$(BIN_DIR)/api-gateway -conf ./api-gateway/conf/config.yaml&
-	$(BIN_DIR)/connector -conf ./connector/conf/config.yaml&
-	$(BIN_DIR)/job -conf ./job/conf/config.yaml&
-	$(BIN_DIR)/logic -conf ./logic/logic/conf/config.yaml&
-	$(BIN_DIR)/message -conf ./logic/message/conf/config.yaml&
-	$(BIN_DIR)/relationship -conf ./logic/relationship/conf/config.yaml&
-	$(BIN_DIR)/user -conf ./logic/user/conf/config.yaml&
-	$(BIN_DIR)/online -conf ./online/conf/config.yaml&
+	$(BIN_DIR)/api-gateway -conf ./api-gateway/config/config.yaml&
+	$(BIN_DIR)/connector -conf ./connector/config/config.yaml&
+	$(BIN_DIR)/job -conf ./job/config/config.yaml&
+	$(BIN_DIR)/logic -conf ./logic/logic/config/config.yaml&
+	$(BIN_DIR)/message -conf ./logic/message/config/config.yaml&
+	$(BIN_DIR)/relationship -conf ./logic/relationship/config/config.yaml&
+	$(BIN_DIR)/user -conf ./logic/user/config/config.yaml&
+	$(BIN_DIR)/online -conf ./online/config/config.yaml&
