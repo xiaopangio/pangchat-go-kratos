@@ -22,3 +22,8 @@ run:
 	$(BIN_DIR)/relationship -conf ./logic/relationship/configs/config.yaml&
 	$(BIN_DIR)/user -conf ./logic/user/configs/config.yaml&
 	$(BIN_DIR)/online -conf ./online/configs/config.yaml&
+restart:
+	pkill -9 -f "$(BIN_DIR)"
+	make run
+stop:
+	pkill -9 -f "$(BIN_DIR)"
