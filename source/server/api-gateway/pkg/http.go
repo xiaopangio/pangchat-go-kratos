@@ -23,6 +23,9 @@ func Fail(c *gin.Context, err error) {
 func FailMessage(c *gin.Context, message string) {
 	c.JSON(http.StatusBadRequest, gin.H{"code": -1, "message": message})
 }
+func SuccessCodeMessage(c *gin.Context, code int, message string) {
+	c.JSON(http.StatusOK, gin.H{"code": code, "message": message})
+}
 func SuccessMessage(c *gin.Context, message string) {
 	c.JSON(http.StatusOK, gin.H{"code": 0, "message": message})
 }
