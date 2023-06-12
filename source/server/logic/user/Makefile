@@ -41,9 +41,9 @@ api:
  	       --go_out=paths=source_relative:./api \
  	       --go-http_out=paths=source_relative:./api \
  	       --go-grpc_out=paths=source_relative:./api \
- 	       --validate_out=paths=source_relative,lang=go:./api \
 	       --openapi_out=fq_schema_naming=true,default_response=false:. \
 	       $(API_PROTO_FILES)
+
 .PHONY: build
 # build
 build:
@@ -62,7 +62,8 @@ all:
 	make api;
 	make config;
 	make generate;
-# generate validate proto
+
+# show help
 help:
 	@echo ''
 	@echo 'Usage:'
@@ -80,4 +81,3 @@ help:
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
 .DEFAULT_GOAL := help
-.PHONY: validate

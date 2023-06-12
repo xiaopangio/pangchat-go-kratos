@@ -11,8 +11,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
 
-func NewLogicClient(registry *registry.LogicRegistry, logger *log.Helper, bc *conf.Bootstrap) (logic.LogicClient, error) {
-	cf := bc.Service
+func NewLogicClient(registry *registry.LogicRegistry, logger *log.Helper, cf *conf.Service) (logic.LogicClient, error) {
 	version := filter.Version("1.0")
 	conn, err := grpc.DialInsecure(
 		context.Background(),

@@ -11,8 +11,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
 
-func NewMessageClient(registry *registry.MessageRegistry, logger *log.Helper, bc *conf.Bootstrap) (message.MessageServiceClient, error) {
-	cf := bc.Service
+func NewMessageClient(registry *registry.MessageRegistry, logger *log.Helper, cf *conf.Service) (message.MessageServiceClient, error) {
 	version := filter.Version("1.0")
 	conn, err := grpc.DialInsecure(
 		context.Background(),

@@ -6,47 +6,41 @@ server:
   name: job
   version: "1.0"
   environment: "dev"
-config:
-  group: "pangchat"
-  data_id: "job.yaml"
-nacos:
+service:
+  logic_service: logic_logic
+  connector_service: connector
+  job_service: job
+  relationship_service: logic_relationship
+  online_service: online
+  user_service: logic_user
+  message_service: logic_message
+kafka:
   addrs:
-    - x.x.x.x:port #nacos开放端口
-#service:
-#  logic_service: logic_logic
-#  connector_service: connector
-#  job_service: job
-#  relationship_service: logic_relationship
-#  online_service: online
-#  user_service: logic_user
-#  message_service: logic_message
-#kafka:
-#  addrs:
-#    - x.x.x.x:port #kafka地址
-#discovery:
-#  etcd:
-#    addrs:
-#      - x.x.x.x:port #etcd地址
-#registry:
-#  etcd:
-#    addrs:
-#      - x.x.x.x:port #etcd地址
-#message_queue:
-#  friend_request_topic: friend_request
-#  friend_request_group: friend_request_group
-#  connect_topic: connect
-#  connect_group: connect_group
-#  friend_topic: friend
-#  friend_group: friend_group
-#  message_topic: message
-#  message_group: message_group
-#data:
-#  redis:
-#    addr: x.x.x.x:port #redis地址
-#    password: xxx #redis密码
-#    db: 0
-#    pool_size: 100
-#    min_idle_conns: 10
-#    max_retries: 3
-#    read_timeout: 0.6s
-#    write_timeout: 0.6s
+    - x.x.x.x:port #kafka地址
+discovery:
+  etcd:
+    addrs:
+      - x.x.x.x:port #etcd地址
+registry:
+  etcd:
+    addrs:
+      - x.x.x.x:port #etcd地址
+message_queue:
+  friend_request_topic: friend_request
+  friend_request_group: friend_request_group
+  connect_topic: connect
+  connect_group: connect_group
+  friend_topic: friend
+  friend_group: friend_group
+  message_topic: message
+  message_group: message_group
+data:
+  redis:
+    addr: x.x.x.x:port #redis地址
+    password: xxx #redis密码
+    db: 0
+    pool_size: 100
+    min_idle_conns: 10
+    max_retries: 3
+    read_timeout: 0.6s
+    write_timeout: 0.6s

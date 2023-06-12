@@ -11,8 +11,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
 
-func NewRelationshipClient(registry *registry.RelationshipRegistry, logger *log.Helper, bc *conf.Bootstrap) (relationship.RelationShipClient, error) {
-	cf := bc.Service
+func NewRelationshipClient(registry *registry.RelationshipRegistry, logger *log.Helper, cf *conf.Service) (relationship.RelationShipClient, error) {
 	version := filter.Version("1.0")
 	conn, err := grpc.DialInsecure(
 		context.Background(),

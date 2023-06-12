@@ -2,7 +2,6 @@ package redis
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/redis/go-redis/v9"
 	"time"
@@ -18,7 +17,6 @@ type Redis struct {
 
 func NewRedisClient(cf *conf.Bootstrap, helper *log.Helper) *Redis {
 	redisCf := cf.Data
-	fmt.Printf("redis config: %+v\n", redisCf)
 	client := redis.NewClient(&redis.Options{
 		Addr:         redisCf.Redis.Addr,
 		Password:     redisCf.Redis.Password,

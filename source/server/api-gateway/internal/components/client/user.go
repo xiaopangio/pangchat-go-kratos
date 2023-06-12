@@ -13,8 +13,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
 
-func NewUserClient(registry *registry.UserRegistry, logger *log.Helper, bc *conf.Bootstrap) (user.UserClient, error) {
-	cf := bc.Service
+func NewUserClient(registry *registry.UserRegistry, logger *log.Helper, cf *conf.Service) (user.UserClient, error) {
 	version := filter.Version("1.0")
 	selector.SetGlobalSelector(wrr.NewBuilder())
 	conn, err := grpc.DialInsecure(

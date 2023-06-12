@@ -52,7 +52,7 @@ type ResetPasswordResponse struct {
 // ModifyAccountIDRequest 修改账户ID请求
 type ModifyAccountIDRequest struct {
 	Uid       string `json:"uid" binding:"required" label:"UID"`
-	AccountId string `json:"account_id" binding:"required,min=8,max=25" label:"accountId"`
+	AccountId string `json:"account_id" binding:"required" label:"accountId"`
 }
 
 // ModifyAccountIDResponse 修改账户ID响应
@@ -99,8 +99,7 @@ type AddressListResponse struct {
 
 // BindPhoneRequest 绑定手机号请求
 type BindPhoneRequest struct {
-	Phone   string `json:"phone" binding:"required,len=11" label:"手机号"`
-	SmsCode string `json:"code" binding:"required,len=4" label:"验证码"`
+	Phone string `json:"phone" binding:"required" label:"手机号"`
 }
 
 // VerifyCodeRequest 验证验证码请求

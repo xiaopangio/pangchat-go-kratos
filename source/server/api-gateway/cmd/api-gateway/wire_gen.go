@@ -30,50 +30,50 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func(), error) {
+func wireApp(confServer *conf.Server, confRegistry *conf.Registry, service *conf.Service, jwt *conf.Jwt, logLogger log.Logger) (*kratos.App, func(), error) {
 	helper := logger.NewHelper(logLogger)
-	jwtManager := auth.NewJwtManager(bootstrap)
-	clientv3Client, err := registry.NewEtcdClient(bootstrap, helper)
+	jwtManager := auth.NewJwtManager(jwt)
+	clientv3Client, err := registry.NewEtcdClient(confRegistry, confServer, helper)
 	if err != nil {
 		return nil, nil, err
 	}
-	messageRegistry := registry.NewMessageRegistry(bootstrap, clientv3Client)
-	messageServiceClient, err := client.NewMessageClient(messageRegistry, helper, bootstrap)
+	messageRegistry := registry.NewMessageRegistry(service, clientv3Client)
+	messageServiceClient, err := client.NewMessageClient(messageRegistry, helper, service)
 	if err != nil {
 		return nil, nil, err
 	}
 	message := service_message.NewMessage(helper, jwtManager, messageServiceClient)
-	userRegistry := registry.NewEtcdUserRegistry(bootstrap, clientv3Client)
-	userClient, err := client.NewUserClient(userRegistry, helper, bootstrap)
+	userRegistry := registry.NewEtcdUserRegistry(service, clientv3Client)
+	userClient, err := client.NewUserClient(userRegistry, helper, service)
 	if err != nil {
 		return nil, nil, err
 	}
 	userService := service_user.NewUserService(userClient, helper, jwtManager)
-	connectorRegistry := registry.NewEtcdConnectorRegistry(bootstrap, clientv3Client)
-	connectorServiceClient, err := client.NewConnectorClient(connectorRegistry, helper, bootstrap)
+	connectorRegistry := registry.NewEtcdConnectorRegistry(service, clientv3Client)
+	connectorServiceClient, err := client.NewConnectorClient(connectorRegistry, helper, service)
 	if err != nil {
 		return nil, nil, err
 	}
 	connectorService := service_connector.NewConnectorService(connectorServiceClient, helper, jwtManager)
-	logicRegistry := registry.NewEtcdLogicRegistry(bootstrap, clientv3Client)
-	logicClient, err := client.NewLogicClient(logicRegistry, helper, bootstrap)
+	logicRegistry := registry.NewEtcdLogicRegistry(service, clientv3Client)
+	logicClient, err := client.NewLogicClient(logicRegistry, helper, service)
 	if err != nil {
 		return nil, nil, err
 	}
 	logicService := service_logic.NewLogicService(logicClient, helper, jwtManager)
-	relationshipRegistry := registry.NewEtcdRelationshipRegistry(bootstrap, clientv3Client)
-	relationShipClient, err := client.NewRelationshipClient(relationshipRegistry, helper, bootstrap)
+	relationshipRegistry := registry.NewEtcdRelationshipRegistry(service, clientv3Client)
+	relationShipClient, err := client.NewRelationshipClient(relationshipRegistry, helper, service)
 	if err != nil {
 		return nil, nil, err
 	}
 	relationship := service_relationship.NewRelationship(helper, relationShipClient, jwtManager)
-	onlineRegistry := registry.NewOnlineRegistry(bootstrap, clientv3Client)
-	onlineClient, err := client.NewOnlineClient(onlineRegistry, helper, bootstrap)
+	onlineRegistry := registry.NewOnlineRegistry(service, clientv3Client)
+	onlineClient, err := client.NewOnlineClient(onlineRegistry, helper, service)
 	if err != nil {
 		return nil, nil, err
 	}
 	online := service_online.NewOnline(helper, jwtManager, onlineClient)
-	httpServer := server.NewHTTPServer(bootstrap, message, userService, connectorService, logicService, relationship, online)
+	httpServer := server.NewHTTPServer(confServer, message, userService, connectorService, logicService, relationship, online)
 	app := newApp(logLogger, httpServer)
 	return app, func() {
 	}, nil
