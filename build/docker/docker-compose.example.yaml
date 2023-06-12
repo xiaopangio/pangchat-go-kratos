@@ -18,10 +18,10 @@ services:
       - "3307"
       - "33070"
     environment:
-      MYSQL_DATABASE: "pangchat"
-      MYSQL_USER: "pangchat"
-      MYSQL_PASSWORD: "password"
-      MYSQL_ROOT_PASSWORD: "password"
+      MYSQL_DATABASE: "xxxx"
+      MYSQL_USER: "xxxx"
+      MYSQL_PASSWORD: "xxxxx"
+      MYSQL_ROOT_PASSWORD: "xxxx"
     volumes:
       - ./data/mysql:/var/lib/mysql
   redis:
@@ -73,7 +73,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181
       KAFKA_BROKER_ID: 1
       KAFKA_LISTENERS: PLAINTEXT://:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://43.143.137.232:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://x.x.x.x:9092
       ALLOW_PLAINTEXT_LISTENER: 'yes'
     depends_on:
       - zoo1
