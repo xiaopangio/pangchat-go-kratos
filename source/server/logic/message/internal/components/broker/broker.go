@@ -17,6 +17,7 @@ type KafkaBroker struct {
 func NewKafkaBroker(helper *log.Helper, cf *conf.Bootstrap) *KafkaBroker {
 	ctx := context.Background()
 	helper.Info("init kafka broker")
+	helper.Info()
 	helper.Infof("init kafka broker addrs:%v", cf.Kafka.Addrs)
 	kafkaBroker := kafka.NewBroker(
 		broker.WithOptionContext(ctx),

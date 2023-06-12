@@ -6,42 +6,48 @@ server:
   name: logic_logic
   version: "1.0"
   environment: "dev"
-service:
-  logic_service: logic_logic
-  connector_service: connector
-discovery:
-  etcd:
-    addrs:
-      - x.x.x.x:port #etcd开放端口
-registry:
-  etcd:
-    addrs:
-      - x.x.x.x:port #etcd开放端口
-data:
-  database:
-    driver: mysql
-    source: xxx:xxx@tcp(x.x.x.x:port)/xxx #数据库
-  redis:
-    addr: x.x.x.x:port #redis开放端口
-    password: xxx
-    db: 0
-    pool_size: 100
-    min_idle_conns: 10
-    max_retries: 3
-    read_timeout: 0.2s
-    write_timeout: 0.2s
-aliyun:
-  access_key: xxx
-  access_secret: xxx
-  sms:
-    sign_name: xxx
-    template_code: xxx
-    region_id: xxx
-    endpoint: xxx
-  oss:
-    endpoint: xxx
-    bucket: xxx
-  sts:
-    endpoint: xxx
-    role_arn: xxx
-    role_session_name: xxx
+config:
+  group: "pangchat"
+  data_id: "logic_logic.yaml"
+nacos:
+  addrs:
+    - x.x.x.x:port #nacos开放端口
+#service:
+#  logic_service: logic_logic
+#  connector_service: connector
+#discovery:
+#  etcd:
+#    addrs:
+#      - x.x.x.x:port #etcd开放端口
+#registry:
+#  etcd:
+#    addrs:
+#      - x.x.x.x:port #etcd开放端口
+#data:
+#  database:
+#    driver: mysql
+#    source: xxx:xxx@tcp(x.x.x.x:port)/xxx #数据库
+#  redis:
+#    addr: x.x.x.x:port #redis开放端口
+#    password: xxx
+#    db: 0
+#    pool_size: 100
+#    min_idle_conns: 10
+#    max_retries: 3
+#    read_timeout: 0.2s
+#    write_timeout: 0.2s
+#aliyun:
+#  access_key: xxx
+#  access_secret: xxx
+#  sms:
+#    sign_name: xxx
+#    template_code: xxx
+#    region_id: xxx
+#    endpoint: xxx
+#  oss:
+#    endpoint: xxx
+#    bucket: xxx
+#  sts:
+#    endpoint: xxx
+#    role_arn: xxx
+#    role_session_name: xxx

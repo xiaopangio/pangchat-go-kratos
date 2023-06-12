@@ -6,38 +6,44 @@ server:
   name: logic_relationship
   version: "1.0"
   environment: "dev"
-service:
-  user_service: logic_user
-  relationship_service: logic_relationship
-  message_service: logic_message
-kafka:
+config:
+  group: "pangchat"
+  data_id: "logic_relationship.yaml"
+nacos:
   addrs:
-    - x.x.x.x:port #kafka开放端口
-message_queue:
-  friend_request_topic: friend_request
-  friend_topic: friend
-  message_topic: message
-  group_request_topic: group_request
-discovery:
-  etcd:
-    addrs:
-      - x.x.x.x:port #etcd开放端口
-registry:
-  etcd:
-    addrs:
-      - x.x.x.x:port #etcd开放端口
-snowflake:
-  worker_id: 1
-data:
-  database:
-    driver: mysql
-    source: xxx:xxx@tcp(x.x.x.x:port)/xxx #数据库
-  redis:
-    addr: x.x.x.x:port #redis开放端口
-    password: xxx
-    db: 0
-    pool_size: 100
-    min_idle_conns: 10
-    max_retries: 3
-    read_timeout: 0.2s
-    write_timeout: 0.2s
+    - x.x.x.x:port #nacos开放端口
+#service:
+#  user_service: logic_user
+#  relationship_service: logic_relationship
+#  message_service: logic_message
+#kafka:
+#  addrs:
+#    - x.x.x.x:port #kafka开放端口
+#message_queue:
+#  friend_request_topic: friend_request
+#  friend_topic: friend
+#  message_topic: message
+#  group_request_topic: group_request
+#discovery:
+#  etcd:
+#    addrs:
+#      - x.x.x.x:port #etcd开放端口
+#registry:
+#  etcd:
+#    addrs:
+#      - x.x.x.x:port #etcd开放端口
+#snowflake:
+#  worker_id: 1
+#data:
+#  database:
+#    driver: mysql
+#    source: xxx:xxx@tcp(x.x.x.x:port)/xxx #数据库
+#  redis:
+#    addr: x.x.x.x:port #redis开放端口
+#    password: xxx
+#    db: 0
+#    pool_size: 100
+#    min_idle_conns: 10
+#    max_retries: 3
+#    read_timeout: 0.2s
+#    write_timeout: 0.2s

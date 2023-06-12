@@ -1,0 +1,41 @@
+service:
+  user_service: logic_user
+  relationship_service: logic_relationship
+discovery:
+  etcd:
+    addrs:
+      - 43.143.137.232:2379
+registry:
+  etcd:
+    addrs:
+      - 43.143.137.232:2379
+snowflake:
+  worker_id: 1
+data:
+  database:
+    driver: mysql
+    source: pangchat:password@tcp(43.143.137.232:3307)/pangchat
+  redis:
+    addr: 43.143.137.232:6379
+    password: password
+    db: 0
+    pool_size: 100
+    min_idle_conns: 10
+    max_retries: 3
+    read_timeout: 0.2s
+    write_timeout: 0.2s
+aliyun:
+  access_key: "LTAI5t5wsegQbfbzDqCiAKzC"
+  access_secret: "Frip75apOT2kdzhXW3SfWWUZVWOkv4"
+  sms:
+    sign_name: "阿里云短信测试"
+    template_code: "SMS_154950909"
+    region_id: "cn-hangzhou"
+    endpoint: "dysmsapi.aliyuncs.com"
+  oss:
+    endpoint: "https://oss-cn-beijing.aliyuncs.com"
+    bucket: "pangchat-media"
+  sts:
+    endpoint: "sts.cn-beijing.aliyuncs.com"
+    role_arn: "acs:ram::1853932617531012:role/ramoss"
+    role_session_name: "pangchat-sts"

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/go-kratos/kratos/v2/middleware/validate"
 	v1 "user/api/v1/user"
 	"user/internal/conf"
 	"user/internal/service"
@@ -15,6 +16,7 @@ func NewGRPCServer(cf *conf.Bootstrap, user *service.UserService, logger log.Log
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
+			validate.Validator(),
 		),
 	}
 	c := cf.Server

@@ -11,7 +11,8 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
 
-func NewConnectorClient(registry *registry.ConnectorRegistry, logger *log.Helper, cf *conf.Service) (connector.ConnectorServiceClient, error) {
+func NewConnectorClient(registry *registry.ConnectorRegistry, logger *log.Helper, bc *conf.Bootstrap) (connector.ConnectorServiceClient, error) {
+	cf := bc.Service
 	version := filter.Version("1.0")
 	conn, err := grpc.DialInsecure(
 		context.Background(),

@@ -7,7 +7,8 @@ import (
 	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
-func NewEtcdClient(r *conf.Registry, s *conf.Server, logger *log.Helper) (*clientv3.Client, error) {
+func NewEtcdClient(bc *conf.Bootstrap, logger *log.Helper) (*clientv3.Client, error) {
+	r := bc.Registry
 	client, err := clientv3.New(
 		clientv3.Config{
 			Endpoints: r.Etcd.Addrs,
@@ -24,7 +25,8 @@ type UserRegistry struct {
 	*etcd.Registry
 }
 
-func NewEtcdUserRegistry(service *conf.Service, client *clientv3.Client) *UserRegistry {
+func NewEtcdUserRegistry(bc *conf.Bootstrap, client *clientv3.Client) *UserRegistry {
+	service := bc.Service
 	return &UserRegistry{
 		Registry: etcd.New(client, etcd.Namespace(service.UserService)),
 	}
@@ -34,7 +36,8 @@ type ConnectorRegistry struct {
 	*etcd.Registry
 }
 
-func NewEtcdConnectorRegistry(service *conf.Service, client *clientv3.Client) *ConnectorRegistry {
+func NewEtcdConnectorRegistry(bc *conf.Bootstrap, client *clientv3.Client) *ConnectorRegistry {
+	service := bc.Service
 	return &ConnectorRegistry{
 		Registry: etcd.New(client, etcd.Namespace(service.ConnectorService)),
 	}
@@ -44,7 +47,8 @@ type LogicRegistry struct {
 	*etcd.Registry
 }
 
-func NewEtcdLogicRegistry(service *conf.Service, client *clientv3.Client) *LogicRegistry {
+func NewEtcdLogicRegistry(bc *conf.Bootstrap, client *clientv3.Client) *LogicRegistry {
+	service := bc.Service
 	return &LogicRegistry{
 		Registry: etcd.New(client, etcd.Namespace(service.LogicService)),
 	}
@@ -54,7 +58,8 @@ type RelationshipRegistry struct {
 	*etcd.Registry
 }
 
-func NewEtcdRelationshipRegistry(service *conf.Service, client *clientv3.Client) *RelationshipRegistry {
+func NewEtcdRelationshipRegistry(bc *conf.Bootstrap, client *clientv3.Client) *RelationshipRegistry {
+	service := bc.Service
 	return &RelationshipRegistry{
 		Registry: etcd.New(client, etcd.Namespace(service.RelationshipService)),
 	}
@@ -64,7 +69,8 @@ type OnlineRegistry struct {
 	*etcd.Registry
 }
 
-func NewOnlineRegistry(service *conf.Service, client *clientv3.Client) *OnlineRegistry {
+func NewOnlineRegistry(bc *conf.Bootstrap, client *clientv3.Client) *OnlineRegistry {
+	service := bc.Service
 	return &OnlineRegistry{
 		Registry: etcd.New(client, etcd.Namespace(service.OnlineService)),
 	}
@@ -74,7 +80,8 @@ type MessageRegistry struct {
 	*etcd.Registry
 }
 
-func NewMessageRegistry(service *conf.Service, client *clientv3.Client) *MessageRegistry {
+func NewMessageRegistry(bc *conf.Bootstrap, client *clientv3.Client) *MessageRegistry {
+	service := bc.Service
 	return &MessageRegistry{
 		Registry: etcd.New(client, etcd.Namespace(service.MessageService)),
 	}

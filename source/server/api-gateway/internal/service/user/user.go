@@ -317,8 +317,9 @@ func (u *UserService) BindPhone(c *gin.Context) {
 		return
 	}
 	bindReq := &user.BindPhoneRequest{
-		Uid:   pkg.ParseInt64(userToken.Uid),
-		Phone: req.Phone,
+		Uid:     pkg.ParseInt64(userToken.Uid),
+		Phone:   req.Phone,
+		SmsCode: req.SmsCode,
 	}
 	reply, err := u.client.BindPhone(ctx, bindReq)
 	err = pkg.HandlerError(c, err)
