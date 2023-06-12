@@ -5,3 +5,5 @@ build/docker/data/
 **/bin
 **/docker-compose.yaml
 **/*.log
+**/log
+**/dist
