@@ -23,7 +23,7 @@ export const checkToken = () => {
     return storage().get("token");
 }
 export const checkAccountID = (accountId: string) => {
-    // 正则 6-16位字母数字
-    const reg = /^[a-zA-Z0-9]{6,16}$/;
+    // 正则 8-16位字母数字
+    const reg = /^[a-zA-Z0-9]{8,16}$/;
     return reg.test(accountId);
 }

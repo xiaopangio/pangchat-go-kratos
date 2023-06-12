@@ -19,6 +19,7 @@ import {GenAvatarName} from "@/utils/gen";
 import {GetImg, StoreImg} from "@/utils/store";
 import {useRecoilState} from "recoil";
 import {RegisterAvatar} from "@/store";
+import message from "@/utils/message";
 
 
 function Register() {
@@ -88,7 +89,7 @@ function Register() {
     const saveAvatarDone = async (file: File | Blob) => {
         let avatar = GenAvatarName();
         try {
-             await StoreImg(avatar, file)
+            await StoreImg(avatar, file)
         } catch (e) {
             console.log(e)
             return
@@ -254,11 +255,11 @@ function Register() {
                     try {
                         let hp = hashPassword(registerParam.Password);
                         let hpc = hashPassword(registerParam.ConfirmPassword);
-                        let userAvatar =await GetImg(avatarUrl);
+                        let userAvatar = await GetImg(avatarUrl);
                         if (!userAvatar) {
                             console.log("no avatar")
                         }
-                        let file=dataUrlToFile(userAvatar, avatarUrl)
+                        let file = dataUrlToFile(userAvatar, avatarUrl)
                         let formData = new FormData();
                         formData.append("file", file);
                         let res = await uploadAvatar(formData);
@@ -271,6 +272,9 @@ function Register() {
                             password_confirm: hpc as string,
                             type: registerParam.type,
                             username: registerParam.type === 1 ? registerParam.phoneNumber : registerParam.AccountId,
+                        });
+                        message.success({
+                            content: "注册成功", duration: 2000
                         });
                         navigate("/login");
                     } catch (e) {

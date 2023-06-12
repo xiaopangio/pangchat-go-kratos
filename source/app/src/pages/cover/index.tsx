@@ -7,6 +7,7 @@ import {HomePrefix} from "@/declare/const";
 import {checkToken} from "@/utils/check";
 import {ParseJwt} from "@/utils/jwt";
 import {User} from "@/declare/type";
+import {InitConnection} from "@/service/service";
 
 function Cover() {
     let navigate = useNavigate();
@@ -20,6 +21,7 @@ function Cover() {
         setTimeout(() => {
             if (user) {
                 setCurrentUser(user);
+                InitConnection()
                 navigate(HomePrefix + "/chat")
                 return
             } else {

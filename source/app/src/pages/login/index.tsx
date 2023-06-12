@@ -16,7 +16,7 @@ import {checkPhone} from "@/utils/check";
 import message from "@/utils/message";
 import {useRegister} from "@/hooks/registerHooks";
 import {websocketInit} from "@/hooks/websocket";
-import {Connect} from "@/service/service";
+import {Connect, InitConnection} from "@/service/service";
 
 function Login() {
     const [loginType, setLoginType] = useState("phone");
@@ -102,6 +102,7 @@ function Login() {
             } catch (e) {
                 console.log(e)
             }
+            InitConnection()
             navigate(HomePrefix + "/chat")
         } catch (e) {
             console.log(e)

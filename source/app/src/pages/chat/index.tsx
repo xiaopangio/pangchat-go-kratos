@@ -16,7 +16,7 @@ import {Friend, Message, MessageCountType} from "@/store/db";
 import DefaultImg from "@img/default.jpg";
 import {useNavigate} from "react-router";
 import PubSub from "pubsub-js";
-import {UnreadMessageResponse} from "@/service/service";
+import {InitConnection, UnreadMessageResponse} from "@/service/service";
 
 function Chat() {
     const [unreadMessageCountMap, setUnreadMessageCountMap] = useRecoilState(UnreadMessageCountMap)
@@ -234,6 +234,7 @@ function Chat() {
     useEffect(() => {
         initUnreadMessageCountMap().then()
         ListenUnreadMessage()
+        InitConnection()
         return () => {
             DexieStoreUnreadMessagesCounts(currentUser?.uid as string, unreadMessageCountMap).then()
         }

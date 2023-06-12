@@ -1,9 +1,10 @@
-import {createBrowserRouter, RouteObject} from "react-router-dom";
-import React, {lazy, Suspense} from "react";
+import {createHashRouter, RouteObject} from "react-router-dom";
+import {lazy, Suspense} from "react";
 
 const lazyLoadLayout = (path: string) => {
     let url = `../layouts/${path}/index.tsx`
-    const Comp = lazy(() => import(url))
+    const viteModule = import.meta.glob('../**/**/**/**');
+    const Comp = lazy(viteModule[`${url}`] as any)
     return (
         <Suspense>
             <Comp></Comp>
@@ -12,7 +13,8 @@ const lazyLoadLayout = (path: string) => {
 }
 const lazyLoadPage = (path: string) => {
     let url = `../pages/${path}/index.tsx`
-    const Comp = lazy(() => import(url))
+    const viteModule = import.meta.glob('../**/**/**/**');
+    const Comp = lazy(viteModule[`${url}`] as any)
     return (
         <Suspense>
             <Comp></Comp>
@@ -22,7 +24,7 @@ const lazyLoadPage = (path: string) => {
 const routes: RouteObject[] = [
     {
         path: "/home",
-        element: lazyLoadLayout("home"),
+        element: lazyLoadLayout("Home"),
         children: [
             {
                 path: "chat",
@@ -123,5 +125,5 @@ const routes: RouteObject[] = [
     }
 
 ]
-const Router = createBrowserRouter(routes);
+const Router = createHashRouter(routes);
 export default Router;
