@@ -10,38 +10,44 @@ server:
   name: connector
   version: "1.0"
   environment: "dev"
-service:
-  connector_service: connector
-  user_service: logic_user
-  relationship_service: logic_relationship
-  online_service: online
-  message_service: logic_message
-kafka:
+config:
+  group: "pangchat"
+  data_id: "connector.yaml"
+nacos:
   addrs:
-    - x.x.x.x:port #kafka地址
-message_queue:
-  friend_request_topic: friend_request
-  friend_request_group: friend_request_group
-  connect_topic: connect
-  connect_group: connect_group
-discovery:
-  etcd:
-    addrs:
-      - x.x.x.x:port #etcd地址
-registry:
-  etcd:
-    addrs:
-      - x.x.x.x:port #etcd地址
-data:
-  database:
-    driver: mysql
-    source: xxx:xxx@tcp(x.x.x.x:port)/xxx #数据库地址
-  redis:
-    addr: x.x.x.x:port #redis地址
-    password: xxx #redis密码
-    db: 0
-    pool_size: 100
-    min_idle_conns: 10
-    max_retries: 3
-    read_timeout: 0.4s
-    write_timeout: 0.6s
+    - x.x.x.x:port #nacos地址
+#service:
+#  connector_service: connector
+#  user_service: logic_user
+#  relationship_service: logic_relationship
+#  online_service: online
+#  message_service: logic_message
+#kafka:
+#  addrs:
+#    - x.x.x.x:port #kafka地址
+#message_queue:
+#  friend_request_topic: friend_request
+#  friend_request_group: friend_request_group
+#  connect_topic: connect
+#  connect_group: connect_group
+#discovery:
+#  etcd:
+#    addrs:
+#      - x.x.x.x:port #etcd地址
+#registry:
+#  etcd:
+#    addrs:
+#      - x.x.x.x:port #etcd地址
+#data:
+#  database:
+#    driver: mysql
+#    source: xxx:xxx@tcp(x.x.x.x:port)/xxx #数据库地址
+#  redis:
+#    addr: x.x.x.x:port #redis地址
+#    password: xxx #redis密码
+#    db: 0
+#    pool_size: 100
+#    min_idle_conns: 10
+#    max_retries: 3
+#    read_timeout: 0.4s
+#    write_timeout: 0.6s

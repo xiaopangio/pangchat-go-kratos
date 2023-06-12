@@ -11,7 +11,8 @@ type JwtManager struct {
 	secret []byte
 }
 
-func NewJwtManager(jwtCf *conf.Jwt) *JwtManager {
+func NewJwtManager(bc *conf.Bootstrap) *JwtManager {
+	jwtCf := bc.Jwt
 	secret := []byte(jwtCf.Key)
 	return &JwtManager{secret: secret}
 }

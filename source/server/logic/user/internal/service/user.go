@@ -21,11 +21,11 @@ func NewUserService(bz *biz.UserBiz, helper *log.Helper) *UserService {
 	}
 }
 func (u *UserService) RegisterUser(ctx context.Context, req *pb.RegisterUserRequest) (*pb.RegisterUserReply, error) {
-	if req.Type != 1 && req.Type != 2 {
-		err := pkg.InvalidArgumentError("request: type is not invalid")
-		u.helper.Error(err.Error())
-		return nil, err
-	}
+	//if req.Type != 1 && req.Type != 2 {
+	//	err := pkg.InvalidArgumentError("request: type is not invalid")
+	//	u.helper.Error(err.Error())
+	//	return nil, err
+	//}
 	if req.Password != req.PasswordConfirm {
 		err := pkg.InvalidArgumentError("request: the two passwords don't match")
 		u.helper.Error(err.Error())

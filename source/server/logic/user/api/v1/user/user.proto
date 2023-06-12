@@ -1,166 +1,164 @@
 syntax = "proto3";
-
 package api.v1.logic.user;
-
+import "validate/validate.proto";
 option go_package = "./api/v1/user;user";
 message UserProfile {
-	int64 user_id =1;
-	string account_id=2;
-	string phone=3;
-	string nick_name=4;
-	UserAddress user_address = 5;
-	string personal_desc=6;
-	string note_name=7;
-	string avatar=8;
+  int64 user_id = 1;
+  string account_id = 2;
+  string phone = 3;
+  string nick_name = 4;
+  UserAddress user_address = 5;
+  string personal_desc = 6;
+  string note_name = 7;
+  string avatar = 8;
 }
 message UserAddress{
-	string city_id=1;
-	string city=2;
-	string province=3;
+  string city_id = 1;
+  string city = 2;
+  string province = 3;
 }
 message Province {
-	string province_id=1;
-	string province_name=2;
-	repeated City cities=3;
+  string province_id = 1;
+  string province_name = 2;
+  repeated City cities = 3;
 }
 message City {
-	string city_id=1;
-	string city_name=2;
+  string city_id = 1;
+  string city_name = 2;
 }
 message AddressList {
-	repeated Province provinces=1;
+  repeated Province provinces = 1;
 }
 message ImageInfo{
-	string image_name=1;
-	string image_type=2;
-	string account_id=3;
+  string image_name = 1;
+  string image_type = 2;
+  string account_id = 3;
 }
 service User {
-	rpc Ping (PingRequest) returns (PingReply) {}
-	rpc RegisterUser (RegisterUserRequest) returns (RegisterUserReply) {}
-	rpc SendSmsCode (SendSmsCodeRequest) returns (SendSmsCodeReply) {}
-	rpc ModifyPasswd (ModifyPasswdRequest) returns (ModifyPasswdReply) {}
-	rpc ResetPassword (ResetPasswordRequest) returns (ResetPasswordReply) {}
-	rpc ModifyAccountID (ModifyAccountIDRequest) returns (ModifyAccountIDReply) {}
-	rpc ModifyProfile (ModifyProfileRequest) returns (ModifyProfileReply) {}
-	rpc Profile (ProfileRequest) returns (ProfileReply) {}
-	rpc AddressList (AddressListRequest) returns (AddressListReply) {}
-	rpc BindPhone (BindPhoneRequest) returns (BindPhoneReply) {}
-	rpc UploadAvatar (stream UploadAvatarRequest) returns (UploadAvatarReply) {}
-	rpc GetAvatar (GetAvatarRequest) returns (stream GetAvatarReply) {}
-	rpc VerifyCode (VerifyCodeRequest) returns (VerifyCodeReply) {}
-	rpc GetProfiles (GetProfilesRequest) returns (GetProfilesReply) {}
-	rpc GetAddressAndDesc (GetAddressAndDescRequest) returns (GetAddressAndDescReply) {}
+  rpc Ping (PingRequest) returns (PingReply) {}
+  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserReply) {}
+  rpc SendSmsCode (SendSmsCodeRequest) returns (SendSmsCodeReply) {}
+  rpc ModifyPasswd (ModifyPasswdRequest) returns (ModifyPasswdReply) {}
+  rpc ResetPassword (ResetPasswordRequest) returns (ResetPasswordReply) {}
+  rpc ModifyAccountID (ModifyAccountIDRequest) returns (ModifyAccountIDReply) {}
+  rpc ModifyProfile (ModifyProfileRequest) returns (ModifyProfileReply) {}
+  rpc Profile (ProfileRequest) returns (ProfileReply) {}
+  rpc AddressList (AddressListRequest) returns (AddressListReply) {}
+  rpc BindPhone (BindPhoneRequest) returns (BindPhoneReply) {}
+  rpc UploadAvatar (stream UploadAvatarRequest) returns (UploadAvatarReply) {}
+  rpc GetAvatar (GetAvatarRequest) returns (stream GetAvatarReply) {}
+  rpc VerifyCode (VerifyCodeRequest) returns (VerifyCodeReply) {}
+  rpc GetProfiles (GetProfilesRequest) returns (GetProfilesReply) {}
+  rpc GetAddressAndDesc (GetAddressAndDescRequest) returns (GetAddressAndDescReply) {}
 }
 message PingRequest {
 }
 message PingReply {
 }
 message RegisterUserRequest {
-	int64 type=1;
-	string username=2; //  账户名：手机号或者自定义账号名
-	string password=4;
-	string password_confirm=5;
-	string desc=6;
-	string nick_name=7;
-	string avatar_url=8;
+  int64 type = 1 [(validate.rules).int64 = {in:[1, 2]}];
+  string username = 2 [(validate.rules).string = {min_len: 8, max_len: 25}];
+  string password = 4 [(validate.rules).string.len = 40];
+  string password_confirm = 5 [(validate.rules).string.len = 40];
+  string nick_name = 7 [(validate.rules).string = {min_len: 1, max_len: 20}];
+  string avatar_url = 8 [(validate.rules).string = {min_len: 1, max_len: 255}];
 }
 message RegisterUserReply {
 }
 
 message SendSmsCodeRequest {
-	string phone=1;
+  string phone = 1 [(validate.rules).string.pattern = "^1[0-9]{10}$"];
 }
 
 message SendSmsCodeReply {
 }
 
 message ModifyPasswdRequest {
-	int64 uid=1;
-	string old_password=2;
-	string new_password=3;
-	string new_password_confirm=4;
+  int64 uid = 1;
+  string old_password = 2 [(validate.rules).string.len = 40];
+  string new_password = 3 [(validate.rules).string.len = 40];
+  string new_password_confirm = 4 [(validate.rules).string.len = 40];
 }
 message ModifyPasswdReply {
 }
 message ResetPasswordRequest {
-	int64 uid=1;
-	string phone=2;
-	string password=3;
-	string password_confirm=4;
+  int64 uid = 1;
+  string phone = 2 [(validate.rules).string.pattern = "^1[0-9]{10}$"];
+  string password = 3 [(validate.rules).string.len = 40];
+  string password_confirm = 4 [(validate.rules).string.len = 40];
 }
 
 message ResetPasswordReply {
 }
 message ModifyAccountIDRequest {
-	int64 uid=1;
-	string account_id=2;
+  int64 uid = 1;
+  string account_id = 2 [(validate.rules).string.pattern = "^[a-zA-Z0-9_]{8,25}$"];
 }
 message ModifyAccountIDReply {
-	UserProfile user=1;
+  UserProfile user = 1;
 }
 message ModifyProfileRequest {
-	UserProfile user=1;
+  UserProfile user = 1 [(validate.rules).message.required = true];
 }
 message ModifyProfileReply {
-	UserProfile user=1;
+  UserProfile user = 1;
 }
 message ProfileRequest {
-	string account_id=1;
+  string account_id = 1 [(validate.rules).string.pattern = "^[a-zA-Z0-9_]{8,25}$"];
 }
 message ProfileReply {
-	UserProfile user=1;
+  UserProfile user = 1;
 }
 message AddressListRequest {
 }
 message AddressListReply {
-	AddressList address_list=1;
+  AddressList address_list = 1;
 }
 message BindPhoneRequest {
-	int64 uid=1;
-	string phone=2;
-	string sms_code=3;
+  int64 uid = 1;
+  string phone = 2 [(validate.rules).string.pattern = "^1[0-9]{10}$"];
+  string sms_code = 3 [(validate.rules).string.pattern = "^[0-9]{4}$"];
 }
 message BindPhoneReply {
 }
 message UploadAvatarRequest {
-	oneof data{
-		ImageInfo info=1;
-		bytes chunk_data=2;
-	}
+  oneof data{
+    ImageInfo info = 1;
+    bytes chunk_data = 2;
+  }
 }
 message UploadAvatarReply {
-	UserProfile user=1;
+  UserProfile user = 1;
 }
 message GetAvatarRequest {
-	string avatar_url=1;
+  string avatar_url = 1 [(validate.rules).string = {min_len: 1, max_len: 255}];
 }
 message GetAvatarReply {
-	bytes data=1;
+  bytes data = 1;
 }
 message VerifyCodeRequest {
-	string phone=1;
-	string sms_code=2;
+  string phone = 1 [(validate.rules).string.pattern = "^1[0-9]{10}$"];
+  string sms_code = 2 [(validate.rules).string.pattern = "^[0-9]{4}$"];
 }
 message VerifyCodeReply {
 }
 message GetProfilesRequest {
-	repeated int64 uids=1;
+  repeated int64 uids = 1;
 }
 message ShortProfile{
-	int64 uid=1;
-	string nick_name=2;
-	string avatar=3;
+  int64 uid = 1;
+  string nick_name = 2 [(validate.rules).string = {min_len: 1, max_len: 20}];
+  string avatar = 3 [(validate.rules).string = {min_len: 1, max_len: 255}];
 }
 message GetProfilesReply {
-	repeated ShortProfile profiles=1;
+  repeated ShortProfile profiles = 1;
 }
 message GetAddressAndDescRequest {
-	int64 uid=1;
+  int64 uid = 1;
 }
 message GetAddressAndDescReply {
-	string city_name=1;
-	string province_name=2;
-	string desc=3;
-	string account_id=4;
+  string city_name = 1;
+  string province_name = 2;
+  string desc = 3;
+  string account_id = 4;
 }

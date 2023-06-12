@@ -12,13 +12,15 @@ import (
 	"github.com/gin-gonic/gin"
 	kgin "github.com/go-kratos/gin"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, messageService *service_message.Message, userService *service_user.UserService, connectorService *service_connector.ConnectorService, logicService *service_logic.LogicService, relationship *service_relationship.Relationship, onlineService *serivice_online.Online) *http.Server {
+func NewHTTPServer(bc *conf.Bootstrap, messageService *service_message.Message, userService *service_user.UserService, connectorService *service_connector.ConnectorService, logicService *service_logic.LogicService, relationship *service_relationship.Relationship, onlineService *serivice_online.Online) *http.Server {
+
 	g := gin.Default()
-	g.Use(kgin.Middlewares(recovery.Recovery()), middleware.Cors())
+	g.Use(kgin.Middlewares(recovery.Recovery(), tracing.Server()), middleware.Cors())
 	v1 := g.Group("/api/v1")
 	service_user.RegisterUserService(v1, userService)                  //注册用户
 	service_connector.RegisterConnectorService(v1, connectorService)   //注册连接器
@@ -27,6 +29,7 @@ func NewHTTPServer(c *conf.Server, messageService *service_message.Message, user
 	serivice_online.RegisterOnlineService(v1, onlineService)           //注册在线服务
 	service_message.RegisterMessageService(v1, messageService)         //注册消息服务
 	var opts []http.ServerOption
+	c := bc.Server
 	if c.Http.Network != "" {
 		opts = append(opts, http.Network(c.Http.Network))
 	}
