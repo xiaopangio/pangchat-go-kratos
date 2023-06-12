@@ -1,10 +1,10 @@
 version: "3.0"
 networks:
-  etcd-net:           # 网络
+  etcd-net: # 网络
     driver: bridge    # 桥接模式
-  kafka-net:          # 网络
+  kafka-net: # 网络
     driver: bridge    # 桥接模式
-  zk-net:             # 网络
+  zk-net: # 网络
     driver: bridge    # 桥接模式
 services:
   mysql:
@@ -49,8 +49,8 @@ services:
       - ALLOW_NONE_AUTHENTICATION=yes
       - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
     ports:
-        - "2379:2379"
-        - "2380:2380"
+      - "2379:2379"
+      - "2380:2380"
 
   zoo1:
     image: zookeeper:3.8.0
@@ -77,3 +77,17 @@ services:
       ALLOW_PLAINTEXT_LISTENER: yes
     depends_on:
       - zoo1
+  nacos:
+    image: nacos/nacos-server:latest
+    container_name: nacos-server
+    environment:
+      - PREFER_HOST_MODE=hostname
+      - MODE=standalone
+      - NACOS_AUTH_IDENTITY_KEY=serverIdentity
+      - NACOS_AUTH_IDENTITY_VALUE=security
+      - NACOS_AUTH_TOKEN=SecretKey012345678901234567890123456789012345678901234567890123456789
+    volumes:
+      - ./log/nacos:/home/nacos/logs
+    ports:
+      - "8848:8848"
+      - "9848:9848"
