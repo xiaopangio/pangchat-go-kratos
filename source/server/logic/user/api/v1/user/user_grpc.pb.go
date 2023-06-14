@@ -26,7 +26,8 @@ const (
 	User_ResetPassword_FullMethodName     = "/api.v1.logic.user.User/ResetPassword"
 	User_ModifyAccountID_FullMethodName   = "/api.v1.logic.user.User/ModifyAccountID"
 	User_ModifyProfile_FullMethodName     = "/api.v1.logic.user.User/ModifyProfile"
-	User_Profile_FullMethodName           = "/api.v1.logic.user.User/Profile"
+	User_Profile_FullMethodName           = "/api.v1.logic.user.User/GetProfileByAccountID"
+	User_GetProfileByUID_FullMethodName   = "/api.v1.logic.user.User/GetProfileByUID"
 	User_AddressList_FullMethodName       = "/api.v1.logic.user.User/AddressList"
 	User_BindPhone_FullMethodName         = "/api.v1.logic.user.User/BindPhone"
 	User_UploadAvatar_FullMethodName      = "/api.v1.logic.user.User/UploadAvatar"
@@ -48,6 +49,7 @@ type UserClient interface {
 	ModifyAccountID(ctx context.Context, in *ModifyAccountIDRequest, opts ...grpc.CallOption) (*ModifyAccountIDReply, error)
 	ModifyProfile(ctx context.Context, in *ModifyProfileRequest, opts ...grpc.CallOption) (*ModifyProfileReply, error)
 	Profile(ctx context.Context, in *ProfileRequest, opts ...grpc.CallOption) (*ProfileReply, error)
+	GetProfileByUID(ctx context.Context, in *GetProfileByUIDRequest, opts ...grpc.CallOption) (*GetProfileByUIDResponse, error)
 	AddressList(ctx context.Context, in *AddressListRequest, opts ...grpc.CallOption) (*AddressListReply, error)
 	BindPhone(ctx context.Context, in *BindPhoneRequest, opts ...grpc.CallOption) (*BindPhoneReply, error)
 	UploadAvatar(ctx context.Context, opts ...grpc.CallOption) (User_UploadAvatarClient, error)
@@ -131,6 +133,15 @@ func (c *userClient) ModifyProfile(ctx context.Context, in *ModifyProfileRequest
 func (c *userClient) Profile(ctx context.Context, in *ProfileRequest, opts ...grpc.CallOption) (*ProfileReply, error) {
 	out := new(ProfileReply)
 	err := c.cc.Invoke(ctx, User_Profile_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) GetProfileByUID(ctx context.Context, in *GetProfileByUIDRequest, opts ...grpc.CallOption) (*GetProfileByUIDResponse, error) {
+	out := new(GetProfileByUIDResponse)
+	err := c.cc.Invoke(ctx, User_GetProfileByUID_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -260,6 +271,7 @@ type UserServer interface {
 	ModifyAccountID(context.Context, *ModifyAccountIDRequest) (*ModifyAccountIDReply, error)
 	ModifyProfile(context.Context, *ModifyProfileRequest) (*ModifyProfileReply, error)
 	Profile(context.Context, *ProfileRequest) (*ProfileReply, error)
+	GetProfileByUID(context.Context, *GetProfileByUIDRequest) (*GetProfileByUIDResponse, error)
 	AddressList(context.Context, *AddressListRequest) (*AddressListReply, error)
 	BindPhone(context.Context, *BindPhoneRequest) (*BindPhoneReply, error)
 	UploadAvatar(User_UploadAvatarServer) error
@@ -296,7 +308,10 @@ func (UnimplementedUserServer) ModifyProfile(context.Context, *ModifyProfileRequ
 	return nil, status.Errorf(codes.Unimplemented, "method ModifyProfile not implemented")
 }
 func (UnimplementedUserServer) Profile(context.Context, *ProfileRequest) (*ProfileReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Profile not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method GetProfileByAccountID not implemented")
+}
+func (UnimplementedUserServer) GetProfileByUID(context.Context, *GetProfileByUIDRequest) (*GetProfileByUIDResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProfileByUID not implemented")
 }
 func (UnimplementedUserServer) AddressList(context.Context, *AddressListRequest) (*AddressListReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddressList not implemented")
@@ -476,6 +491,24 @@ func _User_Profile_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_GetProfileByUID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProfileByUIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetProfileByUID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_GetProfileByUID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetProfileByUID(ctx, req.(*GetProfileByUIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _User_AddressList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddressListRequest)
 	if err := dec(in); err != nil {
@@ -649,8 +682,12 @@ var User_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _User_ModifyProfile_Handler,
 		},
 		{
-			MethodName: "Profile",
+			MethodName: "GetProfileByAccountID",
 			Handler:    _User_Profile_Handler,
+		},
+		{
+			MethodName: "GetProfileByUID",
+			Handler:    _User_GetProfileByUID_Handler,
 		},
 		{
 			MethodName: "AddressList",

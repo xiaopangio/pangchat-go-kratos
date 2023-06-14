@@ -12,6 +12,21 @@ const (
 	LettersSymbol = "~`!@#$%^&*()_-+={[}]|\\:;\"'<,>.?/"
 )
 
+func RandStringWithoutSpecial(n int) (string, error) {
+	lettersDefaultValue := LettersLetter + LettersNumber
+	bytes := make([]byte, n)
+
+	_, err := rand.Read(bytes)
+
+	if err != nil {
+		return "", err
+	}
+
+	for i, b := range bytes {
+		bytes[i] = lettersDefaultValue[b%byte(len(lettersDefaultValue))]
+	}
+	return string(bytes), nil
+}
 func RandString(n int, letters ...string) (string, error) {
 
 	lettersDefaultValue := LettersLetter + LettersNumber + LettersSymbol

@@ -1,4 +1,4 @@
-package pkg
+package common
 
 import v1 "user/api/v1/user"
 

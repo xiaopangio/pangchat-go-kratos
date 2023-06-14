@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"context"
+	"fmt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
@@ -64,4 +65,7 @@ func UnauthenticatedError(msg string, a ...any) error {
 		return status.Errorf(codes.Unauthenticated, msg)
 	}
 	return status.Errorf(codes.Unauthenticated, msg, a)
+}
+func JsonUnmarshalError(err error) error {
+	return fmt.Errorf("解析json失败: %s", err.Error())
 }

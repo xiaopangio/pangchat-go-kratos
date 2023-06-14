@@ -43,6 +43,7 @@ service User {
   rpc ModifyAccountID (ModifyAccountIDRequest) returns (ModifyAccountIDReply) {}
   rpc ModifyProfile (ModifyProfileRequest) returns (ModifyProfileReply) {}
   rpc Profile (ProfileRequest) returns (ProfileReply) {}
+  rpc GetProfileByUID (GetProfileByUIDRequest) returns (GetProfileByUIDResponse) {}
   rpc AddressList (AddressListRequest) returns (AddressListReply) {}
   rpc BindPhone (BindPhoneRequest) returns (BindPhoneReply) {}
   rpc UploadAvatar (stream UploadAvatarRequest) returns (UploadAvatarReply) {}
@@ -101,6 +102,12 @@ message ModifyProfileRequest {
   UserProfile user = 1 [(validate.rules).message.required = true];
 }
 message ModifyProfileReply {
+  UserProfile user = 1;
+}
+message GetProfileByUIDRequest {
+  int64 uid = 1;
+}
+message GetProfileByUIDResponse {
   UserProfile user = 1;
 }
 message ProfileRequest {
