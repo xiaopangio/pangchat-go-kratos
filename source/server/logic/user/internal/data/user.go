@@ -7,6 +7,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	v1 "user/api/v1/user"
 	"user/internal/biz"
+	"user/internal/common/constant"
 	"user/internal/data/orm/dal"
 	"user/internal/data/orm/model"
 	"user/pkg"
@@ -183,7 +184,7 @@ func (u *UserRepoImpl) GetAddress(ctx context.Context, cityId string) (*v1.UserA
 }
 
 func (u *UserRepoImpl) ModifyPassword(ctx context.Context, uid int64, password string) error {
-	cryptPassword, err := bcrypt.GenerateFromPassword([]byte(password), pkg.PasswordCost)
+	cryptPassword, err := bcrypt.GenerateFromPassword([]byte(password), constant.PasswordCost)
 	if err != nil {
 		u.helper.Errorf("密码加密失败: %v", err)
 		return pkg.InternalError("密码加密失败")
