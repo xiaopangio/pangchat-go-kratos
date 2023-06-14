@@ -73,10 +73,10 @@ func NewRelationshipBiz(helper *log.Helper, userClient user.UserClient, messageC
 	return &RelationshipBiz{helper: helper, userClient: userClient, messageClient: messageClient, broker: broker, mqConfig: cf.MessageQueue, repo: repo, mysql: mysql}
 }
 
+// SendFriendRequest 发送好友请求
 func (b *RelationshipBiz) SendFriendRequest(ctx context.Context, requesterId, receiverId int64, noteName, groupName, desc string) (*universal.FriendRequest, error) {
 	friendReq, err := b.repo.CreateFriendRequest(ctx, requesterId, receiverId, noteName, groupName, desc)
 	if err != nil {
-		b.helper.Errorf("send friend request error: %v", err)
 		return nil, err
 	}
 	// 发送消息到mq，异步通知接收者
@@ -87,12 +87,13 @@ func (b *RelationshipBiz) SendFriendRequest(ctx context.Context, requesterId, re
 	}
 	err = b.broker.Publish(b.mqConfig.FriendRequestTopic, m)
 	if err != nil {
-		b.helper.Errorf("send friend request to mq error: %v", err)
-		return nil, err
+		b.helper.Errorf("发送好友请求消息到mq失败: %v", err)
+		return nil, pkg.InternalError("发送好友请求消息到mq失败: %v", err)
 	}
 	reply, err := b.userClient.GetProfiles(ctx, &user.GetProfilesRequest{Uids: []int64{receiverId}})
 	if err != nil {
-		b.helper.Errorf("get profiles error: %v", err)
+		b.helper.Errorf("获取用户信息失败: %v", err)
+		return nil, pkg.InternalError("获取用户信息失败: %v", err)
 	}
 	var NickName, Avatar string
 	if len(reply.Profiles) == 1 {
@@ -113,6 +114,7 @@ func (b *RelationshipBiz) SendFriendRequest(ctx context.Context, requesterId, re
 	return res, nil
 }
 
+// GetFriendRequestList 获取好友请求列表
 func (b *RelationshipBiz) GetFriendRequestList(ctx context.Context, id int64, number int, size int) ([]*model.FriendRequest, int, error) {
 	offset := (number - 1) * size
 	res, count, err := b.repo.GetFriendRequestByPage(ctx, id, offset, size)
@@ -123,15 +125,16 @@ func (b *RelationshipBiz) GetFriendRequestList(ctx context.Context, id int64, nu
 
 }
 
+// GetFriendRequest 获取好友请求
 func (b *RelationshipBiz) GetFriendRequest(ctx context.Context, id int64) (*model.FriendRequest, error) {
 	friendRequest, err := b.repo.GetFriendRequestByRequestId(ctx, id)
 	if err != nil {
-		b.helper.Errorf("get friend request error: %v", err)
 		return nil, err
 	}
 	return friendRequest, nil
 }
 
+// DealFriendRequest 处理好友请求
 func (b *RelationshipBiz) DealFriendRequest(ctx context.Context, requestId int64, status, noteName, groupName string) error {
 	if !pkg.CheckRequestStatus(status) {
 		err := pkg.InvalidArgumentError("status 取值错误 :%v", status)
@@ -140,8 +143,7 @@ func (b *RelationshipBiz) DealFriendRequest(ctx context.Context, requestId int64
 	}
 	request, err := b.repo.GetFriendRequestByRequestId(ctx, requestId)
 	if err != nil {
-		b.helper.Errorf(err.Error())
-		return pkg.GenFuncError("biz.DealFriendRequest")
+		return err
 	}
 	if request.Status != pkg.Pending {
 		err := pkg.InvalidArgumentError("该请求已处理: %v", requestId)
@@ -150,7 +152,6 @@ func (b *RelationshipBiz) DealFriendRequest(ctx context.Context, requestId int64
 	}
 	req, err := b.repo.DealFriendRequest(ctx, requestId, status, noteName, groupName)
 	if err != nil {
-		b.helper.Errorf("deal friend request error: %v", err)
 		return err
 	}
 	m := &model.FriendRequestMessage{
@@ -160,8 +161,8 @@ func (b *RelationshipBiz) DealFriendRequest(ctx context.Context, requestId int64
 	}
 	err = b.broker.Publish(b.mqConfig.FriendRequestTopic, m)
 	if err != nil {
-		b.helper.Errorf("send deal friend request to mq error: %v", err)
-		return err
+		b.helper.Errorf("发送好友请求消息到mq失败: %v", err)
+		return pkg.InternalError("发送好友请求消息到mq失败: %v", err)
 	}
 	if status == pkg.Refused {
 		return nil
@@ -172,20 +173,21 @@ func (b *RelationshipBiz) DealFriendRequest(ctx context.Context, requestId int64
 	}
 	err = b.broker.Publish(b.mqConfig.FriendTopic, friendMsg)
 	if err != nil {
-		b.helper.Errorf("send friend m to mq error: %v", err)
+		b.helper.Errorf("发送好友消息到mq失败: %v", err)
 		return err
 	}
 	if _, err = b.messageClient.InitUnreadMessage(ctx, &message.InitUnreadMessageRequest{
 		Uid:      pkg.FormatInt(req.RequesterID),
 		FriendId: pkg.FormatInt(req.ReceiverID),
 	}); err != nil {
-		return err
+		b.helper.Errorf("初始化未读消息失败: %v", err)
+		return pkg.InternalError("初始化未读消息失败: %v", err)
 	}
 	return nil
 }
 
+// GetFriendList 获取好友列表
 func (b *RelationshipBiz) GetFriendList(ctx context.Context, userId int64) ([]*universal.Friend, error) {
-	b.helper.Infof("get friend list, userId: %d", userId)
 	friends, err := b.repo.GetFriends(ctx, userId)
 	var uids []int64
 	for _, friend := range friends {
@@ -193,8 +195,8 @@ func (b *RelationshipBiz) GetFriendList(ctx context.Context, userId int64) ([]*u
 	}
 	users, err := b.userClient.GetProfiles(ctx, &user.GetProfilesRequest{Uids: uids})
 	if err != nil {
-		b.helper.Errorf("get profiles error: %v", err)
-		return nil, err
+		b.helper.Errorf("获取用户信息失败: %v", err)
+		return nil, pkg.InternalError("获取用户信息失败: %v", err)
 	}
 	m := make(map[int64]*user.ShortProfile)
 	for _, profile := range users.Profiles {
@@ -211,47 +213,47 @@ func (b *RelationshipBiz) GetFriendList(ctx context.Context, userId int64) ([]*u
 			Avatar:    profile.Avatar,
 		})
 	}
-	b.helper.Infof("get friend list, userId: %d success", userId)
-
 	return res, nil
 }
 
+// DeleteFriend 删除好友
 func (b *RelationshipBiz) DeleteFriend(ctx context.Context, id, id2 int64) error {
 	err := b.repo.DelFriend(ctx, id, id2)
 	if err != nil {
-		b.helper.Errorf("delete friend error: %v", err)
 		return err
 	}
 	return nil
 }
 
+// GetFriendInfo 获取好友信息
 func (b *RelationshipBiz) GetFriendInfo(ctx context.Context, id int64) (*user.GetAddressAndDescReply, error) {
 	res, err := b.userClient.GetAddressAndDesc(ctx, &user.GetAddressAndDescRequest{Uid: id})
 	if err != nil {
-		b.helper.Errorf("get address and desc error: %v", err)
+		b.helper.Errorf("获取好友信息: %v", err)
 		return nil, err
 	}
 	return res, nil
 }
 
+// UpdateFriendInfo 更新好友信息
 func (b *RelationshipBiz) UpdateFriendInfo(ctx context.Context, userId, friendId int64, noteName string, groupName string) error {
 	err := b.repo.UpdateFriendInfo(ctx, userId, friendId, noteName, groupName)
 	if err != nil {
-		b.helper.Errorf("update friend info error: %v", err)
 		return err
 	}
 	return nil
 }
 
+// CreateFriendGroup 创建好友分组
 func (b *RelationshipBiz) CreateFriendGroup(ctx context.Context, id int64, name string) error {
 	err := b.repo.CreateFriendGroup(ctx, id, name)
 	if err != nil {
-		b.helper.Errorf("create friend group error: %v", err)
 		return err
 	}
 	return nil
 }
 
+// UpdateFriendGroup 更新好友分组
 func (b *RelationshipBiz) UpdateFriendGroup(ctx context.Context, id int64, name, newName string) error {
 	if name == newName {
 		err := fmt.Errorf("新旧分组名不能相同, name: %s, newName: %s", name, newName)
@@ -265,11 +267,12 @@ func (b *RelationshipBiz) UpdateFriendGroup(ctx context.Context, id int64, name,
 	}
 	err := b.repo.UpdateFriendGroup(ctx, id, name, newName)
 	if err != nil {
-		return pkg.InternalError(err.Error())
+		return err
 	}
 	return nil
 }
 
+// DeleteFriendGroup 删除好友分组
 func (b *RelationshipBiz) DeleteFriendGroup(ctx context.Context, userId int64, groupName string) error {
 	if groupName == pkg.DefaultFriendGroup {
 		err := fmt.Errorf("默认分组不可删除")
@@ -278,16 +281,15 @@ func (b *RelationshipBiz) DeleteFriendGroup(ctx context.Context, userId int64, g
 	}
 	err := b.repo.DeleteFriendGroup(ctx, userId, groupName)
 	if err != nil {
-		b.helper.Errorf("delete friend group error: %v", err)
 		return err
 	}
 	return nil
 }
 
+// GetFriendGroupList 获取好友分组列表
 func (b *RelationshipBiz) GetFriendGroupList(ctx context.Context, id int64) ([]string, error) {
 	res, err := b.repo.GetFriendGroups(ctx, id)
 	if err != nil {
-		b.helper.Errorf("get friend group list error: %v", err)
 		return nil, err
 	}
 	var groupNames []string
@@ -297,10 +299,10 @@ func (b *RelationshipBiz) GetFriendGroupList(ctx context.Context, id int64) ([]s
 	return groupNames, nil
 }
 
+// GetFriendRequests 获取好友请求列表
 func (b *RelationshipBiz) GetFriendRequests(ctx context.Context, requestIds []int64) ([]*universal.FriendRequest, error) {
 	requests, err := b.repo.GetFriendRequestsByRequestIds(ctx, requestIds)
 	if err != nil {
-		b.helper.Errorf("get friend requests error: %v", err)
 		return nil, err
 	}
 	var uids []int64
@@ -312,7 +314,7 @@ func (b *RelationshipBiz) GetFriendRequests(ctx context.Context, requestIds []in
 	}
 	profiles, err := b.userClient.GetProfiles(ctx, &user.GetProfilesRequest{Uids: uids})
 	if err != nil {
-		b.helper.Errorf("get profiles error: %v", err)
+		b.helper.Errorf("获取用户信息失败: %v", err)
 		return nil, err
 	}
 	shortProfiles := profiles.Profiles
@@ -337,17 +339,17 @@ func (b *RelationshipBiz) GetFriendRequests(ctx context.Context, requestIds []in
 	return res, nil
 }
 
+// GetOneFriend 获取单个好友
 func (b *RelationshipBiz) GetOneFriend(ctx context.Context, userId int64, friendId int64) (*universal.Friend, error) {
 	friend, err := b.repo.GetFriend(ctx, userId, friendId)
 	if err != nil {
-		b.helper.Errorf("get one friend error: %v", err)
 		return nil, err
 	}
 	profile, err := b.userClient.GetProfiles(ctx, &user.GetProfilesRequest{
 		Uids: []int64{friend.FriendID},
 	})
 	if err != nil {
-		b.helper.Errorf("get profiles error: %v", err)
+		b.helper.Errorf("获取用户信息失败: %v", err)
 		return nil, err
 	}
 	res := &universal.Friend{
@@ -360,45 +362,45 @@ func (b *RelationshipBiz) GetOneFriend(ctx context.Context, userId int64, friend
 	return res, nil
 }
 
+// CreateGroup 创建群组
 func (b *RelationshipBiz) CreateGroup(ctx context.Context, leaderId int64, groupName string, groupAvatar string, groupDesc string) (*universal.Group, error) {
 	group, err := b.repo.CreateGroup(ctx, leaderId, groupName, groupAvatar, groupDesc)
 	if err != nil {
-		b.helper.Errorf("create group error: %v", err)
 		return nil, err
 	}
 	return group, nil
 }
 
+// GetGroupList 获取群组列表
 func (b *RelationshipBiz) GetGroupList(ctx context.Context, userId int64) ([]*universal.Group, error) {
 	groupIds, err := b.repo.GetGroupIds(ctx, userId)
 	if err != nil {
-		b.helper.Errorf("get group list error: %v", err)
 		return nil, err
 	}
 	groups, err := b.repo.GetGroups(ctx, groupIds)
 	if err != nil {
-		b.helper.Errorf("get groups error: %v", err)
 		return nil, err
 	}
 	return groups, nil
 }
 
+// GetGroupInfo 获取群组信息
 func (b *RelationshipBiz) GetGroupInfo(ctx context.Context, groupId string) (*universal.Group, error) {
 	groups, err := b.repo.GetGroups(ctx, []string{groupId})
 	if err != nil {
-		b.helper.Errorf("get group info error: %v", err)
 		return nil, err
 	}
 	if len(groups) == 0 {
-		return nil, pkg.InternalError("group not found")
+		b.helper.Errorf("该群组不存在: %s", groupId)
+		return nil, pkg.InternalError("该群组不存在: %s", groupId)
 	}
 	return groups[0], nil
 }
 
+// UpdateGroupInfo 更新群组信息
 func (b *RelationshipBiz) UpdateGroupInfo(ctx context.Context, groupId string, groupName string, groupAvatar string, groupDesc string) error {
 	err := b.repo.UpdateGroupInfo(ctx, groupId, groupName, groupAvatar, groupDesc)
 	if err != nil {
-		b.helper.Errorf("update group info error: %v", err)
 		return err
 	}
 	return nil
@@ -408,15 +410,16 @@ func (b *RelationshipBiz) UpdateGroupInfo(ctx context.Context, groupId string, g
 func (b *RelationshipBiz) DeleteGroup(ctx context.Context, groupId string, userId int64) error {
 	groups, err := b.repo.GetGroups(ctx, []string{groupId})
 	if len(groups) == 0 {
-		return pkg.InternalError("group not found")
+		b.helper.Errorf("该群组不存在: %s", groupId)
+		return pkg.InternalError("该群组不存在: %s", groupId)
 	}
 	group := groups[0]
 	if group.GroupLeaderId != userId {
-		return pkg.InternalError("not group leader")
+		b.helper.Errorf("非群主不能删除群组: %s", groupId)
+		return pkg.InternalError("非群主不能删除群组: %s", groupId)
 	}
 	err = b.repo.DeleteGroup(ctx, groupId)
 	if err != nil {
-		b.helper.Errorf("delete group error: %v", err)
 		return err
 	}
 	return nil
@@ -426,7 +429,6 @@ func (b *RelationshipBiz) DeleteGroup(ctx context.Context, groupId string, userI
 func (b *RelationshipBiz) GetGroupMemberList(ctx context.Context, groupId string) ([]*universal.GroupMember, error) {
 	members, err := b.repo.GetGroupMembers(ctx, groupId)
 	if err != nil {
-		err = pkg.InternalError("get group member list error: %v", err)
 		b.helper.Errorf(err.Error())
 		return nil, err
 	}
@@ -436,8 +438,8 @@ func (b *RelationshipBiz) GetGroupMemberList(ctx context.Context, groupId string
 	}
 	profiles, err := b.userClient.GetProfiles(ctx, &user.GetProfilesRequest{Uids: uids})
 	if err != nil {
-		b.helper.Errorf("get profiles error: %v", err)
-		return nil, err
+		b.helper.Errorf("获取用户信息失败: %v", err)
+		return nil, pkg.InternalError("获取用户信息失败: %v", err)
 	}
 	m := make(map[int64]*user.ShortProfile)
 	for _, profile := range profiles.Profiles {
@@ -462,16 +464,16 @@ func (b *RelationshipBiz) GetGroupMemberList(ctx context.Context, groupId string
 func (b *RelationshipBiz) GetGroupMemberInfo(ctx context.Context, groupId string, userId int64) (*universal.GroupMember, error) {
 	member, err := b.repo.GetGroupMember(ctx, groupId, userId)
 	if err != nil {
-		b.helper.Errorf("get group member info error: %v", err)
 		return nil, err
 	}
 	profiles, err := b.userClient.GetProfiles(ctx, &user.GetProfilesRequest{Uids: []int64{userId}})
 	if err != nil {
-		b.helper.Errorf("get profile error: %v", err)
-		return nil, err
+		b.helper.Errorf("获取用户信息失败: %v", err)
+		return nil, pkg.InternalError("获取用户信息失败: %v", err)
 	}
 	if len(profiles.Profiles) == 0 {
-		return nil, pkg.InternalError("profile not found")
+		b.helper.Errorf("该用户不存在: %d", userId)
+		return nil, pkg.InternalError("该用户不存在: %d", userId)
 	}
 	profile := profiles.Profiles[0]
 	res := &universal.GroupMember{
@@ -489,7 +491,6 @@ func (b *RelationshipBiz) GetGroupMemberInfo(ctx context.Context, groupId string
 func (b *RelationshipBiz) UpdateGroupMemberInfo(ctx context.Context, groupId string, userId int64, groupNoteName string, memberNoteName string) error {
 	err := b.repo.UpdateGroupMemberInfo(ctx, groupId, userId, groupNoteName, memberNoteName)
 	if err != nil {
-		b.helper.Errorf("update group member info error: %v", err)
 		return err
 	}
 	return nil
@@ -499,16 +500,14 @@ func (b *RelationshipBiz) UpdateGroupMemberInfo(ctx context.Context, groupId str
 func (b *RelationshipBiz) DeleteGroupMember(ctx context.Context, groupId string, userId int64) error {
 	isMember, err := b.CheckMember(ctx, groupId, userId)
 	if err != nil {
-		b.helper.Errorf(err.Error())
 		return err
 	}
 	if !isMember {
 		b.helper.Warnf("用户：%d 不是群组：%s 成员", userId, groupId)
-		return pkg.ErrNotGroupMember
+		return pkg.InternalError("用户：%d 不是群组：%s 成员", userId, groupId)
 	}
 	err = b.repo.DeleteGroupMember(ctx, groupId, userId)
 	if err != nil {
-		b.helper.Errorf("delete group member error: %v", err)
 		return err
 	}
 	return nil
@@ -518,20 +517,17 @@ func (b *RelationshipBiz) DeleteGroupMember(ctx context.Context, groupId string,
 func (b *RelationshipBiz) SendGroupRequest(ctx context.Context, requesterId int64, groupId string, desc string) (*universal.GroupRequest, error) {
 	request, err := b.repo.CreateGroupRequest(ctx, requesterId, groupId, desc)
 	if err != nil {
-		err = pkg.InternalError("create group request error: %v", err)
-		b.helper.Errorf(err.Error())
 		return nil, err
 	}
 	// 发送通知
-	if err := b.broker.Publish(b.mqConfig.GroupRequestTopic, &model.GroupRequestMessage{
+	if err = b.broker.Publish(b.mqConfig.GroupRequestTopic, &model.GroupRequestMessage{
 		RequestId: request.RequestID,
 	}); err != nil {
-		return nil, err
+		b.helper.Errorf("发送入群申请通知失败: %v", err)
+		return nil, pkg.InternalError("发送入群申请通知失败: %v", err)
 	}
 	groupInfo, err := b.GetGroupInfo(ctx, groupId)
 	if err != nil {
-		err = pkg.InternalError("get group info error: %v", err)
-		b.helper.Errorf(err.Error())
 		return nil, err
 	}
 
@@ -552,8 +548,6 @@ func (b *RelationshipBiz) SendGroupRequest(ctx context.Context, requesterId int6
 func (b *RelationshipBiz) GetGroupRequestList(ctx context.Context, groupId string) ([]*universal.GroupRequest, error) {
 	requests, err := b.repo.GetGroupRequests(ctx, groupId)
 	if err != nil {
-		err = pkg.InternalError("get group request list error: %v", err)
-		b.helper.Errorf(err.Error())
 		return nil, err
 	}
 	var uids []int64
@@ -562,8 +556,8 @@ func (b *RelationshipBiz) GetGroupRequestList(ctx context.Context, groupId strin
 	}
 	profiles, err := b.userClient.GetProfiles(ctx, &user.GetProfilesRequest{Uids: uids})
 	if err != nil {
-		b.helper.Errorf("get profiles error: %v", err)
-		return nil, err
+		b.helper.Errorf("获取用户信息失败: %v", err)
+		return nil, pkg.InternalError("获取用户信息失败: %v", err)
 	}
 	m := make(map[int64]*user.ShortProfile)
 	for _, profile := range profiles.Profiles {
@@ -591,17 +585,16 @@ func (b *RelationshipBiz) GetGroupRequestList(ctx context.Context, groupId strin
 func (b *RelationshipBiz) GetGroupRequest(ctx context.Context, requestId int64) (*universal.GroupRequest, error) {
 	request, err := b.repo.GetGroupRequest(ctx, requestId)
 	if err != nil {
-		err = pkg.InternalError("get group request error: %v", err)
-		b.helper.Errorf(err.Error())
 		return nil, err
 	}
 	profiles, err := b.userClient.GetProfiles(ctx, &user.GetProfilesRequest{Uids: []int64{request.RequesterID}})
 	if err != nil {
-		b.helper.Errorf("get profile error: %v", err)
-		return nil, err
+		b.helper.Errorf("获取用户信息失败: %v", err)
+		return nil, pkg.InternalError("获取用户信息失败: %v", err)
 	}
 	if len(profiles.Profiles) == 0 {
-		return nil, pkg.InternalError("profile not found")
+		b.helper.Errorf("该用户不存在：%d", request.RequesterID)
+		return nil, pkg.InternalError("该用户不存在：%d", request.RequesterID)
 	}
 	profile := profiles.Profiles[0]
 	return &universal.GroupRequest{
@@ -621,8 +614,7 @@ func (b *RelationshipBiz) GetGroupRequest(ctx context.Context, requestId int64) 
 func (b *RelationshipBiz) GetGroupRequests(ctx context.Context, requestIds []int64) ([]*universal.GroupRequest, error) {
 	requests, err := b.repo.GetGroupRequestsByIds(ctx, requestIds)
 	if err != nil {
-		err = pkg.InternalError("get group requests error: %v", err)
-		b.helper.Errorf(err.Error())
+
 		return nil, err
 	}
 	var uids []int64
@@ -631,8 +623,8 @@ func (b *RelationshipBiz) GetGroupRequests(ctx context.Context, requestIds []int
 	}
 	profiles, err := b.userClient.GetProfiles(ctx, &user.GetProfilesRequest{Uids: uids})
 	if err != nil {
-		b.helper.Errorf("get profiles error: %v", err)
-		return nil, err
+		b.helper.Errorf("获取用户信息失败: %v", err)
+		return nil, pkg.InternalError("获取用户信息失败: %v", err)
 	}
 	m := make(map[int64]*user.ShortProfile)
 	for _, profile := range profiles.Profiles {
@@ -665,91 +657,84 @@ func (b *RelationshipBiz) DealGroupRequest(ctx context.Context, requestId int64,
 	}
 	request, err := b.repo.GetGroupRequest(ctx, requestId)
 	if err != nil {
-		b.helper.Errorf(err.Error())
-		return pkg.GenFuncError("biz.DealGroupRequest")
+		return err
 	}
 	if request.Status != pkg.Pending {
-		err := pkg.InvalidArgumentError("该请求已处理: %v", requestId)
+		err = pkg.InvalidArgumentError("该请求已处理: %v", requestId)
 		b.helper.Errorf(err.Error())
 		return err
 	}
 	req, err := b.repo.DealGroupRequest(ctx, requestId, status)
 	// 发送通知
-	if err := b.broker.Publish(b.mqConfig.GroupRequestTopic, &model.GroupRequestMessage{
+	if err = b.broker.Publish(b.mqConfig.GroupRequestTopic, &model.GroupRequestMessage{
 		RequestId:   requestId,
 		RequesterId: req.RequesterID,
 	}); err != nil {
-		return err
+		b.helper.Errorf("发送通知失败: %v", err)
+		return pkg.InternalError("发送通知失败: %v", err)
 	}
 	return nil
 }
 
+// CreateGroupAdmin 设置群管理员
 func (b *RelationshipBiz) CreateGroupAdmin(ctx context.Context, groupId string, userId int64) error {
 	member, err := b.repo.GetGroupMember(ctx, groupId, userId)
-	if err = pkg.IsNotRecordNotFoundError(err); err != nil {
-		err = pkg.InternalError("get group member error: %v", err)
-		b.helper.Errorf(err.Error())
+	if err != nil {
 		return err
 	}
 	if member == nil {
-		err = pkg.InternalError("group member not found")
+		err = pkg.InternalError("群成员不存在:%d", userId)
 		b.helper.Errorf(err.Error())
 		return err
 	}
 	if member.Role == pkg.Admin {
-		err = pkg.InternalError("already admin")
+		err = pkg.InternalError("该成员已经是管理员: %d", userId)
 		b.helper.Errorf(err.Error())
 		return err
 	}
 	if member.Role == pkg.Leader {
-		err = pkg.InternalError("leader can not be admin")
+		err = pkg.InternalError("群主不能设置为管理员: %d", userId)
 		b.helper.Errorf(err.Error())
 		return err
 	}
 	// 更新成员角色
-	if err := b.repo.CreateAdmin(ctx, groupId, userId); err != nil {
-		err = pkg.InternalError("create group admin error: %v", err)
-		b.helper.Errorf(err.Error())
+	if err = b.repo.CreateAdmin(ctx, groupId, userId); err != nil {
 		return err
 	}
 	return nil
 }
 
+// DeleteGroupAdmin 取消群管理员
 func (b *RelationshipBiz) DeleteGroupAdmin(ctx context.Context, groupId string, userId int64) error {
 	member, err := b.repo.GetGroupMember(ctx, groupId, userId)
-	if err = pkg.IsNotRecordNotFoundError(err); err != nil {
-		err = pkg.InternalError("get group member error: %v", err)
-		b.helper.Errorf(err.Error())
+	if err != nil {
 		return err
 	}
 	if member == nil {
-		err = pkg.InternalError("group member not found")
+		err = pkg.InternalError("群成员不存在:%d", userId)
 		b.helper.Errorf(err.Error())
 		return err
 	}
 	if member.Role != pkg.Admin {
-		err = pkg.InternalError("not admin")
+		err = pkg.InternalError("该成员不是管理员: %d", userId)
 		b.helper.Errorf(err.Error())
 		return err
 	}
 	// 更新成员角色
-	if err := b.repo.DeleteAdmin(ctx, groupId, userId); err != nil {
-		err = pkg.InternalError("delete group admin error: %v", err)
-		b.helper.Errorf(err.Error())
+	if err = b.repo.DeleteAdmin(ctx, groupId, userId); err != nil {
 		return err
 	}
 	return nil
 }
 
+// GetGroupAdminList 获取群管理员列表
 func (b *RelationshipBiz) GetGroupAdminList(ctx context.Context, groupId string) ([]*universal.GroupMember, error) {
 	adminIds, err := b.repo.GetGroupAdminIds(ctx, groupId)
 	if err != nil {
-		b.helper.Errorf(err.Error())
 		return nil, err
 	}
 	members, err := b.repo.GetMembersIn(ctx, groupId, adminIds)
 	if err != nil {
-		b.helper.Errorf(err.Error())
 		return nil, err
 	}
 	var uids []int64
@@ -758,8 +743,8 @@ func (b *RelationshipBiz) GetGroupAdminList(ctx context.Context, groupId string)
 	}
 	profiles, err := b.userClient.GetProfiles(ctx, &user.GetProfilesRequest{Uids: uids})
 	if err != nil {
-		b.helper.Errorf(err.Error())
-		return nil, err
+		b.helper.Errorf("获取用户信息失败: %v", err)
+		return nil, pkg.InternalError("获取用户信息失败: %v", err)
 	}
 	m := make(map[int64]*user.ShortProfile)
 	for _, profile := range profiles.Profiles {
@@ -788,8 +773,8 @@ func (b *RelationshipBiz) CompleteMembers(members []*model.GroupMember) ([]*univ
 	}
 	profiles, err := b.userClient.GetProfiles(context.Background(), &user.GetProfilesRequest{Uids: uids})
 	if err != nil {
-		b.helper.Errorf(err.Error())
-		return nil, err
+		b.helper.Errorf("获取用户信息失败: %v", err)
+		return nil, pkg.InternalError("获取用户信息失败: %v", err)
 	}
 	m := make(map[int64]*user.ShortProfile)
 	for _, profile := range profiles.Profiles {
@@ -809,63 +794,65 @@ func (b *RelationshipBiz) CompleteMembers(members []*model.GroupMember) ([]*univ
 	}
 	return res, nil
 }
+
+// CompleteMember 补全群成员信息, 从用户服务获取
 func (b *RelationshipBiz) CompleteMember(member *model.GroupMember) (*universal.GroupMember, error) {
 	members, err := b.CompleteMembers([]*model.GroupMember{member})
 	if err != nil {
 		return nil, err
 	}
 	if len(members) == 0 {
-		return nil, pkg.InternalError("member not found")
+		b.helper.Errorf("该成员不存在: %d", member.MemberID)
+		return nil, pkg.InternalError("该成员不存在: %d", member.MemberID)
 	}
 	return members[0], nil
 }
+
+// GetGroupAdminInfo 获取群管理员信息
 func (b *RelationshipBiz) GetGroupAdminInfo(ctx context.Context, groupId string, userId int64) (*universal.GroupMember, error) {
 	member, err := b.repo.GetGroupMember(ctx, groupId, userId)
-	if err = pkg.IsNotRecordNotFoundError(err); err != nil {
-		err = pkg.InternalError("get group member error: %v", err)
-		b.helper.Errorf(err.Error())
+	if err != nil {
 		return nil, err
 	}
 	if member == nil {
-		err = pkg.InternalError("group member not found")
+		err = pkg.InternalError("群成员不存在:%d", userId)
 		b.helper.Errorf(err.Error())
 		return nil, err
 	}
 	if member.Role != pkg.Admin {
-		err = pkg.InternalError("not admin")
+		err = pkg.InternalError("该成员不是管理员: %d", userId)
 		b.helper.Errorf(err.Error())
 		return nil, err
 	}
 	res, err := b.CompleteMember(member)
 	if err != nil {
-		b.helper.Errorf(err.Error())
 		return nil, err
 	}
 	return res, nil
 }
 
+// CheckAdmin 检查是否是群管理员
 func (b *RelationshipBiz) CheckAdmin(ctx context.Context, groupId string, userId int64) (bool, error) {
 	isAdmin, err := b.repo.ExistAdmin(ctx, groupId, userId)
 	if err != nil {
-		b.helper.Errorf(err.Error())
 		return false, err
 	}
 	return isAdmin, nil
 }
 
+// CheckLeader 检查是否是群主
 func (b *RelationshipBiz) CheckLeader(ctx context.Context, groupId string, userId int64) (bool, error) {
 	leaderId, err := b.repo.GetGroupLeader(ctx, groupId)
 	if err != nil {
-		b.helper.Errorf(err.Error())
 		return false, err
 	}
 	return leaderId == userId, nil
 }
 
+// CheckMember 检查是否是群成员
 func (b *RelationshipBiz) CheckMember(ctx context.Context, groupId string, userId int64) (bool, error) {
 	isMember, err := b.repo.ExistMember(ctx, groupId, userId)
 	if err != nil {
-		b.helper.Errorf(err.Error())
 		return false, err
 	}
 	return isMember, nil

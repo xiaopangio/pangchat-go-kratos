@@ -30,8 +30,9 @@ func (r *RelationshipRepoImpl) DealGroupRequest(ctx context.Context, requestId i
 			Where(tx.FriendRequest.RequestID.Eq(requestId)).
 			Update(tx.GroupRequest.Status, status)
 		if err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.DealGroupRequest")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		// 拒绝则直接返回
 		if status == pkg.Refused {
@@ -42,8 +43,9 @@ func (r *RelationshipRepoImpl) DealGroupRequest(ctx context.Context, requestId i
 			Where(tx.GroupRequest.RequestID.Eq(requestId)).
 			First()
 		if err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.DealGroupRequest")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		member := &model.GroupMember{
 			MemberID:       groupRequest.RequesterID,
@@ -56,14 +58,18 @@ func (r *RelationshipRepoImpl) DealGroupRequest(ctx context.Context, requestId i
 		// 添加群成员
 		if err = tx.GroupMember.WithContext(ctx).
 			Create(member); err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.DealGroupRequest")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		return nil
 	})
 	if err != nil {
-		r.helper.Errorf(pkg.TransactionErrorFormat, err)
-		return nil, pkg.GenFuncError("data.DealGroupRequest")
+		err = pkg.InternalError(pkg.TransactionErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		err = pkg.InternalError(pkg.TransactionErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return groupRequest, err
 }
@@ -79,8 +85,9 @@ func (r *RelationshipRepoImpl) ExistMember(ctx context.Context, groupId string, 
 			dal.GroupMember.IsDeleted.Eq(pkg.NotDeleted),
 		).
 		Count(); err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return false, pkg.GenFuncError("data.ExistMember")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return false, err
 	} else {
 		return count > 0, nil
 	}
@@ -98,8 +105,9 @@ func (r *RelationshipRepoImpl) ExistAdmin(ctx context.Context, groupId string, u
 			dal.GroupAdmin.IsDeleted.Eq(pkg.NotDeleted),
 		).
 		Count(); err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return false, pkg.GenFuncError("data.ExistAdmin")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return false, err
 	} else {
 		return count > 0, nil
 	}
@@ -117,8 +125,9 @@ func (r *RelationshipRepoImpl) GetGroupLeader(ctx context.Context, groupId strin
 			dal.Group.IsDeleted.Eq(pkg.NotDeleted),
 		).
 		First(); pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return 0, pkg.GenFuncError("data.GetGroupLeader")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return 0, err
 	}
 	return group.GroupLeaderID, nil
 }
@@ -135,8 +144,9 @@ func (r *RelationshipRepoImpl) GetMembersIn(ctx context.Context, groupId string,
 		).
 		Find()
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetMembersIn")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return members, nil
 }
@@ -153,8 +163,9 @@ func (r *RelationshipRepoImpl) GetGroupAdminIds(ctx context.Context, groupId str
 			dal.GroupAdmin.IsDeleted.Eq(pkg.NotDeleted),
 		).
 		Find(); pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetGroupAdminIds")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	} else {
 		for _, admin := range admins {
 			adminIds = append(adminIds, admin.AdministratorID)
@@ -172,8 +183,9 @@ func (r *RelationshipRepoImpl) DeleteAdmin(ctx context.Context, groupId string, 
 				dal.GroupAdmin.AdministratorID.Eq(userId),
 			).
 			Update(dal.GroupAdmin.IsDeleted, pkg.Deleted); err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.DeleteAdmin")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		//更新群成员权限
 		if _, err := tx.GroupMember.WithContext(ctx).
@@ -182,13 +194,15 @@ func (r *RelationshipRepoImpl) DeleteAdmin(ctx context.Context, groupId string, 
 				dal.GroupMember.MemberID.Eq(userId),
 			).
 			Update(dal.GroupMember.Role, pkg.Normal); err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.DeleteAdmin")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		return nil
 	}); err != nil {
-		r.helper.Errorf(pkg.TransactionErrorFormat, err)
-		return pkg.GenFuncError("data.DeleteAdmin")
+		err = pkg.InternalError(pkg.TransactionErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -203,8 +217,9 @@ func (r *RelationshipRepoImpl) UpdateMemberRole(ctx context.Context, groupId str
 			dal.GroupMember.MemberID.Eq(userId),
 		).
 		Update(dal.GroupMember.Role, role); err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return pkg.GenFuncError("data.UpdateMemberRole")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -220,8 +235,9 @@ func (r *RelationshipRepoImpl) CreateAdmin(ctx context.Context, groupId string, 
 			GroupID:         groupId,
 			AdministratorID: userId,
 		}); err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.CreateAdmin")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		if err := pkg.ContextErr(ctx); err != nil {
 			return err
@@ -233,13 +249,15 @@ func (r *RelationshipRepoImpl) CreateAdmin(ctx context.Context, groupId string, 
 				dal.GroupMember.MemberID.Eq(userId),
 			).
 			Update(dal.GroupMember.Role, pkg.Admin); err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.CreateAdmin")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		return nil
 	}); err != nil {
-		r.helper.Errorf(pkg.TransactionErrorFormat, err)
-		return pkg.GenFuncError("data.CreateAdmin")
+		err = pkg.InternalError(pkg.TransactionErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -251,8 +269,9 @@ func (r *RelationshipRepoImpl) UpdateGroupRequestStatus(ctx context.Context, req
 	if _, err := dal.GroupRequest.WithContext(ctx).
 		Where(dal.GroupRequest.RequestID.Eq(requestId)).
 		Update(dal.GroupRequest.Status, status); err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return pkg.GenFuncError("data.UpdateGroupRequestStatus")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -269,8 +288,9 @@ func (r *RelationshipRepoImpl) CreateGroupMember(ctx context.Context, request *m
 		return err
 	}
 	if err := dal.GroupMember.WithContext(ctx).Create(m); err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return pkg.GenFuncError("data.CreateGroupMember")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -283,8 +303,9 @@ func (r *RelationshipRepoImpl) GetGroupRequestsByIds(ctx context.Context, reques
 		Where(dal.GroupRequest.RequestID.In(requestIds...)).
 		Find()
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetGroupRequestsByIds")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return requests, nil
 }
@@ -297,8 +318,9 @@ func (r *RelationshipRepoImpl) GetGroupRequest(ctx context.Context, requestId in
 		Where(dal.GroupRequest.RequestID.Eq(requestId)).
 		First()
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetGroupRequest")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return request, nil
 }
@@ -314,8 +336,9 @@ func (r *RelationshipRepoImpl) GetGroupRequests(ctx context.Context, groupId str
 		).
 		Find()
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetGroupRequests")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return requests, nil
 }
@@ -335,8 +358,9 @@ func (r *RelationshipRepoImpl) CreateGroupRequest(ctx context.Context, requester
 	}
 	if err := dal.GroupRequest.WithContext(ctx).
 		Create(m); err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.CreateGroupRequest")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return m, nil
 }
@@ -352,8 +376,9 @@ func (r *RelationshipRepoImpl) DeleteGroupMember(ctx context.Context, groupId st
 			dal.GroupMember.IsDeleted.Eq(pkg.NotDeleted),
 		).
 		Update(dal.GroupMember.IsDeleted, pkg.Deleted); err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return pkg.GenFuncError("data.DeleteGroupMember")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -373,8 +398,9 @@ func (r *RelationshipRepoImpl) UpdateGroupMemberInfo(ctx context.Context, groupI
 			dal.GroupMember.IsDeleted.Eq(pkg.NotDeleted),
 		).
 		Updates(m); err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return pkg.GenFuncError("data.UpdateGroupMemberInfo")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -390,8 +416,9 @@ func (r *RelationshipRepoImpl) GetGroupMember(ctx context.Context, groupId strin
 			dal.GroupMember.IsDeleted.Eq(pkg.NotDeleted),
 		).First()
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetGroupMember")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return member, nil
 }
@@ -413,8 +440,9 @@ func (r *RelationshipRepoImpl) GetGroupMembers(ctx context.Context, groupId stri
 		).
 		Find()
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetGroupMembers")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return members, nil
 }
@@ -426,19 +454,22 @@ func (r *RelationshipRepoImpl) DeleteGroup(ctx context.Context, groupId string) 
 		if _, err := tx.GroupMember.WithContext(ctx).
 			Where(tx.GroupMember.GroupID.Eq(groupId)).
 			Update(dal.GroupMember.IsDeleted, pkg.Deleted); err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.DeleteGroup")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		if _, err := tx.Group.WithContext(ctx).
 			Where(tx.Group.GroupID.Eq(groupId)).
 			Update(dal.Group.IsDeleted, pkg.Deleted); err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.DeleteGroup")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		return nil
 	}); err != nil {
-		r.helper.Errorf(pkg.TransactionErrorFormat, err)
-		return pkg.GenFuncError("data.DeleteGroup")
+		err = pkg.InternalError(pkg.TransactionErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -459,8 +490,9 @@ func (r *RelationshipRepoImpl) UpdateGroupInfo(ctx context.Context, groupId stri
 			dal.Group.IsDeleted.Eq(pkg.NotDeleted),
 		).
 		Updates(m); err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return pkg.GenFuncError("data.UpdateGroupInfo")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -478,8 +510,9 @@ func (r *RelationshipRepoImpl) GetGroupIds(ctx context.Context, userId int64) ([
 		Select(dal.GroupMember.GroupID).
 		Find()
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetGroupIds")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	var ids []string
 	for _, group := range groups {
@@ -499,8 +532,9 @@ func (r *RelationshipRepoImpl) GetGroups(ctx context.Context, groupIds []string)
 			dal.Group.IsDeleted.Eq(pkg.NotDeleted)).
 		Find()
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetGroups")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	var res []*universal.Group
 	for _, group := range groups {
@@ -530,8 +564,9 @@ func (r *RelationshipRepoImpl) CreateGroup(ctx context.Context, leaderId int64, 
 	}
 	if err := dal.Group.WithContext(ctx).
 		Create(m); err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.CreateGroup")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	member := &model.GroupMember{
 		MemberID: leaderId,
@@ -541,8 +576,9 @@ func (r *RelationshipRepoImpl) CreateGroup(ctx context.Context, leaderId int64, 
 	}
 	if err := dal.GroupMember.WithContext(ctx).
 		Create(member); err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.CreateGroup")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return &universal.Group{
 		GroupId:     m.GroupID,
@@ -564,8 +600,9 @@ func (r *RelationshipRepoImpl) GetFriend(ctx context.Context, uid, friendId int6
 			dal.Friend.IsDeleted.Eq(pkg.NotDeleted),
 		).First()
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetFriend")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return friend, nil
 }
@@ -578,8 +615,9 @@ func (r *RelationshipRepoImpl) GetFriendRequestsByRequestIds(ctx context.Context
 		Where(dal.FriendRequest.RequestID.In(requestId...)).
 		Find()
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetFriendRequestsByRequestIds")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return requests, nil
 }
@@ -596,8 +634,9 @@ func (r *RelationshipRepoImpl) DeleteFriendGroup(ctx context.Context, uid int64,
 			).
 			Delete()
 		if err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.DeleteFriendGroup")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		//将该分组下的好友移动到默认分组
 		_, err = tx.Friend.WithContext(ctx).
@@ -609,14 +648,16 @@ func (r *RelationshipRepoImpl) DeleteFriendGroup(ctx context.Context, uid int64,
 				GroupName: pkg.DefaultFriendGroup,
 			})
 		if err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.DeleteFriendGroup")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		return nil
 	})
 	if err != nil {
-		r.helper.Errorf(pkg.TransactionErrorFormat, err)
-		return pkg.GenFuncError("data.DeleteFriendGroup")
+		err = pkg.InternalError(pkg.TransactionErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -633,8 +674,9 @@ func (r *RelationshipRepoImpl) UpdateFriendGroup(ctx context.Context, uid int64,
 			).
 			Update(tx.FriendGroup.GroupName, newGroupName)
 		if err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.UpdateFriendGroup")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		r.helper.Infof("更新好友表中的分组名,uid:%d,groupName:%s,newGroupName:%s", uid, groupName, newGroupName)
 		//更新好友表中的分组名
@@ -645,15 +687,17 @@ func (r *RelationshipRepoImpl) UpdateFriendGroup(ctx context.Context, uid int64,
 			).
 			Update(tx.FriendGroup.GroupName, newGroupName)
 		if err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.UpdateFriendGroup")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		r.helper.Info("更新好友表中的分组名成功")
 		return nil
 	})
 	if err != nil {
-		r.helper.Errorf(pkg.TransactionErrorFormat, err)
-		return pkg.GenFuncError("data.UpdateFriendGroup")
+		err = pkg.InternalError(pkg.TransactionErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -667,8 +711,9 @@ func (r *RelationshipRepoImpl) CreateFriendGroup(ctx context.Context, uid int64,
 		GroupName: groupName,
 	})
 	if err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return pkg.GenFuncError("data.CreateFriendGroup")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -687,8 +732,9 @@ func (r *RelationshipRepoImpl) UpdateFriendInfo(ctx context.Context, uid, friend
 			GroupName: groupName,
 		})
 	if err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return pkg.GenFuncError("data.UpdateFriendInfo")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -704,8 +750,9 @@ func (r *RelationshipRepoImpl) DelFriend(ctx context.Context, uid, friendId int6
 		).
 		Update(dal.Friend.IsDeleted, pkg.Deleted)
 	if err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return pkg.GenFuncError("data.DelFriend")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -721,8 +768,9 @@ func (r *RelationshipRepoImpl) GetFriends(ctx context.Context, uid int64) ([]*mo
 		).
 		Find()
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetFriends")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return friends, nil
 }
@@ -736,8 +784,9 @@ func (r *RelationshipRepoImpl) GetFriendGroups(ctx context.Context, uid int64) (
 		Where(dal.FriendGroup.UserID.Eq(uid)).
 		Find()
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetFriendGroups")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return friendGroups, nil
 }
@@ -752,8 +801,9 @@ func (r *RelationshipRepoImpl) GetFriendsByGroup(ctx context.Context, uid int64,
 			dal.Friend.GroupName.Eq(groupName),
 		).Find()
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetFriendsByGroup")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return friends, nil
 }
@@ -772,8 +822,9 @@ func (r *RelationshipRepoImpl) CreateFriend(ctx context.Context, uid, friendId i
 	err := dal.Friend.WithContext(ctx).
 		Create(&m)
 	if err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return pkg.GenFuncError("data.CreateFriend")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -790,8 +841,9 @@ func (r *RelationshipRepoImpl) DealFriendRequest(ctx context.Context, requestId 
 			Where(tx.FriendRequest.RequestID.Eq(requestId)).
 			Update(tx.FriendRequest.Status, status)
 		if err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.DealFriendRequest")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		// if status is refused, return
 		if status == pkg.Refused {
@@ -802,8 +854,9 @@ func (r *RelationshipRepoImpl) DealFriendRequest(ctx context.Context, requestId 
 			Where(tx.FriendRequest.RequestID.Eq(requestId)).
 			First()
 		if err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.DealFriendRequest")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		var friends []*model.Friend
 		// create friend
@@ -828,14 +881,16 @@ func (r *RelationshipRepoImpl) DealFriendRequest(ctx context.Context, requestId 
 		err = tx.WithContext(ctx).Friend.
 			CreateInBatches(friends, 10)
 		if err != nil {
-			r.helper.Errorf(pkg.SqlErrorFormat, err)
-			return pkg.GenFuncError("data.DealFriendRequest")
+			err = pkg.InternalError(pkg.SqlErrorFormat, err)
+			r.helper.Errorf(err.Error())
+			return err
 		}
 		return nil
 	})
 	if err != nil {
-		r.helper.Errorf(pkg.TransactionErrorFormat, err)
-		return nil, pkg.GenFuncError("data.DealFriendRequest")
+		err = pkg.InternalError(pkg.TransactionErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return request, nil
 }
@@ -848,8 +903,9 @@ func (r *RelationshipRepoImpl) UpdateFriendRequestStatus(ctx context.Context, re
 		Where(dal.FriendRequest.RequestID.Eq(requestId)).
 		Update(dal.FriendRequest.Status, status)
 	if err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return pkg.GenFuncError("data.UpdateFriendRequestStatus")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return err
 	}
 	return nil
 }
@@ -862,8 +918,9 @@ func (r *RelationshipRepoImpl) GetFriendRequestByRequestId(ctx context.Context, 
 		Where(dal.FriendRequest.RequestID.Eq(requestId)).
 		First()
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.GetFriendRequestByRequestId")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return result, nil
 }
@@ -877,8 +934,9 @@ func (r *RelationshipRepoImpl) GetFriendRequestByPage(ctx context.Context, uid i
 		Or(dal.FriendRequest.ReceiverID.Eq(uid)).
 		FindByPage(offset, size)
 	if pkg.IsNotRecordNotFoundError(err) != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, 0, pkg.GenFuncError("data.GetFriendRequestByPage")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, 0, err
 	}
 	if count == 0 {
 		return nil, 0, nil
@@ -892,8 +950,9 @@ func (r *RelationshipRepoImpl) GetFriendRequestByPage(ctx context.Context, uid i
 		Count()
 	r.helper.Infof("count: %d", count)
 	if err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, 0, pkg.GenFuncError("data.GetFriendRequestByPage")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, 0, err
 	}
 	return result, int(count), nil
 }
@@ -907,8 +966,9 @@ func (r *RelationshipRepoImpl) CreateFriendRequest(ctx context.Context, uid, fri
 		).
 		Count()
 	if err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.CreateFriendRequest")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	if count > 0 {
 		return nil, pkg.ErrAlreadyFriend
@@ -925,8 +985,9 @@ func (r *RelationshipRepoImpl) CreateFriendRequest(ctx context.Context, uid, fri
 			dal.FriendRequest.Status.Eq(pkg.Pending)).
 		Count()
 	if err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.CreateFriendRequest")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	if count > 0 {
 		return nil, pkg.ErrAlreadyFriendRequest
@@ -948,8 +1009,9 @@ func (r *RelationshipRepoImpl) CreateFriendRequest(ctx context.Context, uid, fri
 	err = dal.FriendRequest.WithContext(ctx).
 		Create(&m)
 	if err != nil {
-		r.helper.Errorf(pkg.SqlErrorFormat, err)
-		return nil, pkg.GenFuncError("data.CreateFriendRequest")
+		err = pkg.InternalError(pkg.SqlErrorFormat, err)
+		r.helper.Errorf(err.Error())
+		return nil, err
 	}
 	return &m, nil
 }
