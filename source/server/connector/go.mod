@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-kratos/kratos/contrib/config/nacos/v2 v2.0.0-20230608092011-e86ad248c3c1
 	github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20230424154814-520b321fe99b

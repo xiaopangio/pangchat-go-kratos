@@ -39,7 +39,7 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 	node := uid.NewUidGenerator(bootstrap, helper)
 	messageBiz := biz.NewMessageBiz(helper, kafkaBroker, db, messageRepo, bootstrap, redisRedis, node)
 	messageServiceService := service.NewMessageServiceService(messageBiz, helper)
-	grpcServer := server.NewGRPCServer(bootstrap, messageServiceService)
+	grpcServer := server.NewGRPCServer(bootstrap, logLogger, messageServiceService)
 	v := endpoints.NewEndPoints(bootstrap)
 	client, err := registry.NewEtcdClient(bootstrap, helper)
 	if err != nil {

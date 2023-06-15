@@ -40,7 +40,7 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 		return nil, nil, err
 	}
 	node := uid.NewUidGenerator(bootstrap, helper)
-	userRepo := data.NewUserRepo(dataData, node)
+	userRepo := data.NewUserRepo(dataData, node, helper)
 	smsClient := sms.NewSmsClient(bootstrap, redisRedis)
 	stsClient := oss.NewSTS(bootstrap)
 	ossClient := oss.NewOSS(bootstrap, stsClient)

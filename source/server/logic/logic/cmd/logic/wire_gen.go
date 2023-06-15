@@ -46,7 +46,7 @@ func wireApp(bootstrap *conf.Bootstrap, logLogger log.Logger) (*kratos.App, func
 	if err != nil {
 		return nil, nil, err
 	}
-	logicRepo := data.NewLogicRepoImpl(dataData)
+	logicRepo := data.NewLogicRepoImpl(dataData, helper)
 	logicBiz := biz.NewLogicBiz(helper, ossClient, redisRedis, connectorRegistry, loadBalance, bootstrap, logicRepo)
 	logicService := service.NewLogicService(logicBiz, helper)
 	grpcServer := server.NewGRPCServer(bootstrap, logLogger, logicService)
