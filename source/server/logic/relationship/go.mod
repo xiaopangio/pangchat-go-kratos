@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/bwmarrin/snowflake v0.3.0
+	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/go-kratos/kratos/contrib/config/nacos/v2 v2.0.0-20230608092011-e86ad248c3c1
 	github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20230424154814-520b321fe99b
 	github.com/go-kratos/kratos/v2 v2.6.2

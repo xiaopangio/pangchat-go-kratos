@@ -2463,7 +2463,7 @@ var file_v1_user_user_proto_depIdxs = []int32{
 	14, // 16: api.v1.logic.user.User.ResetPassword:input_type -> api.v1.logic.user.ResetPasswordRequest
 	16, // 17: api.v1.logic.user.User.ModifyAccountID:input_type -> api.v1.logic.user.ModifyAccountIDRequest
 	18, // 18: api.v1.logic.user.User.ModifyProfile:input_type -> api.v1.logic.user.ModifyProfileRequest
-	22, // 19: api.v1.logic.user.User.GetProfileByAccountID:input_type -> api.v1.logic.user.ProfileRequest
+	22, // 19: api.v1.logic.user.User.Profile:input_type -> api.v1.logic.user.ProfileRequest
 	20, // 20: api.v1.logic.user.User.GetProfileByUID:input_type -> api.v1.logic.user.GetProfileByUIDRequest
 	24, // 21: api.v1.logic.user.User.AddressList:input_type -> api.v1.logic.user.AddressListRequest
 	26, // 22: api.v1.logic.user.User.BindPhone:input_type -> api.v1.logic.user.BindPhoneRequest
@@ -2479,7 +2479,7 @@ var file_v1_user_user_proto_depIdxs = []int32{
 	15, // 32: api.v1.logic.user.User.ResetPassword:output_type -> api.v1.logic.user.ResetPasswordReply
 	17, // 33: api.v1.logic.user.User.ModifyAccountID:output_type -> api.v1.logic.user.ModifyAccountIDReply
 	19, // 34: api.v1.logic.user.User.ModifyProfile:output_type -> api.v1.logic.user.ModifyProfileReply
-	23, // 35: api.v1.logic.user.User.GetProfileByAccountID:output_type -> api.v1.logic.user.ProfileReply
+	23, // 35: api.v1.logic.user.User.Profile:output_type -> api.v1.logic.user.ProfileReply
 	21, // 36: api.v1.logic.user.User.GetProfileByUID:output_type -> api.v1.logic.user.GetProfileByUIDResponse
 	25, // 37: api.v1.logic.user.User.AddressList:output_type -> api.v1.logic.user.AddressListReply
 	27, // 38: api.v1.logic.user.User.BindPhone:output_type -> api.v1.logic.user.BindPhoneReply

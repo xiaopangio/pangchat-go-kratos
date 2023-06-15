@@ -6,6 +6,7 @@ import (
 	pb "relationship/api/v1/relationship"
 	"relationship/api/v1/universal"
 	"relationship/internal/biz"
+	"relationship/internal/common/constant"
 	"relationship/pkg"
 )
 
@@ -83,7 +84,7 @@ func (s *RelationShipService) GetFriendRequest(ctx context.Context, req *pb.GetF
 // DealFriendRequest 处理好友请求
 func (s *RelationShipService) DealFriendRequest(ctx context.Context, req *pb.DealFriendRequestRequest) (*pb.DealFriendRequestResponse, error) {
 	switch req.Status {
-	case pkg.Pending, pkg.Agreed, pkg.Refused:
+	case constant.Pending, constant.Agreed, constant.Refused:
 	default:
 		s.helper.Errorf("无效的状态: %d", req.Status)
 		return nil, pkg.InvalidArgumentError("\"无效的状态: %d", req.Status)

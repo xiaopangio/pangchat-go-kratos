@@ -22,6 +22,7 @@ const (
 	MessageService_DealSingleMessage_FullMethodName          = "/api.v1.logic.message.MessageService/DealSingleMessage"
 	MessageService_DealGroupMessage_FullMethodName           = "/api.v1.logic.message.MessageService/DealGroupMessage"
 	MessageService_UpdateAckMessage_FullMethodName           = "/api.v1.logic.message.MessageService/UpdateAckMessage"
+	MessageService_UpdateAckMessages_FullMethodName          = "/api.v1.logic.message.MessageService/UpdateAckMessages"
 	MessageService_GetLatestUnreadMessageList_FullMethodName = "/api.v1.logic.message.MessageService/GetLatestUnreadMessageList"
 	MessageService_GetUnloadMessages_FullMethodName          = "/api.v1.logic.message.MessageService/GetUnloadMessages"
 	MessageService_GetAllMessages_FullMethodName             = "/api.v1.logic.message.MessageService/GetAllMessages"
@@ -35,6 +36,7 @@ type MessageServiceClient interface {
 	DealSingleMessage(ctx context.Context, in *DealSingleMessageRequest, opts ...grpc.CallOption) (*DealSingleMessageResponse, error)
 	DealGroupMessage(ctx context.Context, in *DealGroupMessageRequest, opts ...grpc.CallOption) (*DealGroupMessageResponse, error)
 	UpdateAckMessage(ctx context.Context, in *UpdateAckMessageRequest, opts ...grpc.CallOption) (*UpdateAckMessageResponse, error)
+	UpdateAckMessages(ctx context.Context, in *UpdateAckMessagesRequest, opts ...grpc.CallOption) (*UpdateAckMessagesResponse, error)
 	GetLatestUnreadMessageList(ctx context.Context, in *GetLatestUnreadMessageListRequest, opts ...grpc.CallOption) (*GetLatestUnreadMessageListResponse, error)
 	GetUnloadMessages(ctx context.Context, in *GetUnloadMessagesRequest, opts ...grpc.CallOption) (*GetUnloadMessagesResponse, error)
 	GetAllMessages(ctx context.Context, in *GetAllMessageRequest, opts ...grpc.CallOption) (*GetAllMessageResponse, error)
@@ -70,6 +72,15 @@ func (c *messageServiceClient) DealGroupMessage(ctx context.Context, in *DealGro
 func (c *messageServiceClient) UpdateAckMessage(ctx context.Context, in *UpdateAckMessageRequest, opts ...grpc.CallOption) (*UpdateAckMessageResponse, error) {
 	out := new(UpdateAckMessageResponse)
 	err := c.cc.Invoke(ctx, MessageService_UpdateAckMessage_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messageServiceClient) UpdateAckMessages(ctx context.Context, in *UpdateAckMessagesRequest, opts ...grpc.CallOption) (*UpdateAckMessagesResponse, error) {
+	out := new(UpdateAckMessagesResponse)
+	err := c.cc.Invoke(ctx, MessageService_UpdateAckMessages_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -119,6 +130,7 @@ type MessageServiceServer interface {
 	DealSingleMessage(context.Context, *DealSingleMessageRequest) (*DealSingleMessageResponse, error)
 	DealGroupMessage(context.Context, *DealGroupMessageRequest) (*DealGroupMessageResponse, error)
 	UpdateAckMessage(context.Context, *UpdateAckMessageRequest) (*UpdateAckMessageResponse, error)
+	UpdateAckMessages(context.Context, *UpdateAckMessagesRequest) (*UpdateAckMessagesResponse, error)
 	GetLatestUnreadMessageList(context.Context, *GetLatestUnreadMessageListRequest) (*GetLatestUnreadMessageListResponse, error)
 	GetUnloadMessages(context.Context, *GetUnloadMessagesRequest) (*GetUnloadMessagesResponse, error)
 	GetAllMessages(context.Context, *GetAllMessageRequest) (*GetAllMessageResponse, error)
@@ -138,6 +150,9 @@ func (UnimplementedMessageServiceServer) DealGroupMessage(context.Context, *Deal
 }
 func (UnimplementedMessageServiceServer) UpdateAckMessage(context.Context, *UpdateAckMessageRequest) (*UpdateAckMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAckMessage not implemented")
+}
+func (UnimplementedMessageServiceServer) UpdateAckMessages(context.Context, *UpdateAckMessagesRequest) (*UpdateAckMessagesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAckMessages not implemented")
 }
 func (UnimplementedMessageServiceServer) GetLatestUnreadMessageList(context.Context, *GetLatestUnreadMessageListRequest) (*GetLatestUnreadMessageListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetLatestUnreadMessageList not implemented")
@@ -214,6 +229,24 @@ func _MessageService_UpdateAckMessage_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MessageServiceServer).UpdateAckMessage(ctx, req.(*UpdateAckMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessageService_UpdateAckMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAckMessagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageServiceServer).UpdateAckMessages(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MessageService_UpdateAckMessages_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageServiceServer).UpdateAckMessages(ctx, req.(*UpdateAckMessagesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -308,6 +341,10 @@ var MessageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateAckMessage",
 			Handler:    _MessageService_UpdateAckMessage_Handler,
+		},
+		{
+			MethodName: "UpdateAckMessages",
+			Handler:    _MessageService_UpdateAckMessages_Handler,
 		},
 		{
 			MethodName: "GetLatestUnreadMessageList",

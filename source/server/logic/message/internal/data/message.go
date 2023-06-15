@@ -14,7 +14,7 @@ type MessageRepoImpl struct {
 	helper *log.Helper
 }
 
-func (m *MessageRepoImpl) GetMessages(ctx context.Context, uid, friendId string) ([]*universal.Message, error) {
+func (m *MessageRepoImpl) GetMessages(ctx context.Context, uid, friendId int64) ([]*universal.Message, error) {
 	if err := pkg.ContextErr(ctx); err != nil {
 		return nil, err
 	}
@@ -24,7 +24,8 @@ func (m *MessageRepoImpl) GetMessages(ctx context.Context, uid, friendId string)
 		Order(dal.Message.MessageID.Desc()).
 		Find()
 	if err != nil {
-		return nil, pkg.InternalError("get messages error")
+		m.helper.Errorf("get messages error: %v", err)
+		return nil, pkg.InternalError("get messages error: %v", err)
 	}
 	var result []*universal.Message
 	for _, message := range messages {
@@ -40,7 +41,7 @@ func (m *MessageRepoImpl) GetMessages(ctx context.Context, uid, friendId string)
 	return result, nil
 }
 
-func (m *MessageRepoImpl) GetMessagesBefore(ctx context.Context, senderId, receiverId string, messageId string, limit int) ([]*universal.Message, error) {
+func (m *MessageRepoImpl) GetMessagesBefore(ctx context.Context, senderId, receiverId, messageId int64, limit int) ([]*universal.Message, error) {
 	if err := pkg.ContextErr(ctx); err != nil {
 		return nil, err
 	}
@@ -52,7 +53,8 @@ func (m *MessageRepoImpl) GetMessagesBefore(ctx context.Context, senderId, recei
 		Limit(limit).
 		Find()
 	if err != nil {
-		return nil, pkg.InternalError("get messages before error")
+		m.helper.Errorf("get messages before error: %v", err)
+		return nil, pkg.InternalError("get messages before error: %v", err)
 	}
 	var result []*universal.Message
 	for _, message := range messages {
@@ -68,7 +70,7 @@ func (m *MessageRepoImpl) GetMessagesBefore(ctx context.Context, senderId, recei
 	return result, nil
 }
 
-func (m *MessageRepoImpl) GetLatestMessage(ctx context.Context, uid, friendId string) (*universal.Message, error) {
+func (m *MessageRepoImpl) GetLatestMessage(ctx context.Context, uid, friendId int64) (*universal.Message, error) {
 	if err := pkg.ContextErr(ctx); err != nil {
 		return nil, err
 	}
@@ -79,7 +81,8 @@ func (m *MessageRepoImpl) GetLatestMessage(ctx context.Context, uid, friendId st
 		Order(dal.Message.MessageID.Desc()).
 		First()
 	if err != nil {
-		return nil, pkg.InternalError("get latest message error")
+		m.helper.Errorf("get latest message error: %v", err)
+		return nil, pkg.InternalError("get latest message error: %v", err)
 	}
 	return &universal.Message{
 		MessageId:  message.MessageID,
@@ -91,7 +94,7 @@ func (m *MessageRepoImpl) GetLatestMessage(ctx context.Context, uid, friendId st
 	}, nil
 }
 
-func (m *MessageRepoImpl) GetUnreadMessageCount(ctx context.Context, uid, friendId string, messageId string) (int, error) {
+func (m *MessageRepoImpl) GetUnreadMessageCount(ctx context.Context, uid, friendId, messageId int64) (int, error) {
 	if err := pkg.ContextErr(ctx); err != nil {
 		return 0, err
 	}
@@ -101,7 +104,8 @@ func (m *MessageRepoImpl) GetUnreadMessageCount(ctx context.Context, uid, friend
 		Where(dal.Message.MessageID.Gt(messageId)).
 		Count()
 	if err != nil {
-		return 0, pkg.InternalError("get unread message count error")
+		m.helper.Errorf("get unread message count error: %v", err)
+		return 0, pkg.InternalError("get unread message count error: %v", err)
 	}
 	return int(count), nil
 }

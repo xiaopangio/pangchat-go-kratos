@@ -34,7 +34,7 @@ type JobBiz struct {
 }
 
 // NewConnectorClient  返回一个grpc连接
-func NewConnectorClient(url string) (connector.ConnectorServiceClient, error) {
+func (b *JobBiz) NewConnectorClient(url string) (connector.ConnectorServiceClient, error) {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
 		grpc.WithEndpoint(url),
@@ -43,7 +43,7 @@ func NewConnectorClient(url string) (connector.ConnectorServiceClient, error) {
 		),
 	)
 	if err != nil {
-		log.Error("dial err: %v", err)
+		b.helper.Errorf("grpc.DialInsecure err: %s", err)
 		return nil, err
 	}
 	return connector.NewConnectorServiceClient(conn), nil
@@ -87,6 +87,7 @@ func (b *JobBiz) HandleFriendRequest(ctx context.Context, event broker.Event, ms
 	b.helper.Infof("HandleFriendRequest: %s %s %v", msg.RequestId, msg.UserId, msg.PublishAt)
 	if err := event.Ack(); err != nil {
 		b.helper.Errorf("ack err: %s", err)
+
 	}
 	//获取用户在线设备
 	device, err := b.GetDevice(ctx, msg.UserId)
@@ -117,9 +118,9 @@ func (b *JobBiz) HandleFriendRequest(ctx context.Context, event broker.Event, ms
 		NickName = res.Profiles[0].NickName
 		Avatar = res.Profiles[0].Avatar
 	}
-	connectorClient, err := NewConnectorClient(device.DeviceUrl)
+	connectorClient, err := b.NewConnectorClient(device.DeviceUrl)
 	if err != nil {
-		b.helper.Errorf("NewConnectorClient err: %s", err)
+		b.helper.Errorf("b.NewConnectorClient err: %s", err)
 		return
 	}
 	_, err = connectorClient.PushFriendRequests(ctx, &connector.PushFriendRequestsRequest{
@@ -163,7 +164,7 @@ func (b *JobBiz) HandleConnectInit(ctx context.Context, event broker.Event, msg 
 		b.helper.Errorf("HandleConnectInit: %s", "user_id is empty")
 	}
 	//	构建连接器客户端
-	connectorClient, err := NewConnectorClient(device.DeviceUrl)
+	connectorClient, err := b.NewConnectorClient(device.DeviceUrl)
 	if err != nil {
 		b.helper.Errorf("HandleConnectInit: %s", err)
 		return
@@ -173,7 +174,7 @@ func (b *JobBiz) HandleConnectInit(ctx context.Context, event broker.Event, msg 
 	//初始化好友
 	b.InitFriend(ctx, pkg.FormatInt(uid), connectorClient)
 	//初始化未读消息
-	b.InitMessage(ctx, pkg.FormatInt(uid), connectorClient)
+	b.InitMessage(ctx, uid, connectorClient)
 }
 
 // InitFriendRequest 用户连接成功后，用来推送未推送的好友请求以及处理完毕后的好友请求
@@ -266,7 +267,7 @@ func (b *JobBiz) InitFriend(ctx context.Context, uid string, conn connector.Conn
 }
 
 // InitMessage 用户连接成功后，用来推送未读消息列表
-func (b *JobBiz) InitMessage(ctx context.Context, uid string, conn connector.ConnectorServiceClient) {
+func (b *JobBiz) InitMessage(ctx context.Context, uid int64, conn connector.ConnectorServiceClient) {
 	b.helper.Info("InitMessage")
 	if reply, err := b.messageCli.GetLatestUnreadMessageList(ctx, &message.GetLatestUnreadMessageListRequest{
 		Uid: uid,
@@ -277,7 +278,7 @@ func (b *JobBiz) InitMessage(ctx context.Context, uid string, conn connector.Con
 			return
 		}
 		if _, err = conn.PushUnreadMessageList(ctx, &connector.PushUnreadMessageListRequest{
-			Uid:  pkg.ParseInt64(uid),
+			Uid:  uid,
 			List: reply.List,
 		}); err != nil {
 			return
@@ -323,9 +324,9 @@ func (b *JobBiz) HandleFriend(ctx context.Context, event broker.Event, msg *mq_k
 		return
 	}
 	//构建连接器客户端
-	connectorClient, err := NewConnectorClient(device.DeviceUrl)
+	connectorClient, err := b.NewConnectorClient(device.DeviceUrl)
 	if err != nil {
-		b.helper.Errorf("NewConnectorClient err: %s", err)
+		b.helper.Errorf("b.NewConnectorClient err: %s", err)
 		return
 	}
 	//推送朋友信息
@@ -349,35 +350,35 @@ func (b *JobBiz) HandleMessage(ctx context.Context, event broker.Event, msg *uni
 	if err := event.Ack(); err != nil {
 		b.helper.Errorf("ack err: %s", err)
 	}
-	senderDevice, err := b.GetDevice(ctx, pkg.ParseInt64(msg.SenderId))
+	senderDevice, err := b.GetDevice(ctx, msg.SenderId)
 	if err != nil {
 		return
 	}
 	//构建连接器客户端
-	senderConnClient, err := NewConnectorClient(senderDevice.DeviceUrl)
+	senderConnClient, err := b.NewConnectorClient(senderDevice.DeviceUrl)
 	if err != nil {
-		b.helper.Errorf("NewConnectorClient err: %s", err)
+		b.helper.Errorf("b.NewConnectorClient err: %s", err)
 		return
 	}
 	//推送消息
 	if _, err = senderConnClient.ReplyMessage(ctx, &connector.ReplyMessageRequest{
-		Uid:     pkg.ParseInt64(msg.SenderId),
+		Uid:     msg.SenderId,
 		Message: msg,
 	}); err != nil {
 		b.helper.Errorf("PushMessage err: %s", err)
 		return
 	}
-	receiverDevice, err := b.GetDevice(ctx, pkg.ParseInt64(msg.ReceiverId))
+	receiverDevice, err := b.GetDevice(ctx, msg.ReceiverId)
 	if err != nil {
 		return
 	}
-	receiverConnClient, err := NewConnectorClient(receiverDevice.DeviceUrl)
+	receiverConnClient, err := b.NewConnectorClient(receiverDevice.DeviceUrl)
 	if err != nil {
-		b.helper.Errorf("NewConnectorClient err: %s", err)
+		b.helper.Errorf("b.NewConnectorClient err: %s", err)
 		return
 	}
 	if _, err = receiverConnClient.PushMessage(ctx, &connector.PushMessageRequest{
-		Uid:     pkg.ParseInt64(msg.ReceiverId),
+		Uid:     msg.ReceiverId,
 		Message: msg,
 	}); err != nil {
 		b.helper.Errorf("PushMessage err: %s", err)

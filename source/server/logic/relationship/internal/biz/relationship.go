@@ -2,12 +2,13 @@ package biz
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
 	"relationship/api/v1/message"
 	"relationship/api/v1/universal"
 	"relationship/api/v1/user"
+	"relationship/internal/common"
+	"relationship/internal/common/constant"
 	"relationship/internal/components/broker"
 	"relationship/internal/conf"
 	"relationship/internal/data/orm/model"
@@ -136,19 +137,17 @@ func (b *RelationshipBiz) GetFriendRequest(ctx context.Context, id int64) (*mode
 
 // DealFriendRequest 处理好友请求
 func (b *RelationshipBiz) DealFriendRequest(ctx context.Context, requestId int64, status, noteName, groupName string) error {
-	if !pkg.CheckRequestStatus(status) {
-		err := pkg.InvalidArgumentError("status 取值错误 :%v", status)
-		b.helper.Errorf(err.Error())
-		return err
+	if !common.CheckRequestStatus(status) {
+		b.helper.Errorf("status 取值错误 :%v", status)
+		return pkg.InvalidArgumentError("status 取值错误 :%v", status)
 	}
 	request, err := b.repo.GetFriendRequestByRequestId(ctx, requestId)
 	if err != nil {
 		return err
 	}
-	if request.Status != pkg.Pending {
-		err := pkg.InvalidArgumentError("该请求已处理: %v", requestId)
-		b.helper.Errorf(err.Error())
-		return err
+	if request.Status != constant.Pending {
+		b.helper.Errorf("该请求已处理: %v", request.Status)
+		return pkg.InvalidArgumentError("该请求已处理: %v", request.Status)
 	}
 	req, err := b.repo.DealFriendRequest(ctx, requestId, status, noteName, groupName)
 	if err != nil {
@@ -164,7 +163,7 @@ func (b *RelationshipBiz) DealFriendRequest(ctx context.Context, requestId int64
 		b.helper.Errorf("发送好友请求消息到mq失败: %v", err)
 		return pkg.InternalError("发送好友请求消息到mq失败: %v", err)
 	}
-	if status == pkg.Refused {
+	if status == constant.Refused {
 		return nil
 	}
 	friendMsg := &model.FriendMessage{
@@ -177,8 +176,8 @@ func (b *RelationshipBiz) DealFriendRequest(ctx context.Context, requestId int64
 		return err
 	}
 	if _, err = b.messageClient.InitUnreadMessage(ctx, &message.InitUnreadMessageRequest{
-		Uid:      pkg.FormatInt(req.RequesterID),
-		FriendId: pkg.FormatInt(req.ReceiverID),
+		Uid:      req.RequesterID,
+		FriendId: req.ReceiverID,
 	}); err != nil {
 		b.helper.Errorf("初始化未读消息失败: %v", err)
 		return pkg.InternalError("初始化未读消息失败: %v", err)
@@ -206,7 +205,7 @@ func (b *RelationshipBiz) GetFriendList(ctx context.Context, userId int64) ([]*u
 	for _, friend := range friends {
 		profile := m[friend.FriendID]
 		res = append(res, &universal.Friend{
-			FriendId:  pkg.FormatInt(friend.FriendID),
+			FriendId:  friend.FriendID,
 			NoteName:  friend.NoteName,
 			GroupName: friend.GroupName,
 			NickName:  profile.NickName,
@@ -256,14 +255,12 @@ func (b *RelationshipBiz) CreateFriendGroup(ctx context.Context, id int64, name 
 // UpdateFriendGroup 更新好友分组
 func (b *RelationshipBiz) UpdateFriendGroup(ctx context.Context, id int64, name, newName string) error {
 	if name == newName {
-		err := fmt.Errorf("新旧分组名不能相同, name: %s, newName: %s", name, newName)
-		b.helper.Errorf(err.Error())
-		return pkg.InvalidArgumentError(err.Error())
+		b.helper.Errorf("新旧分组名不能相同, name: %s, newName: %s", name, newName)
+		return pkg.InvalidArgumentError("新旧分组名不能相同, name: %s, newName: %s", name, newName)
 	}
-	if name == pkg.DefaultFriendGroup {
-		err := fmt.Errorf("默认分组不可修改")
-		b.helper.Errorf(err.Error())
-		return pkg.InvalidArgumentError(err.Error())
+	if name == constant.DefaultFriendGroup {
+		b.helper.Errorf("默认分组不可修改")
+		return pkg.InvalidArgumentError("默认分组不可修改")
 	}
 	err := b.repo.UpdateFriendGroup(ctx, id, name, newName)
 	if err != nil {
@@ -274,10 +271,9 @@ func (b *RelationshipBiz) UpdateFriendGroup(ctx context.Context, id int64, name,
 
 // DeleteFriendGroup 删除好友分组
 func (b *RelationshipBiz) DeleteFriendGroup(ctx context.Context, userId int64, groupName string) error {
-	if groupName == pkg.DefaultFriendGroup {
-		err := fmt.Errorf("默认分组不可删除")
-		b.helper.Errorf(err.Error())
-		return pkg.InvalidArgumentError(err.Error())
+	if groupName == constant.DefaultFriendGroup {
+		b.helper.Errorf("默认分组不可删除")
+		return pkg.InvalidArgumentError("默认分组不可删除")
 	}
 	err := b.repo.DeleteFriendGroup(ctx, userId, groupName)
 	if err != nil {
@@ -353,7 +349,7 @@ func (b *RelationshipBiz) GetOneFriend(ctx context.Context, userId int64, friend
 		return nil, err
 	}
 	res := &universal.Friend{
-		FriendId:  pkg.FormatInt(friend.FriendID),
+		FriendId:  friend.FriendID,
 		NickName:  profile.Profiles[0].NickName,
 		NoteName:  friend.NoteName,
 		Avatar:    profile.Profiles[0].Avatar,
@@ -650,19 +646,17 @@ func (b *RelationshipBiz) GetGroupRequests(ctx context.Context, requestIds []int
 
 // DealGroupRequest 处理入群申请
 func (b *RelationshipBiz) DealGroupRequest(ctx context.Context, requestId int64, status string) error {
-	if !pkg.CheckRequestStatus(status) {
-		err := pkg.InvalidArgumentError("status 取值错误 :%v", status)
-		b.helper.Errorf(err.Error())
-		return err
+	if !common.CheckRequestStatus(status) {
+		b.helper.Errorf("status 取值错误 :%v", status)
+		return pkg.InvalidArgumentError("status 取值错误 :%v", status)
 	}
 	request, err := b.repo.GetGroupRequest(ctx, requestId)
 	if err != nil {
 		return err
 	}
-	if request.Status != pkg.Pending {
-		err = pkg.InvalidArgumentError("该请求已处理: %v", requestId)
-		b.helper.Errorf(err.Error())
-		return err
+	if request.Status != constant.Pending {
+		b.helper.Errorf("该申请已处理")
+		return pkg.InvalidArgumentError("该申请已处理")
 	}
 	req, err := b.repo.DealGroupRequest(ctx, requestId, status)
 	// 发送通知
@@ -683,19 +677,16 @@ func (b *RelationshipBiz) CreateGroupAdmin(ctx context.Context, groupId string, 
 		return err
 	}
 	if member == nil {
-		err = pkg.InternalError("群成员不存在:%d", userId)
-		b.helper.Errorf(err.Error())
-		return err
+		b.helper.Errorf("该成员不存在: %d", userId)
+		return pkg.InternalError("该成员不存在: %d", userId)
 	}
-	if member.Role == pkg.Admin {
-		err = pkg.InternalError("该成员已经是管理员: %d", userId)
-		b.helper.Errorf(err.Error())
-		return err
+	if member.Role == constant.Admin {
+		b.helper.Errorf("该成员已经是管理员: %d", userId)
+		return pkg.InternalError("该成员已经是管理员: %d", userId)
 	}
-	if member.Role == pkg.Leader {
-		err = pkg.InternalError("群主不能设置为管理员: %d", userId)
-		b.helper.Errorf(err.Error())
-		return err
+	if member.Role == constant.Leader {
+		b.helper.Errorf("该成员是群主: %d", userId)
+		return pkg.InternalError("该成员是群主: %d", userId)
 	}
 	// 更新成员角色
 	if err = b.repo.CreateAdmin(ctx, groupId, userId); err != nil {
@@ -711,14 +702,12 @@ func (b *RelationshipBiz) DeleteGroupAdmin(ctx context.Context, groupId string, 
 		return err
 	}
 	if member == nil {
-		err = pkg.InternalError("群成员不存在:%d", userId)
-		b.helper.Errorf(err.Error())
-		return err
+		b.helper.Errorf("该成员不存在: %d", userId)
+		return pkg.InternalError("该成员不存在: %d", userId)
 	}
-	if member.Role != pkg.Admin {
-		err = pkg.InternalError("该成员不是管理员: %d", userId)
-		b.helper.Errorf(err.Error())
-		return err
+	if member.Role != constant.Admin {
+		b.helper.Errorf("该成员不是管理员: %d", userId)
+		return pkg.InternalError("该成员不是管理员: %d", userId)
 	}
 	// 更新成员角色
 	if err = b.repo.DeleteAdmin(ctx, groupId, userId); err != nil {
@@ -815,14 +804,12 @@ func (b *RelationshipBiz) GetGroupAdminInfo(ctx context.Context, groupId string,
 		return nil, err
 	}
 	if member == nil {
-		err = pkg.InternalError("群成员不存在:%d", userId)
-		b.helper.Errorf(err.Error())
-		return nil, err
+		b.helper.Errorf("该成员不存在: %d", userId)
+		return nil, pkg.InternalError("该成员不存在: %d", userId)
 	}
-	if member.Role != pkg.Admin {
-		err = pkg.InternalError("该成员不是管理员: %d", userId)
-		b.helper.Errorf(err.Error())
-		return nil, err
+	if member.Role != constant.Admin {
+		b.helper.Errorf("该成员不是管理员: %d", userId)
+		return nil, pkg.InternalError("该成员不是管理员: %d", userId)
 	}
 	res, err := b.CompleteMember(member)
 	if err != nil {

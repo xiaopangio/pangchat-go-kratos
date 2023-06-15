@@ -26,9 +26,8 @@ func NewUserService(bz *biz.UserBiz, helper *log.Helper) *UserService {
 // RegisterUser 注册用户
 func (u *UserService) RegisterUser(ctx context.Context, req *pb.RegisterUserRequest) (*pb.RegisterUserReply, error) {
 	if req.Password != req.PasswordConfirm {
-		err := pkg.InvalidArgumentError("两次密码不一致，请重新输入")
-		u.helper.Error(err.Error())
-		return nil, err
+		u.helper.Error("两次密码不一致，请重新输入")
+		return nil, pkg.InvalidArgumentError("两次密码不一致，请重新输入")
 	}
 	err := u.bz.Register(ctx, req.Type, req.Username, req.Password, req.NickName, req.AvatarUrl)
 	if err != nil {
@@ -125,7 +124,6 @@ func (u *UserService) AddressList(ctx context.Context, _ *pb.AddressListRequest)
 func (u *UserService) BindPhone(ctx context.Context, req *pb.BindPhoneRequest) (*pb.BindPhoneReply, error) {
 	err := u.bz.BindPhone(ctx, req.Uid, req.Phone, req.SmsCode)
 	if err != nil {
-		u.helper.Error(err.Error())
 		return nil, err
 	}
 	return &pb.BindPhoneReply{}, nil

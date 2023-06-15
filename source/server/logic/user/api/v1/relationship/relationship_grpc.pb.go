@@ -19,19 +19,42 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RelationShip_SendFriendRequest_FullMethodName    = "/api.v1.logic.relationship.relationShip/SendFriendRequest"
-	RelationShip_GetFriendRequestList_FullMethodName = "/api.v1.logic.relationship.relationShip/GetFriendRequestList"
-	RelationShip_GetFriendRequest_FullMethodName     = "/api.v1.logic.relationship.relationShip/GetFriendRequest"
-	RelationShip_GetFriendRequests_FullMethodName    = "/api.v1.logic.relationship.relationShip/GetFriendRequests"
-	RelationShip_DealFriendRequest_FullMethodName    = "/api.v1.logic.relationship.relationShip/DealFriendRequest"
-	RelationShip_GetFriendList_FullMethodName        = "/api.v1.logic.relationship.relationShip/GetFriendList"
-	RelationShip_DeleteFriend_FullMethodName         = "/api.v1.logic.relationship.relationShip/DeleteFriend"
-	RelationShip_GetFriendInfo_FullMethodName        = "/api.v1.logic.relationship.relationShip/GetFriendInfo"
-	RelationShip_UpdateFriendInfo_FullMethodName     = "/api.v1.logic.relationship.relationShip/UpdateFriendInfo"
-	RelationShip_CreateFriendGroup_FullMethodName    = "/api.v1.logic.relationship.relationShip/CreateFriendGroup"
-	RelationShip_UpdateFriendGroup_FullMethodName    = "/api.v1.logic.relationship.relationShip/UpdateFriendGroup"
-	RelationShip_DeleteFriendGroup_FullMethodName    = "/api.v1.logic.relationship.relationShip/DeleteFriendGroup"
-	RelationShip_GetFriendGroupList_FullMethodName   = "/api.v1.logic.relationship.relationShip/GetFriendGroupList"
+	RelationShip_SendFriendRequest_FullMethodName     = "/api.v1.logic.relationship.relationShip/SendFriendRequest"
+	RelationShip_GetFriendRequestList_FullMethodName  = "/api.v1.logic.relationship.relationShip/GetFriendRequestList"
+	RelationShip_GetFriendRequest_FullMethodName      = "/api.v1.logic.relationship.relationShip/GetFriendRequest"
+	RelationShip_GetFriendRequests_FullMethodName     = "/api.v1.logic.relationship.relationShip/GetFriendRequests"
+	RelationShip_DealFriendRequest_FullMethodName     = "/api.v1.logic.relationship.relationShip/DealFriendRequest"
+	RelationShip_GetFriendList_FullMethodName         = "/api.v1.logic.relationship.relationShip/GetFriendList"
+	RelationShip_GetOneFriend_FullMethodName          = "/api.v1.logic.relationship.relationShip/GetOneFriend"
+	RelationShip_GetFriendsByIDS_FullMethodName       = "/api.v1.logic.relationship.relationShip/GetFriendsByIDS"
+	RelationShip_DeleteFriend_FullMethodName          = "/api.v1.logic.relationship.relationShip/DeleteFriend"
+	RelationShip_GetFriendInfo_FullMethodName         = "/api.v1.logic.relationship.relationShip/GetFriendInfo"
+	RelationShip_UpdateFriendInfo_FullMethodName      = "/api.v1.logic.relationship.relationShip/UpdateFriendInfo"
+	RelationShip_CreateFriendGroup_FullMethodName     = "/api.v1.logic.relationship.relationShip/CreateFriendGroup"
+	RelationShip_UpdateFriendGroup_FullMethodName     = "/api.v1.logic.relationship.relationShip/UpdateFriendGroup"
+	RelationShip_DeleteFriendGroup_FullMethodName     = "/api.v1.logic.relationship.relationShip/DeleteFriendGroup"
+	RelationShip_GetFriendGroupList_FullMethodName    = "/api.v1.logic.relationship.relationShip/GetFriendGroupList"
+	RelationShip_CreateGroup_FullMethodName           = "/api.v1.logic.relationship.relationShip/CreateGroup"
+	RelationShip_GetGroupList_FullMethodName          = "/api.v1.logic.relationship.relationShip/GetGroupList"
+	RelationShip_GetGroupInfo_FullMethodName          = "/api.v1.logic.relationship.relationShip/GetGroupInfo"
+	RelationShip_UpdateGroupInfo_FullMethodName       = "/api.v1.logic.relationship.relationShip/UpdateGroupInfo"
+	RelationShip_DeleteGroup_FullMethodName           = "/api.v1.logic.relationship.relationShip/DeleteGroup"
+	RelationShip_GetGroupMemberList_FullMethodName    = "/api.v1.logic.relationship.relationShip/GetGroupMemberList"
+	RelationShip_GetGroupMemberInfo_FullMethodName    = "/api.v1.logic.relationship.relationShip/GetGroupMemberInfo"
+	RelationShip_UpdateGroupMemberInfo_FullMethodName = "/api.v1.logic.relationship.relationShip/UpdateGroupMemberInfo"
+	RelationShip_DeleteGroupMember_FullMethodName     = "/api.v1.logic.relationship.relationShip/DeleteGroupMember"
+	RelationShip_SendGroupRequest_FullMethodName      = "/api.v1.logic.relationship.relationShip/SendGroupRequest"
+	RelationShip_GetGroupRequestList_FullMethodName   = "/api.v1.logic.relationship.relationShip/GetGroupRequestList"
+	RelationShip_GetGroupRequest_FullMethodName       = "/api.v1.logic.relationship.relationShip/GetGroupRequest"
+	RelationShip_GetGroupRequests_FullMethodName      = "/api.v1.logic.relationship.relationShip/GetGroupRequests"
+	RelationShip_DealGroupRequest_FullMethodName      = "/api.v1.logic.relationship.relationShip/DealGroupRequest"
+	RelationShip_CreateGroupAdmin_FullMethodName      = "/api.v1.logic.relationship.relationShip/CreateGroupAdmin"
+	RelationShip_DeleteGroupAdmin_FullMethodName      = "/api.v1.logic.relationship.relationShip/DeleteGroupAdmin"
+	RelationShip_GetGroupAdminList_FullMethodName     = "/api.v1.logic.relationship.relationShip/GetGroupAdminList"
+	RelationShip_GetGroupAdminInfo_FullMethodName     = "/api.v1.logic.relationship.relationShip/GetGroupAdminInfo"
+	RelationShip_CheckAdmin_FullMethodName            = "/api.v1.logic.relationship.relationShip/CheckAdmin"
+	RelationShip_CheckLeader_FullMethodName           = "/api.v1.logic.relationship.relationShip/CheckLeader"
+	RelationShip_CheckMember_FullMethodName           = "/api.v1.logic.relationship.relationShip/CheckMember"
 )
 
 // RelationShipClient is the client API for RelationShip service.
@@ -44,6 +67,8 @@ type RelationShipClient interface {
 	GetFriendRequests(ctx context.Context, in *GetFriendRequestsRequest, opts ...grpc.CallOption) (*GetFriendRequestsResponse, error)
 	DealFriendRequest(ctx context.Context, in *DealFriendRequestRequest, opts ...grpc.CallOption) (*DealFriendRequestResponse, error)
 	GetFriendList(ctx context.Context, in *GetFriendListRequest, opts ...grpc.CallOption) (*GetFriendListResponse, error)
+	GetOneFriend(ctx context.Context, in *GetOneFriendRequest, opts ...grpc.CallOption) (*GetONeFriendResponse, error)
+	GetFriendsByIDS(ctx context.Context, in *GetFriendsByIDSRequest, opts ...grpc.CallOption) (*GetFriendsByIDSResponse, error)
 	DeleteFriend(ctx context.Context, in *DeleteFriendRequest, opts ...grpc.CallOption) (*DeleteFriendResponse, error)
 	GetFriendInfo(ctx context.Context, in *GetFriendInfoRequest, opts ...grpc.CallOption) (*GetFriendInfoResponse, error)
 	UpdateFriendInfo(ctx context.Context, in *UpdateFriendInfoRequest, opts ...grpc.CallOption) (*UpdateFriendInfoResponse, error)
@@ -51,6 +76,29 @@ type RelationShipClient interface {
 	UpdateFriendGroup(ctx context.Context, in *UpdateFriendGroupRequest, opts ...grpc.CallOption) (*UpdateFriendGroupResponse, error)
 	DeleteFriendGroup(ctx context.Context, in *DeleteFriendGroupRequest, opts ...grpc.CallOption) (*DeleteFriendGroupResponse, error)
 	GetFriendGroupList(ctx context.Context, in *GetFriendGroupListRequest, opts ...grpc.CallOption) (*GetFriendGroupListResponse, error)
+	// 群组
+	CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupResponse, error)
+	GetGroupList(ctx context.Context, in *GetGroupListRequest, opts ...grpc.CallOption) (*GetGroupListResponse, error)
+	GetGroupInfo(ctx context.Context, in *GetGroupInfoRequest, opts ...grpc.CallOption) (*GetGroupInfoResponse, error)
+	UpdateGroupInfo(ctx context.Context, in *UpdateGroupInfoRequest, opts ...grpc.CallOption) (*UpdateGroupInfoResponse, error)
+	DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*DeleteGroupResponse, error)
+	GetGroupMemberList(ctx context.Context, in *GetGroupMemberListRequest, opts ...grpc.CallOption) (*GetGroupMemberListResponse, error)
+	GetGroupMemberInfo(ctx context.Context, in *GetGroupMemberInfoRequest, opts ...grpc.CallOption) (*GetGroupMemberInfoResponse, error)
+	UpdateGroupMemberInfo(ctx context.Context, in *UpdateGroupMemberInfoRequest, opts ...grpc.CallOption) (*UpdateGroupMemberInfoResponse, error)
+	DeleteGroupMember(ctx context.Context, in *DeleteGroupMemberRequest, opts ...grpc.CallOption) (*DeleteGroupMemberResponse, error)
+	SendGroupRequest(ctx context.Context, in *SendGroupRequestRequest, opts ...grpc.CallOption) (*SendGroupRequestResponse, error)
+	GetGroupRequestList(ctx context.Context, in *GetGroupRequestListRequest, opts ...grpc.CallOption) (*GetGroupRequestListResponse, error)
+	GetGroupRequest(ctx context.Context, in *GetGroupRequestRequest, opts ...grpc.CallOption) (*GetGroupRequestResponse, error)
+	GetGroupRequests(ctx context.Context, in *GetGroupRequestsRequest, opts ...grpc.CallOption) (*GetGroupRequestsResponse, error)
+	DealGroupRequest(ctx context.Context, in *DealGroupRequestRequest, opts ...grpc.CallOption) (*DealGroupRequestResponse, error)
+	// 群聊管理员
+	CreateGroupAdmin(ctx context.Context, in *CreateGroupAdminRequest, opts ...grpc.CallOption) (*CreateGroupAdminResponse, error)
+	DeleteGroupAdmin(ctx context.Context, in *DeleteGroupAdminRequest, opts ...grpc.CallOption) (*DeleteGroupAdminResponse, error)
+	GetGroupAdminList(ctx context.Context, in *GetGroupAdminListRequest, opts ...grpc.CallOption) (*GetGroupAdminListResponse, error)
+	GetGroupAdminInfo(ctx context.Context, in *GetGroupAdminInfoRequest, opts ...grpc.CallOption) (*GetGroupAdminInfoResponse, error)
+	CheckAdmin(ctx context.Context, in *CheckAdminRequest, opts ...grpc.CallOption) (*CheckAdminResponse, error)
+	CheckLeader(ctx context.Context, in *CheckLeaderRequest, opts ...grpc.CallOption) (*CheckLeaderResponse, error)
+	CheckMember(ctx context.Context, in *CheckMemberRequest, opts ...grpc.CallOption) (*CheckMemberResponse, error)
 }
 
 type relationShipClient struct {
@@ -109,6 +157,24 @@ func (c *relationShipClient) DealFriendRequest(ctx context.Context, in *DealFrie
 func (c *relationShipClient) GetFriendList(ctx context.Context, in *GetFriendListRequest, opts ...grpc.CallOption) (*GetFriendListResponse, error) {
 	out := new(GetFriendListResponse)
 	err := c.cc.Invoke(ctx, RelationShip_GetFriendList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) GetOneFriend(ctx context.Context, in *GetOneFriendRequest, opts ...grpc.CallOption) (*GetONeFriendResponse, error) {
+	out := new(GetONeFriendResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetOneFriend_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) GetFriendsByIDS(ctx context.Context, in *GetFriendsByIDSRequest, opts ...grpc.CallOption) (*GetFriendsByIDSResponse, error) {
+	out := new(GetFriendsByIDSResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetFriendsByIDS_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -178,6 +244,195 @@ func (c *relationShipClient) GetFriendGroupList(ctx context.Context, in *GetFrie
 	return out, nil
 }
 
+func (c *relationShipClient) CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupResponse, error) {
+	out := new(CreateGroupResponse)
+	err := c.cc.Invoke(ctx, RelationShip_CreateGroup_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) GetGroupList(ctx context.Context, in *GetGroupListRequest, opts ...grpc.CallOption) (*GetGroupListResponse, error) {
+	out := new(GetGroupListResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetGroupList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) GetGroupInfo(ctx context.Context, in *GetGroupInfoRequest, opts ...grpc.CallOption) (*GetGroupInfoResponse, error) {
+	out := new(GetGroupInfoResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetGroupInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) UpdateGroupInfo(ctx context.Context, in *UpdateGroupInfoRequest, opts ...grpc.CallOption) (*UpdateGroupInfoResponse, error) {
+	out := new(UpdateGroupInfoResponse)
+	err := c.cc.Invoke(ctx, RelationShip_UpdateGroupInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*DeleteGroupResponse, error) {
+	out := new(DeleteGroupResponse)
+	err := c.cc.Invoke(ctx, RelationShip_DeleteGroup_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) GetGroupMemberList(ctx context.Context, in *GetGroupMemberListRequest, opts ...grpc.CallOption) (*GetGroupMemberListResponse, error) {
+	out := new(GetGroupMemberListResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetGroupMemberList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) GetGroupMemberInfo(ctx context.Context, in *GetGroupMemberInfoRequest, opts ...grpc.CallOption) (*GetGroupMemberInfoResponse, error) {
+	out := new(GetGroupMemberInfoResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetGroupMemberInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) UpdateGroupMemberInfo(ctx context.Context, in *UpdateGroupMemberInfoRequest, opts ...grpc.CallOption) (*UpdateGroupMemberInfoResponse, error) {
+	out := new(UpdateGroupMemberInfoResponse)
+	err := c.cc.Invoke(ctx, RelationShip_UpdateGroupMemberInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) DeleteGroupMember(ctx context.Context, in *DeleteGroupMemberRequest, opts ...grpc.CallOption) (*DeleteGroupMemberResponse, error) {
+	out := new(DeleteGroupMemberResponse)
+	err := c.cc.Invoke(ctx, RelationShip_DeleteGroupMember_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) SendGroupRequest(ctx context.Context, in *SendGroupRequestRequest, opts ...grpc.CallOption) (*SendGroupRequestResponse, error) {
+	out := new(SendGroupRequestResponse)
+	err := c.cc.Invoke(ctx, RelationShip_SendGroupRequest_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) GetGroupRequestList(ctx context.Context, in *GetGroupRequestListRequest, opts ...grpc.CallOption) (*GetGroupRequestListResponse, error) {
+	out := new(GetGroupRequestListResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetGroupRequestList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) GetGroupRequest(ctx context.Context, in *GetGroupRequestRequest, opts ...grpc.CallOption) (*GetGroupRequestResponse, error) {
+	out := new(GetGroupRequestResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetGroupRequest_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) GetGroupRequests(ctx context.Context, in *GetGroupRequestsRequest, opts ...grpc.CallOption) (*GetGroupRequestsResponse, error) {
+	out := new(GetGroupRequestsResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetGroupRequests_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) DealGroupRequest(ctx context.Context, in *DealGroupRequestRequest, opts ...grpc.CallOption) (*DealGroupRequestResponse, error) {
+	out := new(DealGroupRequestResponse)
+	err := c.cc.Invoke(ctx, RelationShip_DealGroupRequest_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) CreateGroupAdmin(ctx context.Context, in *CreateGroupAdminRequest, opts ...grpc.CallOption) (*CreateGroupAdminResponse, error) {
+	out := new(CreateGroupAdminResponse)
+	err := c.cc.Invoke(ctx, RelationShip_CreateGroupAdmin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) DeleteGroupAdmin(ctx context.Context, in *DeleteGroupAdminRequest, opts ...grpc.CallOption) (*DeleteGroupAdminResponse, error) {
+	out := new(DeleteGroupAdminResponse)
+	err := c.cc.Invoke(ctx, RelationShip_DeleteGroupAdmin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) GetGroupAdminList(ctx context.Context, in *GetGroupAdminListRequest, opts ...grpc.CallOption) (*GetGroupAdminListResponse, error) {
+	out := new(GetGroupAdminListResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetGroupAdminList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) GetGroupAdminInfo(ctx context.Context, in *GetGroupAdminInfoRequest, opts ...grpc.CallOption) (*GetGroupAdminInfoResponse, error) {
+	out := new(GetGroupAdminInfoResponse)
+	err := c.cc.Invoke(ctx, RelationShip_GetGroupAdminInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) CheckAdmin(ctx context.Context, in *CheckAdminRequest, opts ...grpc.CallOption) (*CheckAdminResponse, error) {
+	out := new(CheckAdminResponse)
+	err := c.cc.Invoke(ctx, RelationShip_CheckAdmin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) CheckLeader(ctx context.Context, in *CheckLeaderRequest, opts ...grpc.CallOption) (*CheckLeaderResponse, error) {
+	out := new(CheckLeaderResponse)
+	err := c.cc.Invoke(ctx, RelationShip_CheckLeader_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationShipClient) CheckMember(ctx context.Context, in *CheckMemberRequest, opts ...grpc.CallOption) (*CheckMemberResponse, error) {
+	out := new(CheckMemberResponse)
+	err := c.cc.Invoke(ctx, RelationShip_CheckMember_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RelationShipServer is the server API for RelationShip service.
 // All implementations must embed UnimplementedRelationShipServer
 // for forward compatibility
@@ -188,6 +443,8 @@ type RelationShipServer interface {
 	GetFriendRequests(context.Context, *GetFriendRequestsRequest) (*GetFriendRequestsResponse, error)
 	DealFriendRequest(context.Context, *DealFriendRequestRequest) (*DealFriendRequestResponse, error)
 	GetFriendList(context.Context, *GetFriendListRequest) (*GetFriendListResponse, error)
+	GetOneFriend(context.Context, *GetOneFriendRequest) (*GetONeFriendResponse, error)
+	GetFriendsByIDS(context.Context, *GetFriendsByIDSRequest) (*GetFriendsByIDSResponse, error)
 	DeleteFriend(context.Context, *DeleteFriendRequest) (*DeleteFriendResponse, error)
 	GetFriendInfo(context.Context, *GetFriendInfoRequest) (*GetFriendInfoResponse, error)
 	UpdateFriendInfo(context.Context, *UpdateFriendInfoRequest) (*UpdateFriendInfoResponse, error)
@@ -195,6 +452,29 @@ type RelationShipServer interface {
 	UpdateFriendGroup(context.Context, *UpdateFriendGroupRequest) (*UpdateFriendGroupResponse, error)
 	DeleteFriendGroup(context.Context, *DeleteFriendGroupRequest) (*DeleteFriendGroupResponse, error)
 	GetFriendGroupList(context.Context, *GetFriendGroupListRequest) (*GetFriendGroupListResponse, error)
+	// 群组
+	CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupResponse, error)
+	GetGroupList(context.Context, *GetGroupListRequest) (*GetGroupListResponse, error)
+	GetGroupInfo(context.Context, *GetGroupInfoRequest) (*GetGroupInfoResponse, error)
+	UpdateGroupInfo(context.Context, *UpdateGroupInfoRequest) (*UpdateGroupInfoResponse, error)
+	DeleteGroup(context.Context, *DeleteGroupRequest) (*DeleteGroupResponse, error)
+	GetGroupMemberList(context.Context, *GetGroupMemberListRequest) (*GetGroupMemberListResponse, error)
+	GetGroupMemberInfo(context.Context, *GetGroupMemberInfoRequest) (*GetGroupMemberInfoResponse, error)
+	UpdateGroupMemberInfo(context.Context, *UpdateGroupMemberInfoRequest) (*UpdateGroupMemberInfoResponse, error)
+	DeleteGroupMember(context.Context, *DeleteGroupMemberRequest) (*DeleteGroupMemberResponse, error)
+	SendGroupRequest(context.Context, *SendGroupRequestRequest) (*SendGroupRequestResponse, error)
+	GetGroupRequestList(context.Context, *GetGroupRequestListRequest) (*GetGroupRequestListResponse, error)
+	GetGroupRequest(context.Context, *GetGroupRequestRequest) (*GetGroupRequestResponse, error)
+	GetGroupRequests(context.Context, *GetGroupRequestsRequest) (*GetGroupRequestsResponse, error)
+	DealGroupRequest(context.Context, *DealGroupRequestRequest) (*DealGroupRequestResponse, error)
+	// 群聊管理员
+	CreateGroupAdmin(context.Context, *CreateGroupAdminRequest) (*CreateGroupAdminResponse, error)
+	DeleteGroupAdmin(context.Context, *DeleteGroupAdminRequest) (*DeleteGroupAdminResponse, error)
+	GetGroupAdminList(context.Context, *GetGroupAdminListRequest) (*GetGroupAdminListResponse, error)
+	GetGroupAdminInfo(context.Context, *GetGroupAdminInfoRequest) (*GetGroupAdminInfoResponse, error)
+	CheckAdmin(context.Context, *CheckAdminRequest) (*CheckAdminResponse, error)
+	CheckLeader(context.Context, *CheckLeaderRequest) (*CheckLeaderResponse, error)
+	CheckMember(context.Context, *CheckMemberRequest) (*CheckMemberResponse, error)
 	mustEmbedUnimplementedRelationShipServer()
 }
 
@@ -220,6 +500,12 @@ func (UnimplementedRelationShipServer) DealFriendRequest(context.Context, *DealF
 func (UnimplementedRelationShipServer) GetFriendList(context.Context, *GetFriendListRequest) (*GetFriendListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFriendList not implemented")
 }
+func (UnimplementedRelationShipServer) GetOneFriend(context.Context, *GetOneFriendRequest) (*GetONeFriendResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOneFriend not implemented")
+}
+func (UnimplementedRelationShipServer) GetFriendsByIDS(context.Context, *GetFriendsByIDSRequest) (*GetFriendsByIDSResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFriendsByIDS not implemented")
+}
 func (UnimplementedRelationShipServer) DeleteFriend(context.Context, *DeleteFriendRequest) (*DeleteFriendResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFriend not implemented")
 }
@@ -240,6 +526,69 @@ func (UnimplementedRelationShipServer) DeleteFriendGroup(context.Context, *Delet
 }
 func (UnimplementedRelationShipServer) GetFriendGroupList(context.Context, *GetFriendGroupListRequest) (*GetFriendGroupListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFriendGroupList not implemented")
+}
+func (UnimplementedRelationShipServer) CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateGroup not implemented")
+}
+func (UnimplementedRelationShipServer) GetGroupList(context.Context, *GetGroupListRequest) (*GetGroupListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupList not implemented")
+}
+func (UnimplementedRelationShipServer) GetGroupInfo(context.Context, *GetGroupInfoRequest) (*GetGroupInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupInfo not implemented")
+}
+func (UnimplementedRelationShipServer) UpdateGroupInfo(context.Context, *UpdateGroupInfoRequest) (*UpdateGroupInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroupInfo not implemented")
+}
+func (UnimplementedRelationShipServer) DeleteGroup(context.Context, *DeleteGroupRequest) (*DeleteGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteGroup not implemented")
+}
+func (UnimplementedRelationShipServer) GetGroupMemberList(context.Context, *GetGroupMemberListRequest) (*GetGroupMemberListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupMemberList not implemented")
+}
+func (UnimplementedRelationShipServer) GetGroupMemberInfo(context.Context, *GetGroupMemberInfoRequest) (*GetGroupMemberInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupMemberInfo not implemented")
+}
+func (UnimplementedRelationShipServer) UpdateGroupMemberInfo(context.Context, *UpdateGroupMemberInfoRequest) (*UpdateGroupMemberInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroupMemberInfo not implemented")
+}
+func (UnimplementedRelationShipServer) DeleteGroupMember(context.Context, *DeleteGroupMemberRequest) (*DeleteGroupMemberResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteGroupMember not implemented")
+}
+func (UnimplementedRelationShipServer) SendGroupRequest(context.Context, *SendGroupRequestRequest) (*SendGroupRequestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendGroupRequest not implemented")
+}
+func (UnimplementedRelationShipServer) GetGroupRequestList(context.Context, *GetGroupRequestListRequest) (*GetGroupRequestListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupRequestList not implemented")
+}
+func (UnimplementedRelationShipServer) GetGroupRequest(context.Context, *GetGroupRequestRequest) (*GetGroupRequestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupRequest not implemented")
+}
+func (UnimplementedRelationShipServer) GetGroupRequests(context.Context, *GetGroupRequestsRequest) (*GetGroupRequestsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupRequests not implemented")
+}
+func (UnimplementedRelationShipServer) DealGroupRequest(context.Context, *DealGroupRequestRequest) (*DealGroupRequestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DealGroupRequest not implemented")
+}
+func (UnimplementedRelationShipServer) CreateGroupAdmin(context.Context, *CreateGroupAdminRequest) (*CreateGroupAdminResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateGroupAdmin not implemented")
+}
+func (UnimplementedRelationShipServer) DeleteGroupAdmin(context.Context, *DeleteGroupAdminRequest) (*DeleteGroupAdminResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteGroupAdmin not implemented")
+}
+func (UnimplementedRelationShipServer) GetGroupAdminList(context.Context, *GetGroupAdminListRequest) (*GetGroupAdminListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupAdminList not implemented")
+}
+func (UnimplementedRelationShipServer) GetGroupAdminInfo(context.Context, *GetGroupAdminInfoRequest) (*GetGroupAdminInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupAdminInfo not implemented")
+}
+func (UnimplementedRelationShipServer) CheckAdmin(context.Context, *CheckAdminRequest) (*CheckAdminResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckAdmin not implemented")
+}
+func (UnimplementedRelationShipServer) CheckLeader(context.Context, *CheckLeaderRequest) (*CheckLeaderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckLeader not implemented")
+}
+func (UnimplementedRelationShipServer) CheckMember(context.Context, *CheckMemberRequest) (*CheckMemberResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckMember not implemented")
 }
 func (UnimplementedRelationShipServer) mustEmbedUnimplementedRelationShipServer() {}
 
@@ -358,6 +707,42 @@ func _RelationShip_GetFriendList_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RelationShipServer).GetFriendList(ctx, req.(*GetFriendListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_GetOneFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOneFriendRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetOneFriend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetOneFriend_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetOneFriend(ctx, req.(*GetOneFriendRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_GetFriendsByIDS_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFriendsByIDSRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetFriendsByIDS(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetFriendsByIDS_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetFriendsByIDS(ctx, req.(*GetFriendsByIDSRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -488,6 +873,384 @@ func _RelationShip_GetFriendGroupList_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RelationShip_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).CreateGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_CreateGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).CreateGroup(ctx, req.(*CreateGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_GetGroupList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetGroupList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetGroupList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetGroupList(ctx, req.(*GetGroupListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_GetGroupInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetGroupInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetGroupInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetGroupInfo(ctx, req.(*GetGroupInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_UpdateGroupInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateGroupInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).UpdateGroupInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_UpdateGroupInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).UpdateGroupInfo(ctx, req.(*UpdateGroupInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_DeleteGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).DeleteGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_DeleteGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).DeleteGroup(ctx, req.(*DeleteGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_GetGroupMemberList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupMemberListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetGroupMemberList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetGroupMemberList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetGroupMemberList(ctx, req.(*GetGroupMemberListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_GetGroupMemberInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupMemberInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetGroupMemberInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetGroupMemberInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetGroupMemberInfo(ctx, req.(*GetGroupMemberInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_UpdateGroupMemberInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateGroupMemberInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).UpdateGroupMemberInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_UpdateGroupMemberInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).UpdateGroupMemberInfo(ctx, req.(*UpdateGroupMemberInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_DeleteGroupMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteGroupMemberRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).DeleteGroupMember(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_DeleteGroupMember_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).DeleteGroupMember(ctx, req.(*DeleteGroupMemberRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_SendGroupRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendGroupRequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).SendGroupRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_SendGroupRequest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).SendGroupRequest(ctx, req.(*SendGroupRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_GetGroupRequestList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupRequestListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetGroupRequestList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetGroupRequestList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetGroupRequestList(ctx, req.(*GetGroupRequestListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_GetGroupRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupRequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetGroupRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetGroupRequest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetGroupRequest(ctx, req.(*GetGroupRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_GetGroupRequests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupRequestsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetGroupRequests(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetGroupRequests_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetGroupRequests(ctx, req.(*GetGroupRequestsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_DealGroupRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DealGroupRequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).DealGroupRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_DealGroupRequest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).DealGroupRequest(ctx, req.(*DealGroupRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_CreateGroupAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateGroupAdminRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).CreateGroupAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_CreateGroupAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).CreateGroupAdmin(ctx, req.(*CreateGroupAdminRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_DeleteGroupAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteGroupAdminRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).DeleteGroupAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_DeleteGroupAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).DeleteGroupAdmin(ctx, req.(*DeleteGroupAdminRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_GetGroupAdminList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupAdminListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetGroupAdminList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetGroupAdminList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetGroupAdminList(ctx, req.(*GetGroupAdminListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_GetGroupAdminInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupAdminInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).GetGroupAdminInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_GetGroupAdminInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).GetGroupAdminInfo(ctx, req.(*GetGroupAdminInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_CheckAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckAdminRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).CheckAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_CheckAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).CheckAdmin(ctx, req.(*CheckAdminRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_CheckLeader_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckLeaderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).CheckLeader(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_CheckLeader_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).CheckLeader(ctx, req.(*CheckLeaderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationShip_CheckMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckMemberRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationShipServer).CheckMember(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RelationShip_CheckMember_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationShipServer).CheckMember(ctx, req.(*CheckMemberRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RelationShip_ServiceDesc is the grpc.ServiceDesc for RelationShip service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -520,6 +1283,14 @@ var RelationShip_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RelationShip_GetFriendList_Handler,
 		},
 		{
+			MethodName: "GetOneFriend",
+			Handler:    _RelationShip_GetOneFriend_Handler,
+		},
+		{
+			MethodName: "GetFriendsByIDS",
+			Handler:    _RelationShip_GetFriendsByIDS_Handler,
+		},
+		{
 			MethodName: "DeleteFriend",
 			Handler:    _RelationShip_DeleteFriend_Handler,
 		},
@@ -546,6 +1317,90 @@ var RelationShip_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetFriendGroupList",
 			Handler:    _RelationShip_GetFriendGroupList_Handler,
+		},
+		{
+			MethodName: "CreateGroup",
+			Handler:    _RelationShip_CreateGroup_Handler,
+		},
+		{
+			MethodName: "GetGroupList",
+			Handler:    _RelationShip_GetGroupList_Handler,
+		},
+		{
+			MethodName: "GetGroupInfo",
+			Handler:    _RelationShip_GetGroupInfo_Handler,
+		},
+		{
+			MethodName: "UpdateGroupInfo",
+			Handler:    _RelationShip_UpdateGroupInfo_Handler,
+		},
+		{
+			MethodName: "DeleteGroup",
+			Handler:    _RelationShip_DeleteGroup_Handler,
+		},
+		{
+			MethodName: "GetGroupMemberList",
+			Handler:    _RelationShip_GetGroupMemberList_Handler,
+		},
+		{
+			MethodName: "GetGroupMemberInfo",
+			Handler:    _RelationShip_GetGroupMemberInfo_Handler,
+		},
+		{
+			MethodName: "UpdateGroupMemberInfo",
+			Handler:    _RelationShip_UpdateGroupMemberInfo_Handler,
+		},
+		{
+			MethodName: "DeleteGroupMember",
+			Handler:    _RelationShip_DeleteGroupMember_Handler,
+		},
+		{
+			MethodName: "SendGroupRequest",
+			Handler:    _RelationShip_SendGroupRequest_Handler,
+		},
+		{
+			MethodName: "GetGroupRequestList",
+			Handler:    _RelationShip_GetGroupRequestList_Handler,
+		},
+		{
+			MethodName: "GetGroupRequest",
+			Handler:    _RelationShip_GetGroupRequest_Handler,
+		},
+		{
+			MethodName: "GetGroupRequests",
+			Handler:    _RelationShip_GetGroupRequests_Handler,
+		},
+		{
+			MethodName: "DealGroupRequest",
+			Handler:    _RelationShip_DealGroupRequest_Handler,
+		},
+		{
+			MethodName: "CreateGroupAdmin",
+			Handler:    _RelationShip_CreateGroupAdmin_Handler,
+		},
+		{
+			MethodName: "DeleteGroupAdmin",
+			Handler:    _RelationShip_DeleteGroupAdmin_Handler,
+		},
+		{
+			MethodName: "GetGroupAdminList",
+			Handler:    _RelationShip_GetGroupAdminList_Handler,
+		},
+		{
+			MethodName: "GetGroupAdminInfo",
+			Handler:    _RelationShip_GetGroupAdminInfo_Handler,
+		},
+		{
+			MethodName: "CheckAdmin",
+			Handler:    _RelationShip_CheckAdmin_Handler,
+		},
+		{
+			MethodName: "CheckLeader",
+			Handler:    _RelationShip_CheckLeader_Handler,
+		},
+		{
+			MethodName: "CheckMember",
+			Handler:    _RelationShip_CheckMember_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

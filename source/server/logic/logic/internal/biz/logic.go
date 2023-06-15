@@ -51,7 +51,6 @@ func NewLogicBiz(helper *log.Helper, ossClient *oss.OSSClient, redisCli *redis.R
 // GetConnectorUrl 负载均衡获取connector的url
 func (l *LogicBiz) GetConnectorUrl(ctx context.Context) (error error, host, port string) {
 	instances, err := l.connectorRegistry.GetService(ctx, l.cf.ConnectorService)
-	l.helper.Info("GetConnectorUrl", "instances", instances)
 	if err != nil {
 		return
 	}
@@ -60,7 +59,6 @@ func (l *LogicBiz) GetConnectorUrl(ctx context.Context) (error error, host, port
 	if instance == nil {
 		return
 	}
-	l.helper.Info("GetConnectorUrl", "instance", instance.Endpoints)
 	var endpoint string
 	for _, s := range instance.Endpoints {
 		if strings.Contains(s, "http") {
@@ -98,14 +96,14 @@ func (l *LogicBiz) TransferToolOption(option *model.ToolOption) *logic.ToolOptio
 func (l *LogicBiz) GetToolOptions(ctx context.Context) ([]*logic.ToolOption, error) {
 	if values, err := l.redisCli.SMember(ToolOptionsKey); err != nil {
 		l.helper.Error("GetToolOptions from redis ", "err", err)
-		return nil, err
+		return nil, pkg.InternalError("GetToolOptions from redis ", err)
 	} else {
 		if values == nil || len(values) == 0 {
 			//redis中没有数据，从数据库中获取
 			res, err := l.repo.GetToolOptions(ctx)
 			if err != nil {
 				l.helper.Error("GetToolOptions from db ", "err", err)
-				return nil, err
+				return nil, pkg.InternalError("GetToolOptions from db ", err)
 			}
 			options := l.TransferToolOptions(res)
 			//将数据存入redis
@@ -113,11 +111,11 @@ func (l *LogicBiz) GetToolOptions(ctx context.Context) ([]*logic.ToolOption, err
 				value, err := json.Marshal(option)
 				if err != nil {
 					l.helper.Error("GetToolOptions json.Marshal ", "err", err)
-					return nil, err
+					return nil, pkg.InternalError("GetToolOptions json.Marshal ", err)
 				}
 				if err = l.redisCli.SAdd(ToolOptionsKey, string(value)); err != nil {
 					l.helper.Error("GetToolOptions redis.SAdd ", "err", err)
-					return nil, err
+					return nil, pkg.InternalError("GetToolOptions redis.SAdd ", err)
 				}
 			}
 			return options, nil
@@ -128,7 +126,7 @@ func (l *LogicBiz) GetToolOptions(ctx context.Context) ([]*logic.ToolOption, err
 				option := &logic.ToolOption{}
 				if err := json.Unmarshal([]byte(value), option); err != nil {
 					l.helper.Error("GetToolOptions json.Unmarshal ", "err", err)
-					return nil, err
+					return nil, pkg.InternalError("GetToolOptions json.Unmarshal ", err)
 				}
 				options = append(options, option)
 			}
@@ -159,14 +157,14 @@ func (l *LogicBiz) TransferEmojis(emojis []*model.Emoji) []*logic.Emoji {
 func (l *LogicBiz) GetPreEmojis(ctx context.Context) ([]*logic.Emoji, error) {
 	if values, err := l.redisCli.SMember(EmojisKey); err != nil {
 		l.helper.Error("GetPreEmojis from redis ", "err", err)
-		return nil, err
+		return nil, pkg.InternalError("GetPreEmojis from redis ", err)
 	} else {
 		if values == nil || len(values) == 0 {
 			//redis中没有数据，从数据库中获取
 			res, err := l.repo.GetEmojis(ctx)
 			if err != nil {
 				l.helper.Error("GetPreEmojis from db ", "err", err)
-				return nil, err
+				return nil, pkg.InternalError("GetPreEmojis from db ", err)
 			}
 			emojis := l.TransferEmojis(res)
 			//将数据存入redis
@@ -174,11 +172,11 @@ func (l *LogicBiz) GetPreEmojis(ctx context.Context) ([]*logic.Emoji, error) {
 				value, err := json.Marshal(emoji)
 				if err != nil {
 					l.helper.Error("GetPreEmojis json.Marshal ", "err", err)
-					return nil, err
+					return nil, pkg.InternalError("GetPreEmojis json.Marshal ", err)
 				}
 				if err = l.redisCli.SAdd(EmojisKey, string(value)); err != nil {
 					l.helper.Error("GetPreEmojis redis.SAdd ", "err", err)
-					return nil, err
+					return nil, pkg.InternalError("GetPreEmojis redis.SAdd ", err)
 				}
 			}
 			return emojis, nil
@@ -189,7 +187,7 @@ func (l *LogicBiz) GetPreEmojis(ctx context.Context) ([]*logic.Emoji, error) {
 				emoji := &logic.Emoji{}
 				if err := json.Unmarshal([]byte(value), emoji); err != nil {
 					l.helper.Error("GetPreEmojis json.Unmarshal ", "err", err)
-					return nil, err
+					return nil, pkg.InternalError("GetPreEmojis json.Unmarshal ", err)
 				}
 				emojis = append(emojis, emoji)
 			}

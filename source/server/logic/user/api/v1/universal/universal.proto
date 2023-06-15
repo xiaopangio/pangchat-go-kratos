@@ -12,12 +12,19 @@ message FriendRequest{
   string nick_name = 9;
   string avatar = 10;
 }
+message Friend {
+  int64 friend_id = 1;
+  string nick_name = 3;
+  string note_name = 4;
+  string avatar = 5;
+  string group_name = 6;
+}
 message Message{
-  string message_id = 1;
+  int64 message_id = 1;
   int64 type = 2;
   string content = 3;
-  string sender_id = 4;
-  string receiver_id = 5;
+  int64 sender_id = 4;
+  int64 receiver_id = 5;
   string send_at = 6;
 }
 message Group{
@@ -35,4 +42,15 @@ message GroupMember{
   string member_avatar = 4;
   string join_at = 5;
   string member_role = 6; //群主，管理员，普通成员
+}
+message GroupRequest{
+  int64 request_id = 1;
+  int64 requester_id = 2;
+  string group_id = 5;
+  string desc = 7;
+  string status = 8;
+  string create_at = 9;
+  string update_at = 10;
+  string nick_name = 11;
+  string avatar = 12;
 }

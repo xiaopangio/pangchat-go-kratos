@@ -273,11 +273,11 @@ func (c *ConnectorServiceBiz) ProcessSingleMessage(conn *websocket.Conn, uid str
 	c.helper.Infof("msg: %v", msg)
 	res := msg.Data.(map[string]interface{})
 	m := &universal.Message{
-		MessageId:  res["message_id"].(string),
+		MessageId:  pkg.ParseInt64(res["message_id"].(string)),
 		Type:       pkg.ParseInt64(res["type"].(string)),
 		Content:    res["content"].(string),
-		SenderId:   res["sender_id"].(string),
-		ReceiverId: res["receiver_id"].(string),
+		SenderId:   pkg.ParseInt64(res["sender_id"].(string)),
+		ReceiverId: pkg.ParseInt64(res["receiver_id"].(string)),
 		SendAt:     res["send_at"].(string),
 	}
 	c.helper.Infof("ProcessSingleMessage: %v", m)

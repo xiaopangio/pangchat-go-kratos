@@ -18,7 +18,6 @@ func NewMessageServiceService(biz *biz.MessageBiz, helper *log.Helper) *MessageS
 }
 
 func (s *MessageServiceService) DealSingleMessage(ctx context.Context, req *pb.DealSingleMessageRequest) (*pb.DealSingleMessageResponse, error) {
-	s.helper.Infof("DealSingleMessage")
 	if err := s.biz.DealSingleMessage(ctx, req.Message); err != nil {
 		return nil, err
 	}
@@ -37,7 +36,10 @@ func (s *MessageServiceService) UpdateAckMessage(ctx context.Context, req *pb.Up
 }
 func (s *MessageServiceService) GetLatestUnreadMessageList(ctx context.Context, req *pb.GetLatestUnreadMessageListRequest) (*pb.GetLatestUnreadMessageListResponse, error) {
 	s.helper.Infof("GetLatestUnreadMessageList")
-	list := s.biz.GetLatestUnreadMessageList(ctx, req.Uid)
+	list, err := s.biz.GetLatestUnreadMessageList(ctx, req.Uid)
+	if err != nil {
+		return nil, err
+	}
 	return &pb.GetLatestUnreadMessageListResponse{
 		List: list,
 	}, nil

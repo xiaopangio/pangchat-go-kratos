@@ -18,10 +18,8 @@ func NewLogicService(biz *biz.LogicBiz, helper *log.Helper) *LogicService {
 }
 
 func (s *LogicService) GetConnectorUrl(ctx context.Context, req *logic.GetConnectorUrlRequest) (*logic.GetConnectorUrlResponse, error) {
-	s.helper.Info("GetConnectorUrl")
 	err, host, port := s.biz.GetConnectorUrl(ctx)
 	if err != nil {
-		s.helper.Error("GetConnectorUrl", "err", err)
 		return nil, err
 	}
 	return &logic.GetConnectorUrlResponse{
@@ -30,7 +28,6 @@ func (s *LogicService) GetConnectorUrl(ctx context.Context, req *logic.GetConnec
 	}, nil
 }
 func (s *LogicService) GetToolOptions(ctx context.Context, req *logic.GetToolOptionsRequest) (*logic.GetToolOptionsResponse, error) {
-	s.helper.Info("GetToolOptions")
 	if options, err := s.biz.GetToolOptions(ctx); err != nil {
 		return nil, err
 	} else {
@@ -40,7 +37,6 @@ func (s *LogicService) GetToolOptions(ctx context.Context, req *logic.GetToolOpt
 	}
 }
 func (s *LogicService) GetPreEmojis(ctx context.Context, req *logic.GetPreEmojisRequest) (*logic.GetPreEmojisResponse, error) {
-	s.helper.Info("GetPreEmojis")
 	if emojis, err := s.biz.GetPreEmojis(ctx); err != nil {
 		return nil, err
 	} else {

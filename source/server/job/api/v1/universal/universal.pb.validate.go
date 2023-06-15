@@ -371,6 +371,139 @@ var _ interface {
 	ErrorName() string
 } = MessageValidationError{}
 
+// Validate checks the field values on UnreadMessageInfo with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *UnreadMessageInfo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UnreadMessageInfo with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UnreadMessageInfoMultiError, or nil if none found.
+func (m *UnreadMessageInfo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UnreadMessageInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetLatestMessage()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UnreadMessageInfoValidationError{
+					field:  "LatestMessage",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UnreadMessageInfoValidationError{
+					field:  "LatestMessage",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetLatestMessage()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UnreadMessageInfoValidationError{
+				field:  "LatestMessage",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for UnreadCount
+
+	if len(errors) > 0 {
+		return UnreadMessageInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+// UnreadMessageInfoMultiError is an error wrapping multiple validation errors
+// returned by UnreadMessageInfo.ValidateAll() if the designated constraints
+// aren't met.
+type UnreadMessageInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UnreadMessageInfoMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UnreadMessageInfoMultiError) AllErrors() []error { return m }
+
+// UnreadMessageInfoValidationError is the validation error returned by
+// UnreadMessageInfo.Validate if the designated constraints aren't met.
+type UnreadMessageInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UnreadMessageInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UnreadMessageInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UnreadMessageInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UnreadMessageInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UnreadMessageInfoValidationError) ErrorName() string {
+	return "UnreadMessageInfoValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UnreadMessageInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUnreadMessageInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UnreadMessageInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UnreadMessageInfoValidationError{}
+
 // Validate checks the field values on Group with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.

@@ -1,79 +1,80 @@
 syntax = "proto3";
 import "v1/universal/universal.proto";
+import "validate/validate.proto";
 package api.v1.logic.message;
 
 option go_package = "/api/v1/message;message";
 
 service MessageService {
-    rpc DealSingleMessage (DealSingleMessageRequest) returns (DealSingleMessageResponse) {}
-    rpc DealGroupMessage (DealGroupMessageRequest) returns (DealGroupMessageResponse) {}
-    rpc UpdateAckMessage (UpdateAckMessageRequest) returns (UpdateAckMessageResponse) {}
-    rpc UpdateAckMessages (UpdateAckMessagesRequest) returns (UpdateAckMessagesResponse) {}
-    rpc GetLatestUnreadMessageList (GetLatestUnreadMessageListRequest) returns (GetLatestUnreadMessageListResponse) {}
-    rpc GetUnloadMessages (GetUnloadMessagesRequest) returns (GetUnloadMessagesResponse) {}
-    rpc GetAllMessages (GetAllMessageRequest) returns (GetAllMessageResponse) {}
-    rpc InitUnreadMessage (InitUnreadMessageRequest) returns (InitUnreadMessageResponse) {}
+  rpc DealSingleMessage (DealSingleMessageRequest) returns (DealSingleMessageResponse) {}
+  rpc DealGroupMessage (DealGroupMessageRequest) returns (DealGroupMessageResponse) {}
+  rpc UpdateAckMessage (UpdateAckMessageRequest) returns (UpdateAckMessageResponse) {}
+  rpc UpdateAckMessages (UpdateAckMessagesRequest) returns (UpdateAckMessagesResponse) {}
+  rpc GetLatestUnreadMessageList (GetLatestUnreadMessageListRequest) returns (GetLatestUnreadMessageListResponse) {}
+  rpc GetUnloadMessages (GetUnloadMessagesRequest) returns (GetUnloadMessagesResponse) {}
+  rpc GetAllMessages (GetAllMessageRequest) returns (GetAllMessageResponse) {}
+  rpc InitUnreadMessage (InitUnreadMessageRequest) returns (InitUnreadMessageResponse) {}
 }
 
 message DealSingleMessageRequest {
-    universal.Message message = 1;
+  universal.Message message = 1 [(validate.rules).message.required = true];
 }
 message DealSingleMessageResponse {
 }
 
 message DealGroupMessageRequest {
-    universal.Message message = 1;
-    string group_id = 2;
+  universal.Message message = 1 [(validate.rules).message.required = true];
+  string group_id = 2 [(validate.rules).string = {min_len:10,max_len:13}];
 }
 message DealGroupMessageResponse {
 }
 
 message UpdateAckMessageRequest {
-    string message_id = 1;
-    string sender_id = 2;
-    string receiver_id = 3;
+  int64 message_id = 1;
+  int64 sender_id = 2;
+  int64 receiver_id = 3;
 }
 message UpdateAckMessageResponse {
 }
 message AckMessageInfo {
-    string message_id = 1;
-    string sender_id = 2;
+  int64 message_id = 1;
+  int64 sender_id = 2;
 }
 message UpdateAckMessagesRequest {
-    string receiver_id = 1;
-    repeated AckMessageInfo list = 2;
+  int64 receiver_id = 1;
+  repeated AckMessageInfo list = 2;
 }
 message UpdateAckMessagesResponse {
 
 }
 message GetLatestUnreadMessageListRequest {
-    string uid = 1;
+  int64 uid = 1;
 }
 message GetLatestUnreadMessageListResponse {
-    repeated universal.UnreadMessageInfo list = 1;
+  repeated universal.UnreadMessageInfo list = 1;
 }
 
 message GetUnloadMessagesRequest {
-    string sender_id = 1;
-    string receiver_id = 2;
-    string message_id = 3; //倒序加载
-    int64 num = 4;
+  int64 sender_id = 1;
+  int64 receiver_id = 2;
+  int64 message_id = 3; //倒序加载
+  int64 num = 4;
 }
 message GetUnloadMessagesResponse {
-    repeated universal.Message messages = 1;
+  repeated universal.Message messages = 1;
 }
 
 message GetAllMessageRequest {
-    string sender_id = 1;
-    string receiver_id = 2;
+  int64 sender_id = 1;
+  int64 receiver_id = 2;
 }
 message GetAllMessageResponse {
-    repeated universal.Message messages = 1;
+  repeated universal.Message messages = 1;
 }
 
 message InitUnreadMessageRequest {
-    string uid = 1;
-    string friend_id = 2;
+  int64 uid = 1;
+  int64 friend_id = 2;
 }
 message InitUnreadMessageResponse {
 }

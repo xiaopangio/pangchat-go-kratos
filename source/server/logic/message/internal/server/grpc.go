@@ -1,7 +1,10 @@
 package server
 
 import (
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"message/api/v1/message"
 	"message/internal/conf"
@@ -9,10 +12,12 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(cf *conf.Bootstrap, service *service.MessageServiceService) *grpc.Server {
+func NewGRPCServer(cf *conf.Bootstrap, logger log.Logger, service *service.MessageServiceService) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
+			logging.Server(logger),
+			validate.Validator(),
 		),
 	}
 	c := cf.Server

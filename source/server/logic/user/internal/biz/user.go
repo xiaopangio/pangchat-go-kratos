@@ -439,6 +439,7 @@ func (u *UserBiz) BindPhone(ctx context.Context, uid int64, phone, code string) 
 func (u *UserBiz) UploadAvatar(ctx context.Context, stream user.User_UploadAvatarServer) error {
 	req, err := stream.Recv()
 	if err != nil {
+		u.helper.Errorf("获取图片信息失败: %s", err)
 		return pkg.InternalError("获取图片信息失败: %s", err)
 	}
 	imageName := req.GetInfo().ImageName
@@ -452,6 +453,7 @@ func (u *UserBiz) UploadAvatar(ctx context.Context, stream user.User_UploadAvata
 	}
 	err = u.ossClient.Bucket.PutObject(imagePath, reader)
 	if err != nil {
+		u.helper.Errorf("上传图片失败: %s", err)
 		return pkg.InternalError("上传图片失败: %s", err)
 	}
 	if accountId == "" {
@@ -461,6 +463,7 @@ func (u *UserBiz) UploadAvatar(ctx context.Context, stream user.User_UploadAvata
 			},
 		})
 		if err != nil {
+			u.helper.Errorf("上传图片失败: %s", err)
 			return pkg.InternalError("上传图片失败: %s", err)
 		}
 		return nil
@@ -487,11 +490,13 @@ func (u *UserBiz) GetAvatar(ctx context.Context, avatarUrl string, stream user.U
 	}
 	reader, err := u.ossClient.Bucket.GetObject(avatarUrl)
 	if err != nil {
+		u.helper.Error("获取图片失败: %s", err)
 		return pkg.InternalError("获取图片失败: %s", err)
 	}
 	defer func(reader io.ReadCloser) {
 		err := reader.Close()
 		if err != nil {
+			u.helper.Errorf("关闭图片流失败: %s", err)
 			u.helper.Error("关闭图片流失败: %s", err)
 		}
 	}(reader)
@@ -502,12 +507,14 @@ func (u *UserBiz) GetAvatar(ctx context.Context, avatarUrl string, stream user.U
 			if err == io.EOF {
 				return nil
 			}
+			u.helper.Errorf("读取图片失败: %s", err)
 			return pkg.InternalError("读取图片失败: %s", err)
 		}
 		err = stream.Send(&user.GetAvatarReply{
 			Data: buffer[:n],
 		})
 		if err != nil {
+			u.helper.Errorf("发送图片失败: %s", err)
 			return pkg.InternalError("发送图片失败: %s", err)
 		}
 	}

@@ -31,62 +31,67 @@ func NewMessageBiz(helper *log.Helper, broker *broker.KafkaBroker, mysql *gorm.D
 
 type MessageRepo interface {
 	StoreMessage(ctx context.Context, message *universal.Message) error
-	GetLatestMessage(ctx context.Context, uid, friendId string) (*universal.Message, error)
-	GetUnreadMessageCount(ctx context.Context, uid, friendId string, messageId string) (int, error)
-	GetMessagesBefore(ctx context.Context, senderId, receiverId, messageId string, limit int) ([]*universal.Message, error)
-	GetMessages(ctx context.Context, uid, friendId string) ([]*universal.Message, error)
+	GetLatestMessage(ctx context.Context, uid, friendId int64) (*universal.Message, error)
+	GetUnreadMessageCount(ctx context.Context, uid, friendId, messageId int64) (int, error)
+	GetMessagesBefore(ctx context.Context, senderId, receiverId, messageId int64, limit int) ([]*universal.Message, error)
+	GetMessages(ctx context.Context, uid, friendId int64) ([]*universal.Message, error)
 }
 
-func BuildMessage(senderId string, messageId string) string {
-	return fmt.Sprintf("%s.%s", senderId, messageId)
+func BuildMessage(senderId int64, messageId int64) string {
+	return fmt.Sprintf("%d.%d", senderId, messageId)
 }
-func BuildMessageKey(receiverId, senderId string) string {
-	return fmt.Sprintf("%s.%s.%s", redis.SingleMessageAckPrefix, receiverId, senderId)
+func BuildMessageKey(receiverId, senderId int64) string {
+	return fmt.Sprintf("%s.%d.%d", redis.SingleMessageAckPrefix, receiverId, senderId)
 }
-func BuildMessageKeyPrefix(uid string) string {
-	return fmt.Sprintf("%s.%s", redis.SingleMessageAckPrefix, uid)
+func BuildMessageKeyPrefix(uid int64) string {
+	return fmt.Sprintf("%s.%d", redis.SingleMessageAckPrefix, uid)
 }
 func (b *MessageBiz) DealSingleMessage(ctx context.Context, msg *universal.Message) error {
 	messageId := b.snowSlakeNode.Generate()
-	msg.MessageId = messageId.String()
+	msg.MessageId = messageId.Int64()
 	key := BuildMessageKey(msg.ReceiverId, msg.SenderId)
 	if _, err := b.redisCli.Get(key); err != nil {
 		if err == redis.Nil {
 			//之前的消息确认由于异常原因丢失，构建redis key
-			s := BuildMessage(msg.SenderId, pkg.FormatInt(messageId.Int64()-1))
-			if err := b.redisCli.Set(key, s, 0); err != nil {
-				return err
+			s := BuildMessage(msg.SenderId, msg.MessageId-1)
+			if err = b.redisCli.Set(key, s, 0); err != nil {
+				b.helper.Errorf("redis set 失败: %v", err)
+				return pkg.InternalError("redis set 失败: %v", err)
 			}
 		} else {
-			b.helper.Errorf("get redis message error: %v", err)
+			b.helper.Errorf("redis get 失败: %v", err)
+			return pkg.InternalError("redis get 失败: %v", err)
 		}
 	}
 	if err := b.broker.Publish(b.mqConfig.MessageTopic, msg); err != nil {
 		b.helper.Errorf("publish message error: %v", err)
 		return pkg.InternalError("publish message error")
 	}
-	b.helper.Infof("publish message success: %v", msg)
 	if err := b.repo.StoreMessage(ctx, msg); err != nil {
-		return err
+		b.helper.Errorf("store message error: %v", err)
+		return pkg.InternalError("store message error")
 	}
 	return nil
 }
-func (b *MessageBiz) UpdateAckMessage(ctx context.Context, senderId string, receiverId string, messageId string) error {
+func (b *MessageBiz) UpdateAckMessage(ctx context.Context, senderId, receiverId, messageId int64) error {
 	s := BuildMessage(senderId, messageId) // 格式为 senderId.messageId
 	key := BuildMessageKey(receiverId, senderId)
-	b.helper.Info(key + ": " + s)
-	if err := b.redisCli.Set(key, s, 0); err != nil {
+	if err := pkg.ContextErr(ctx); err != nil {
 		return err
+	}
+	if err := b.redisCli.Set(key, s, 0); err != nil {
+		b.helper.Errorf("redis set 失败: %v", err)
+		return pkg.InternalError("redis set 失败: %v", err)
 	}
 	return nil
 }
 
-func (b *MessageBiz) GetLatestUnreadMessageList(ctx context.Context, uid string) []*universal.UnreadMessageInfo {
+func (b *MessageBiz) GetLatestUnreadMessageList(ctx context.Context, uid int64) ([]*universal.UnreadMessageInfo, error) {
 	prefix := BuildMessageKeyPrefix(uid)
 	keys, err := b.redisCli.GetPrefix(prefix)
 	if err != nil {
 		b.helper.Errorf("get redis message error: %v", err)
-		return nil
+		return nil, pkg.InternalError("get redis message error: %v", err)
 	}
 	var msgsInRedis []string
 	for _, key := range keys {
@@ -103,8 +108,8 @@ func (b *MessageBiz) GetLatestUnreadMessageList(ctx context.Context, uid string)
 		if len(msg) != 2 {
 			continue
 		}
-		senderId := msg[0]
-		messageId := msg[1]
+		senderId := pkg.ParseInt64(msg[0])
+		messageId := pkg.ParseInt64(msg[1])
 		unreadMessageCount, err := b.repo.GetUnreadMessageCount(ctx, uid, senderId, messageId)
 		if err != nil {
 			continue
@@ -116,53 +121,50 @@ func (b *MessageBiz) GetLatestUnreadMessageList(ctx context.Context, uid string)
 		if err != nil {
 			continue
 		}
-		b.helper.Infof("senderId: %v, messageId: %v, unreadMessageCount: %v", senderId, messageId, unreadMessageCount)
 		unreadMessageInfos = append(unreadMessageInfos, &universal.UnreadMessageInfo{
 			LatestMessage: latestMessage,
 			UnreadCount:   int64(unreadMessageCount),
 		})
 	}
-	return unreadMessageInfos
+	return unreadMessageInfos, nil
 }
 
-func (b *MessageBiz) GetUnloadMessages(ctx context.Context, senderId string, receiverId string, messageId string, num int64) ([]*universal.Message, error) {
+func (b *MessageBiz) GetUnloadMessages(ctx context.Context, senderId, receiverId, messageId, num int64) ([]*universal.Message, error) {
 	messages, err := b.repo.GetMessagesBefore(ctx, senderId, receiverId, messageId, int(num))
-	b.helper.Infof("senderId: %v", senderId)
-	b.helper.Infof("receiverId: %v", receiverId)
-	b.helper.Infof("messageId: %v", messageId)
-	b.helper.Infof("num: %v", num)
 	if err != nil {
 		return nil, err
 	}
 	return messages, nil
 }
 
-func (b *MessageBiz) GetAllMessages(ctx context.Context, senderId string, receiverId string) ([]*universal.Message, error) {
+func (b *MessageBiz) GetAllMessages(ctx context.Context, senderId, receiverId int64) ([]*universal.Message, error) {
 	messages, err := b.repo.GetMessages(ctx, senderId, receiverId)
 	if err != nil {
-		b.helper.Errorf("get messages error: %v", err)
 		return nil, err
 	}
 	return messages, nil
 }
 
-func (b *MessageBiz) InitUnreadMessage(ctx context.Context, uid string, friendId string) error {
-	m1 := BuildMessage(uid, "0")
-	m2 := BuildMessage(friendId, "0")
+func (b *MessageBiz) InitUnreadMessage(ctx context.Context, uid, friendId int64) error {
+	m1 := BuildMessage(uid, 0)
+	m2 := BuildMessage(friendId, 0)
 	key1 := BuildMessageKey(friendId, uid)
 	key2 := BuildMessageKey(uid, friendId)
+	if err := pkg.ContextErr(ctx); err != nil {
+		return err
+	}
 	if err := b.redisCli.Set(key1, m1, 0); err != nil {
 		b.helper.Errorf("set redis message error: %v", err)
-		return err
+		return pkg.InternalError("set redis message error: %v", err)
 	}
 	if err := b.redisCli.Set(key2, m2, 0); err != nil {
 		b.helper.Errorf("set redis message error: %v", err)
-		return err
+		return pkg.InternalError("set redis message error: %v", err)
 	}
 	return nil
 }
 
-func (b *MessageBiz) UpdateAckMessages(ctx context.Context, receiverId string, ackMessageInfos []*message.AckMessageInfo) error {
+func (b *MessageBiz) UpdateAckMessages(ctx context.Context, receiverId int64, ackMessageInfos []*message.AckMessageInfo) error {
 	for _, info := range ackMessageInfos {
 		if err := b.UpdateAckMessage(ctx, info.SenderId, receiverId, info.MessageId); err != nil {
 			return err

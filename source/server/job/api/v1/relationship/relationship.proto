@@ -1,138 +1,297 @@
 syntax = "proto3";
 import "v1/universal/universal.proto";
 package api.v1.logic.relationship;
+import "validate/validate.proto";
 option go_package = "./api/v1/relationship;relationship";
 service relationShip {
-    rpc SendFriendRequest (SendFriendRequestRequest) returns (SendFriendRequestResponse) {}
-    rpc GetFriendRequestList (GetFriendRequestListRequest) returns (GetFriendRequestListResponse) {}
-    rpc GetFriendRequest( GetFriendRequestRequest) returns (GetFriendRequestResponse) {}
-    rpc GetFriendRequests (GetFriendRequestsRequest) returns (GetFriendRequestsResponse) {}
-    rpc DealFriendRequest (DealFriendRequestRequest) returns (DealFriendRequestResponse) {}
-    rpc GetFriendList (GetFriendListRequest) returns (GetFriendListResponse) {}
-    rpc GetOneFriend(GetOneFriendRequest) returns (GetONeFriendResponse) {}
-    rpc GetFriendsByIDS(GetFriendsByIDSRequest) returns (GetFriendsByIDSResponse) {}
-    rpc DeleteFriend (DeleteFriendRequest) returns (DeleteFriendResponse) {}
-    rpc GetFriendInfo (GetFriendInfoRequest) returns (GetFriendInfoResponse) {}
-    rpc UpdateFriendInfo (UpdateFriendInfoRequest) returns (UpdateFriendInfoResponse) {}
-    rpc CreateFriendGroup (CreateFriendGroupRequest) returns (CreateFriendGroupResponse) {}
-    rpc UpdateFriendGroup (UpdateFriendGroupRequest) returns (UpdateFriendGroupResponse) {}
-    rpc DeleteFriendGroup (DeleteFriendGroupRequest) returns (DeleteFriendGroupResponse) {}
-    rpc GetFriendGroupList (GetFriendGroupListRequest) returns (GetFriendGroupListResponse) {}
+  rpc SendFriendRequest (SendFriendRequestRequest) returns (SendFriendRequestResponse) {}
+  rpc GetFriendRequestList (GetFriendRequestListRequest) returns (GetFriendRequestListResponse) {}
+  rpc GetFriendRequest(GetFriendRequestRequest) returns (GetFriendRequestResponse) {}
+  rpc GetFriendRequests (GetFriendRequestsRequest) returns (GetFriendRequestsResponse) {}
+  rpc DealFriendRequest (DealFriendRequestRequest) returns (DealFriendRequestResponse) {}
+  rpc GetFriendList (GetFriendListRequest) returns (GetFriendListResponse) {}
+  rpc GetOneFriend(GetOneFriendRequest) returns (GetONeFriendResponse) {}
+  rpc GetFriendsByIDS(GetFriendsByIDSRequest) returns (GetFriendsByIDSResponse) {}
+  rpc DeleteFriend (DeleteFriendRequest) returns (DeleteFriendResponse) {}
+  rpc GetFriendInfo (GetFriendInfoRequest) returns (GetFriendInfoResponse) {}
+  rpc UpdateFriendInfo (UpdateFriendInfoRequest) returns (UpdateFriendInfoResponse) {}
+  rpc CreateFriendGroup (CreateFriendGroupRequest) returns (CreateFriendGroupResponse) {}
+  rpc UpdateFriendGroup (UpdateFriendGroupRequest) returns (UpdateFriendGroupResponse) {}
+  rpc DeleteFriendGroup (DeleteFriendGroupRequest) returns (DeleteFriendGroupResponse) {}
+  rpc GetFriendGroupList (GetFriendGroupListRequest) returns (GetFriendGroupListResponse) {}
+  // 群组
+  rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse) {}
+  rpc GetGroupList (GetGroupListRequest) returns (GetGroupListResponse) {}
+  rpc GetGroupInfo (GetGroupInfoRequest) returns (GetGroupInfoResponse) {}
+  rpc UpdateGroupInfo (UpdateGroupInfoRequest) returns (UpdateGroupInfoResponse) {}
+  rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse) {}
+  rpc GetGroupMemberList (GetGroupMemberListRequest) returns (GetGroupMemberListResponse) {}
+  rpc GetGroupMemberInfo (GetGroupMemberInfoRequest) returns (GetGroupMemberInfoResponse) {}
+  rpc UpdateGroupMemberInfo (UpdateGroupMemberInfoRequest) returns (UpdateGroupMemberInfoResponse) {}
+  rpc DeleteGroupMember (DeleteGroupMemberRequest) returns (DeleteGroupMemberResponse) {}
+  rpc SendGroupRequest (SendGroupRequestRequest) returns (SendGroupRequestResponse) {}
+  rpc GetGroupRequestList (GetGroupRequestListRequest) returns (GetGroupRequestListResponse) {}
+  rpc GetGroupRequest (GetGroupRequestRequest) returns (GetGroupRequestResponse) {}
+  rpc GetGroupRequests (GetGroupRequestsRequest) returns (GetGroupRequestsResponse) {}
+  rpc DealGroupRequest (DealGroupRequestRequest) returns (DealGroupRequestResponse) {}
+  //  群聊管理员
+  rpc CreateGroupAdmin (CreateGroupAdminRequest) returns (CreateGroupAdminResponse) {}
+  rpc DeleteGroupAdmin (DeleteGroupAdminRequest) returns (DeleteGroupAdminResponse) {}
+  rpc GetGroupAdminList (GetGroupAdminListRequest) returns (GetGroupAdminListResponse) {}
+  rpc GetGroupAdminInfo (GetGroupAdminInfoRequest) returns (GetGroupAdminInfoResponse) {}
+  rpc CheckAdmin (CheckAdminRequest) returns (CheckAdminResponse) {}
+  rpc CheckLeader (CheckLeaderRequest) returns (CheckLeaderResponse) {}
+  rpc CheckMember(CheckMemberRequest) returns (CheckMemberResponse) {}
 }
 message GetFriendsByIDSRequest{
-    repeated int64 friend_ids = 1;
+  repeated int64 friend_ids = 1;
 }
 message GetFriendsByIDSResponse{
-    repeated universal.Friend friends = 1;
+  repeated universal.Friend friends = 1;
 }
 message GetOneFriendRequest{
-    int64 user_id = 1;
-    int64 friend_id = 2;
+  int64 user_id = 1;
+  int64 friend_id = 2;
 }
 message GetONeFriendResponse{
-    universal.Friend friend = 1;
+  universal.Friend friend = 1;
 }
 message SendFriendRequestRequest {
-    int64 requester_id = 1;
-    int64 receiver_id = 2;
-    string note_name = 3;
-    string desc = 4;
-    string group_name = 5;
+  int64 requester_id = 1;
+  int64 receiver_id = 2;
+  string note_name = 3 [(validate.rules).string = {min_len:1,max_len:10}];
+  string desc = 4 [(validate.rules).string.max_len = 50];
+  string group_name = 5[(validate.rules).string = {min_len:1,max_len:10}];
 }
 message SendFriendRequestResponse {
-    universal.FriendRequest friend_request = 1;
+  universal.FriendRequest friend_request = 1;
 }
 message GetFriendRequestListRequest {
-    int64 user_id = 1;
-    int64 page_number = 2;
-    int64 page_size = 3;
+  int64 user_id = 1;
+  int64 page_number = 2 [(validate.rules).int64.gt = 0];
+  int64 page_size = 3 [(validate.rules).int64.lt = 100];
 }
-//message FriendRequest{
-//    int64 request_id = 1;
-//    int64 requester_id = 2;
-//    int64 receiver_id = 3;
-//    string desc = 5;
-//    string status = 6;
-//    string create_time = 7;
-//    string update_time = 8;
-//    string nick_name = 9;
-//    string avatar = 10;
-//}
 message GetFriendRequestListResponse {
-    repeated universal.FriendRequest friend_requests = 1;
-    int64 total = 2;
+  repeated universal.FriendRequest friend_requests = 1;
+  int64 total = 2;
 }
 message GetFriendRequestRequest {
-    int64 request_id = 1;
+  int64 request_id = 1;
 }
 message GetFriendRequestResponse {
-    universal.FriendRequest friend_request = 1;
+  universal.FriendRequest friend_request = 1;
 }
 message GetFriendRequestsRequest{
-    repeated int64 request_ids = 1;
+  repeated int64 request_ids = 1;
 }
 message GetFriendRequestsResponse{
-    repeated universal.FriendRequest friend_requests = 1;
+  repeated universal.FriendRequest friend_requests = 1;
 }
 message DealFriendRequestRequest {
-    int64 request_id = 1;
-    string status = 2;
-    string note_name = 3;
-    string group_name = 4;
+  int64 request_id = 1;
+  string status = 2 [(validate.rules).string.in = "1,2"];
+  string note_name = 3 [(validate.rules).string = {min_len:1,max_len:10}];
+  string group_name = 4 [(validate.rules).string = {min_len:1,max_len:10}];
 }
 message DealFriendRequestResponse {
 }
 message GetFriendListRequest {
-    int64 user_id = 1;
+  int64 user_id = 1;
 }
 message GetFriendListResponse {
-    repeated universal.Friend friends = 1;
+  repeated universal.Friend friends = 1;
 }
 message DeleteFriendRequest {
-    int64 user_id = 1;
-    int64 friend_id = 2;
+  int64 user_id = 1;
+  int64 friend_id = 2;
 }
 message DeleteFriendResponse {
 }
 message GetFriendInfoRequest {
-    int64 friend_id = 1;
+  int64 friend_id = 1;
 }
 message GetFriendInfoResponse {
-    string city_name = 1;
-    string province_name = 2;
-    string desc = 3;
-    string account_id = 4;
+  string city_name = 1;
+  string province_name = 2;
+  string desc = 3;
+  string account_id = 4;
 }
 message UpdateFriendInfoRequest {
-    int64 user_id = 1;
-    int64 friend_id = 2;
-    string note_name = 3;
-    string group_name = 4;
+  int64 user_id = 1;
+  int64 friend_id = 2;
+  string note_name = 3 [(validate.rules).string = {min_len:1,max_len:10}];
+  string group_name = 4 [(validate.rules).string = {min_len:1,max_len:10}];
 }
 message UpdateFriendInfoResponse {
 }
 message CreateFriendGroupRequest {
-    int64 user_id = 1;
-    string group_name = 2;
+  int64 user_id = 1;
+  string group_name = 2 [(validate.rules).string = {min_len:1,max_len:10}];
 }
 message CreateFriendGroupResponse {
 }
 message UpdateFriendGroupRequest {
-    int64 user_id = 1;
-    string group_name = 2;
-    string new_group_name = 3;
+  int64 user_id = 1;
+  string group_name = 2 [(validate.rules).string = {min_len:1,max_len:10}];
+  string new_group_name = 3 [(validate.rules).string = {min_len:1,max_len:10}];
 }
 message UpdateFriendGroupResponse {
 }
 message DeleteFriendGroupRequest {
-    int64 user_id = 1;
-    string group_name = 2;
+  int64 user_id = 1;
+  string group_name = 2 [(validate.rules).string = {min_len:1,max_len:10}];
 }
 message DeleteFriendGroupResponse {
 }
 message GetFriendGroupListRequest {
-    int64 user_id = 1;
+  int64 user_id = 1;
 }
 message GetFriendGroupListResponse {
-    repeated string group_names = 1;
+  repeated string group_names = 1;
+}
+//群组
+message CreateGroupRequest {
+  string group_name = 1 [(validate.rules).string = {min_len:1,max_len:10}];
+  string group_avatar = 2 [(validate.rules).string = {min_len:1,max_len:255}];
+  string group_desc = 3 [(validate.rules).string = {min_len:1,max_len:100}];
+  int64  group_leader_id = 4;
+}
+message CreateGroupResponse {
+  universal.Group group = 1;
+}
+message GetGroupListRequest {
+  int64 user_id = 1;
+}
+message GetGroupListResponse {
+  repeated universal.Group groups = 1;
+}
+message GetGroupInfoRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+}
+message GetGroupInfoResponse{
+  universal.Group group = 1;
+}
+message UpdateGroupInfoRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+  string group_name = 2 [(validate.rules).string = {min_len:1,max_len:10}];
+  string group_avatar = 3 [(validate.rules).string = {min_len:1,max_len:255}];
+  string group_desc = 4 [(validate.rules).string = {min_len:1,max_len:100}];
+}
+message UpdateGroupInfoResponse{
+}
+message DeleteGroupRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+  int64 user_id = 2;
+}
+message DeleteGroupResponse{
+}
+message GetGroupMemberListRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+}
+message GetGroupMemberListResponse{
+  repeated universal.GroupMember group_members = 1;
+}
+message GetGroupMemberInfoRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+  int64 user_id = 2;
+}
+message GetGroupMemberInfoResponse{
+  universal.GroupMember group_member = 1;
+}
+message UpdateGroupMemberInfoRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+  int64 user_id = 2;
+  string member_note_name = 3 [(validate.rules).string = {min_len:1,max_len:10}];
+  string group_note_name = 4 [(validate.rules).string = {min_len:1,max_len:10}];
+}
+message UpdateGroupMemberInfoResponse{
+}
+message DeleteGroupMemberRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+  int64 user_id = 2;
+  int64 admin_id = 3;
+}
+message DeleteGroupMemberResponse{
+}
+message SendGroupRequestRequest{
+  int64 requester_id = 1;
+  string group_id = 2 [(validate.rules).string = {min_len:10,max_len:13}];
+  string desc = 3 [(validate.rules).string = {min_len:1,max_len:100}];
+}
+message SendGroupRequestResponse{
+  universal.GroupRequest group_request = 1;
+}
+message GetGroupRequestListRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+}
+message GetGroupRequestListResponse{
+  repeated universal.GroupRequest group_requests = 1;
+}
+message GetGroupRequestRequest{
+  int64 request_id = 1;
+}
+message GetGroupRequestResponse{
+  universal.GroupRequest group_request = 1;
+}
+message GetGroupRequestsRequest{
+  repeated int64 request_ids = 1;
+}
+message GetGroupRequestsResponse{
+  repeated universal.GroupRequest group_requests = 1;
+}
+message DealGroupRequestRequest{
+  int64 request_id = 1;
+  string status = 2 [(validate.rules).string = {in:"1,2"}];
+}
+message DealGroupRequestResponse{
+}
+message CreateGroupAdminRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+  int64 user_id = 2;
+}
+message CreateGroupAdminResponse{
+}
+message DeleteGroupAdminRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+  int64 user_id = 2;
+}
+message DeleteGroupAdminResponse{
+}
+message GetGroupAdminListRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+}
+message GetGroupAdminListResponse{
+  repeated universal.GroupMember group_admins = 1;
+}
+message GetGroupAdminInfoRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+  int64 user_id = 2;
+}
+message GetGroupAdminInfoResponse{
+  universal.GroupMember group_admin = 1;
+}
+message CheckAdminRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+  int64 user_id = 2;
+}
+message CheckAdminResponse{
+  bool is_admin = 1;
+}
+message GetGroupMemberRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+  int64 user_id = 2;
+}
+message CheckLeaderRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+  int64 user_id = 2;
+}
+message CheckLeaderResponse{
+  bool is_leader = 1;
+}
+message CheckMemberRequest{
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+  int64 user_id = 2;
+}
+message CheckMemberResponse{
+  bool is_member = 1;
 }

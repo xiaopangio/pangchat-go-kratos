@@ -1,6 +1,7 @@
 syntax = "proto3";
 import "v1/universal/universal.proto";
 package api.v1.logic.relationship;
+import "validate/validate.proto";
 option go_package = "./api/v1/relationship;relationship";
 service relationShip {
   rpc SendFriendRequest (SendFriendRequestRequest) returns (SendFriendRequestResponse) {}
@@ -58,17 +59,17 @@ message GetONeFriendResponse{
 message SendFriendRequestRequest {
   int64 requester_id = 1;
   int64 receiver_id = 2;
-  string note_name = 3;
-  string desc = 4;
-  string group_name = 5;
+  string note_name = 3 [(validate.rules).string = {min_len:1,max_len:10}];
+  string desc = 4 [(validate.rules).string.max_len = 50];
+  string group_name = 5[(validate.rules).string = {min_len:1,max_len:10}];
 }
 message SendFriendRequestResponse {
   universal.FriendRequest friend_request = 1;
 }
 message GetFriendRequestListRequest {
   int64 user_id = 1;
-  int64 page_number = 2;
-  int64 page_size = 3;
+  int64 page_number = 2 [(validate.rules).int64.gt = 0];
+  int64 page_size = 3 [(validate.rules).int64.lt = 100];
 }
 message GetFriendRequestListResponse {
   repeated universal.FriendRequest friend_requests = 1;
@@ -88,9 +89,9 @@ message GetFriendRequestsResponse{
 }
 message DealFriendRequestRequest {
   int64 request_id = 1;
-  string status = 2;
-  string note_name = 3;
-  string group_name = 4;
+  string status = 2 [(validate.rules).string.in = "1,2"];
+  string note_name = 3 [(validate.rules).string = {min_len:1,max_len:10}];
+  string group_name = 4 [(validate.rules).string = {min_len:1,max_len:10}];
 }
 message DealFriendRequestResponse {
 }
@@ -118,27 +119,27 @@ message GetFriendInfoResponse {
 message UpdateFriendInfoRequest {
   int64 user_id = 1;
   int64 friend_id = 2;
-  string note_name = 3;
-  string group_name = 4;
+  string note_name = 3 [(validate.rules).string = {min_len:1,max_len:10}];
+  string group_name = 4 [(validate.rules).string = {min_len:1,max_len:10}];
 }
 message UpdateFriendInfoResponse {
 }
 message CreateFriendGroupRequest {
   int64 user_id = 1;
-  string group_name = 2;
+  string group_name = 2 [(validate.rules).string = {min_len:1,max_len:10}];
 }
 message CreateFriendGroupResponse {
 }
 message UpdateFriendGroupRequest {
   int64 user_id = 1;
-  string group_name = 2;
-  string new_group_name = 3;
+  string group_name = 2 [(validate.rules).string = {min_len:1,max_len:10}];
+  string new_group_name = 3 [(validate.rules).string = {min_len:1,max_len:10}];
 }
 message UpdateFriendGroupResponse {
 }
 message DeleteFriendGroupRequest {
   int64 user_id = 1;
-  string group_name = 2;
+  string group_name = 2 [(validate.rules).string = {min_len:1,max_len:10}];
 }
 message DeleteFriendGroupResponse {
 }
@@ -150,9 +151,9 @@ message GetFriendGroupListResponse {
 }
 //群组
 message CreateGroupRequest {
-  string group_name = 1;
-  string group_avatar = 2;
-  string group_desc = 3;
+  string group_name = 1 [(validate.rules).string = {min_len:1,max_len:10}];
+  string group_avatar = 2 [(validate.rules).string = {min_len:1,max_len:255}];
+  string group_desc = 3 [(validate.rules).string = {min_len:1,max_len:100}];
   int64  group_leader_id = 4;
 }
 message CreateGroupResponse {
@@ -165,48 +166,48 @@ message GetGroupListResponse {
   repeated universal.Group groups = 1;
 }
 message GetGroupInfoRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
 }
 message GetGroupInfoResponse{
   universal.Group group = 1;
 }
 message UpdateGroupInfoRequest{
-  string group_id = 1;
-  string group_name = 2;
-  string group_avatar = 3;
-  string group_desc = 4;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
+  string group_name = 2 [(validate.rules).string = {min_len:1,max_len:10}];
+  string group_avatar = 3 [(validate.rules).string = {min_len:1,max_len:255}];
+  string group_desc = 4 [(validate.rules).string = {min_len:1,max_len:100}];
 }
 message UpdateGroupInfoResponse{
 }
 message DeleteGroupRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
   int64 user_id = 2;
 }
 message DeleteGroupResponse{
 }
 message GetGroupMemberListRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
 }
 message GetGroupMemberListResponse{
   repeated universal.GroupMember group_members = 1;
 }
 message GetGroupMemberInfoRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
   int64 user_id = 2;
 }
 message GetGroupMemberInfoResponse{
   universal.GroupMember group_member = 1;
 }
 message UpdateGroupMemberInfoRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
   int64 user_id = 2;
-  string member_note_name = 3;
-  string group_note_name = 4;
+  string member_note_name = 3 [(validate.rules).string = {min_len:1,max_len:10}];
+  string group_note_name = 4 [(validate.rules).string = {min_len:1,max_len:10}];
 }
 message UpdateGroupMemberInfoResponse{
 }
 message DeleteGroupMemberRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
   int64 user_id = 2;
   int64 admin_id = 3;
 }
@@ -214,14 +215,14 @@ message DeleteGroupMemberResponse{
 }
 message SendGroupRequestRequest{
   int64 requester_id = 1;
-  string group_id = 2;
-  string desc = 3;
+  string group_id = 2 [(validate.rules).string = {min_len:10,max_len:13}];
+  string desc = 3 [(validate.rules).string = {min_len:1,max_len:100}];
 }
 message SendGroupRequestResponse{
   universal.GroupRequest group_request = 1;
 }
 message GetGroupRequestListRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
 }
 message GetGroupRequestListResponse{
   repeated universal.GroupRequest group_requests = 1;
@@ -240,55 +241,55 @@ message GetGroupRequestsResponse{
 }
 message DealGroupRequestRequest{
   int64 request_id = 1;
-  string status = 2;
+  string status = 2 [(validate.rules).string = {in:"1,2"}];
 }
 message DealGroupRequestResponse{
 }
 message CreateGroupAdminRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
   int64 user_id = 2;
 }
 message CreateGroupAdminResponse{
 }
 message DeleteGroupAdminRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
   int64 user_id = 2;
 }
 message DeleteGroupAdminResponse{
 }
 message GetGroupAdminListRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
 }
 message GetGroupAdminListResponse{
   repeated universal.GroupMember group_admins = 1;
 }
 message GetGroupAdminInfoRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
   int64 user_id = 2;
 }
 message GetGroupAdminInfoResponse{
   universal.GroupMember group_admin = 1;
 }
 message CheckAdminRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
   int64 user_id = 2;
 }
 message CheckAdminResponse{
   bool is_admin = 1;
 }
 message GetGroupMemberRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
   int64 user_id = 2;
 }
 message CheckLeaderRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
   int64 user_id = 2;
 }
 message CheckLeaderResponse{
   bool is_leader = 1;
 }
 message CheckMemberRequest{
-  string group_id = 1;
+  string group_id = 1 [(validate.rules).string = {min_len:10,max_len:13}];
   int64 user_id = 2;
 }
 message CheckMemberResponse{

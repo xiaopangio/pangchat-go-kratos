@@ -27,11 +27,11 @@ func newMessage(db *gorm.DB, opts ...gen.DOOption) message {
 
 	tableName := _message.messageDo.TableName()
 	_message.ALL = field.NewAsterisk(tableName)
-	_message.MessageID = field.NewString(tableName, "message_id")
+	_message.MessageID = field.NewInt64(tableName, "message_id")
 	_message.Type = field.NewInt32(tableName, "type")
 	_message.Content = field.NewString(tableName, "content")
-	_message.SenderID = field.NewString(tableName, "sender_id")
-	_message.ReceiverID = field.NewString(tableName, "receiver_id")
+	_message.SenderID = field.NewInt64(tableName, "sender_id")
+	_message.ReceiverID = field.NewInt64(tableName, "receiver_id")
 	_message.SendAt = field.NewString(tableName, "send_at")
 
 	_message.fillFieldMap()
@@ -43,11 +43,11 @@ type message struct {
 	messageDo messageDo
 
 	ALL        field.Asterisk
-	MessageID  field.String // 唯一消息标识
+	MessageID  field.Int64  // 唯一消息标识
 	Type       field.Int32  // 消息类型：1为文字，2为图片，3为视频，4为文件
 	Content    field.String // 消息体
-	SenderID   field.String // 发送者
-	ReceiverID field.String // 接受者
+	SenderID   field.Int64  // 发送者
+	ReceiverID field.Int64  // 接受者
 	SendAt     field.String // 发送时间
 
 	fieldMap map[string]field.Expr
@@ -65,11 +65,11 @@ func (m message) As(alias string) *message {
 
 func (m *message) updateTableName(table string) *message {
 	m.ALL = field.NewAsterisk(table)
-	m.MessageID = field.NewString(table, "message_id")
+	m.MessageID = field.NewInt64(table, "message_id")
 	m.Type = field.NewInt32(table, "type")
 	m.Content = field.NewString(table, "content")
-	m.SenderID = field.NewString(table, "sender_id")
-	m.ReceiverID = field.NewString(table, "receiver_id")
+	m.SenderID = field.NewInt64(table, "sender_id")
+	m.ReceiverID = field.NewInt64(table, "receiver_id")
 	m.SendAt = field.NewString(table, "send_at")
 
 	m.fillFieldMap()

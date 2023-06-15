@@ -4,6 +4,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"relationship/api/v1/relationship"
 	"relationship/internal/conf"
@@ -15,8 +16,8 @@ func NewGRPCServer(c *conf.Bootstrap, logger log.Logger, service *service.Relati
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
-			//	log中间件
 			logging.Server(logger),
+			validate.Validator(),
 		),
 	}
 	serverConf := c.Server.Grpc

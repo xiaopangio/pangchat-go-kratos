@@ -26,7 +26,7 @@ const (
 	User_ResetPassword_FullMethodName     = "/api.v1.logic.user.User/ResetPassword"
 	User_ModifyAccountID_FullMethodName   = "/api.v1.logic.user.User/ModifyAccountID"
 	User_ModifyProfile_FullMethodName     = "/api.v1.logic.user.User/ModifyProfile"
-	User_Profile_FullMethodName           = "/api.v1.logic.user.User/GetProfileByAccountID"
+	User_Profile_FullMethodName           = "/api.v1.logic.user.User/Profile"
 	User_GetProfileByUID_FullMethodName   = "/api.v1.logic.user.User/GetProfileByUID"
 	User_AddressList_FullMethodName       = "/api.v1.logic.user.User/AddressList"
 	User_BindPhone_FullMethodName         = "/api.v1.logic.user.User/BindPhone"
@@ -308,7 +308,7 @@ func (UnimplementedUserServer) ModifyProfile(context.Context, *ModifyProfileRequ
 	return nil, status.Errorf(codes.Unimplemented, "method ModifyProfile not implemented")
 }
 func (UnimplementedUserServer) Profile(context.Context, *ProfileRequest) (*ProfileReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetProfileByAccountID not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method Profile not implemented")
 }
 func (UnimplementedUserServer) GetProfileByUID(context.Context, *GetProfileByUIDRequest) (*GetProfileByUIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProfileByUID not implemented")
@@ -682,7 +682,7 @@ var User_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _User_ModifyProfile_Handler,
 		},
 		{
-			MethodName: "GetProfileByAccountID",
+			MethodName: "Profile",
 			Handler:    _User_Profile_Handler,
 		},
 		{

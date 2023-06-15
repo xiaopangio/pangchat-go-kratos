@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	cfg "github.com/go-kratos/kratos/contrib/config/nacos/v2"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/nacos-group/nacos-sdk-go/clients"
@@ -69,7 +70,8 @@ func NewLogger(bc *conf.Bootstrap) log.Logger {
 			}
 		}
 	}
-	logFilePath := "../logs/" + bc.Server.Name + "_" + strings.Split(bc.Server.Grpc.Addr, ":")[1] + ".log"
+	today := time.Now().Format("2006-01-02")
+	logFilePath := "../logs/" + bc.Server.Name + "_" + strings.Split(bc.Server.Grpc.Addr, ":")[1] + "_" + today + ".log"
 	logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)
