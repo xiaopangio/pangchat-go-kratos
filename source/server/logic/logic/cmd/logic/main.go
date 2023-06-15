@@ -60,17 +60,17 @@ func newApp(logger log.Logger, cf *conf.Bootstrap, gs *grpc.Server, endpoints []
 // NewLogger new a logger.
 func NewLogger(bc *conf.Bootstrap) log.Logger {
 	//判断是否有日志文件夹，没有则创建
-	_, err := os.Stat("../logs")
+	_, err := os.Stat("./logs")
 	if err != nil {
 		if os.IsNotExist(err) {
-			err := os.Mkdir("../logs", os.ModePerm)
+			err := os.Mkdir("./logs", os.ModePerm)
 			if err != nil {
 				panic(err)
 			}
 		}
 	}
 	today := time.Now().Format("2006-01-02")
-	logFilePath := "../logs/" + bc.Server.Name + "_" + strings.Split(bc.Server.Grpc.Addr, ":")[1] + "_" + today + ".log"
+	logFilePath := "./logs/" + bc.Server.Name + "_" + strings.Split(bc.Server.Grpc.Addr, ":")[1] + "_" + today + ".log"
 	logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)
