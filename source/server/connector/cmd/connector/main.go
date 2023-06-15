@@ -66,11 +66,9 @@ func NewLogger(bc *conf.Bootstrap) log.Logger {
 	//判断是否有日志文件夹，没有则创建
 	_, err := os.Stat("../logs")
 	if err != nil {
-		if os.IsNotExist(err) {
-			err := os.Mkdir("../logs", os.ModePerm)
-			if err != nil {
-				panic(err)
-			}
+		err := os.Mkdir("../logs", os.ModePerm)
+		if err != nil {
+			panic(err)
 		}
 	}
 	today := time.Now().Format("2006-01-02")
