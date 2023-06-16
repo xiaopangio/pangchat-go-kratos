@@ -61,14 +61,14 @@ ifeq ($(OS),Windows_NT)
 	$(PKILL) user$(EXE) >nul 2>&1 || exit 0
 	$(PKILL) online$(EXE) >nul 2>&1 || exit 0
 else
-	pkill -9 -f api-gateway >nul 2>&1 || exit 0
-	pkill -9 -f connector >nul 2>&1 || exit 0
-	pkill -9 -f job >nul 2>&1 || exit 0
-	pkill -9 -f logic >nul 2>&1 || exit 0
-	pkill -9 -f message >nul 2>&1 || exit 0
-	pkill -9 -f relationship >nul 2>&1 || exit 0
-	pkill -9 -f user >nul 2>&1 || exit 0
-	pkill -9 -f online >nul 2>&1 || exit 0
+	pkill -9 -f "api-gateway"
+	pkill -9 -f "connector"
+	pkill -9 -f "job"
+	pkill -9 -f "logic"
+	pkill -9 -f "message"
+	pkill -9 -f "relationship"
+	pkill -9 -f "user"
+	pkill -9 -f "online"
 endif
 	make clean
 clean:
