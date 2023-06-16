@@ -7,14 +7,15 @@ ifeq ($(OS),Windows_NT)
 	MV = move
 	EXE = .exe
 else
-	RM = rm -f
+	RM = rm -rf
 	MKDIR = mkdir -p
 	PKILL = pkill -9 -f
 	MV = mv
 	EXE =
 endif
 build:
-	mkdir bin >nul 2>&1 || exit 0
+	make clean
+	mkdir bin
 	cd api-gateway/cmd/api-gateway/ && go build . && $(MV) api-gateway$(EXE) $(BIN_DIR)
 	cd connector/cmd/connector/ && go build . && $(MV) connector$(EXE)  $(BIN_DIR)
 	cd job/cmd/job/ && go build . && $(MV) job$(EXE)  $(BIN_DIR)
@@ -24,6 +25,7 @@ build:
 	cd logic/user/cmd/user/ && go build . && $(MV) user$(EXE)  $(BIN_DIR)
 	cd online/cmd/online/ && go build . && $(MV) online$(EXE)  $(BIN_DIR)
 run:
+	make clean
 	make build
 ifeq ($(OS),Windows_NT)
 	cd $(BIN_DIR) && start /B .\api-gateway$(EXE) -conf ../api-gateway/configs/config.yaml
@@ -58,14 +60,14 @@ ifeq ($(OS),Windows_NT)
 	$(PKILL) user$(EXE) >nul 2>&1 || exit 0
 	$(PKILL) online$(EXE) >nul 2>&1 || exit 0
 else
-	$(PKILL) api-gateway >nul 2>&1 || exit 0
-	$(PKILL) connector >nul 2>&1 || exit 0
-	$(PKILL) job >nul 2>&1 || exit 0
-	$(PKILL) logic >nul 2>&1 || exit 0
-	$(PKILL) message >nul 2>&1 || exit 0
-	$(PKILL) relationship >nul 2>&1 || exit 0
-	$(PKILL) user >nul 2>&1 || exit 0
-	$(PKILL) online >nul 2>&1 || exit 0
+	pkill -9 -f api-gateway
+	pkill -9 -f connector
+	pkill -9 -f job
+	pkill -9 -f logic
+	pkill -9 -f message
+	pkill -9 -f relationship
+	pkill -9 -f user
+	pkill -9 -f online
 endif
 	make clean
 clean:
