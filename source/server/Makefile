@@ -1,12 +1,14 @@
-BIN_DIR:=$(subst /,\,$(CURDIR)/bin)
-CACHE_DIR:=$(subst /,\,$(CURDIR)/cache)
 ifeq ($(OS),Windows_NT)
+	BIN_DIR = $(subst /,\,$(CURDIR)/bin)
+    CACHE_DIR = $(subst /,\,$(CURDIR)/cache)
 	RM = rmdir /S /Q
 	MKDIR = mkdir -p
 	PKILL = taskkill /F /IM
 	MV = move
 	EXE = .exe
 else
+	BIN_DIR = $(CURDIR)/bin
+	CACHE_DIR = $(CURDIR)/cache
 	RM = rm -rf
 	MKDIR = mkdir -p
 	PKILL = pkill -9 -f
