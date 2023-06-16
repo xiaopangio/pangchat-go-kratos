@@ -1,4 +1,5 @@
 BIN_DIR:=$(subst /,\,$(CURDIR)/bin)
+CACHE_DIR:=$(subst /,\,$(CURDIR)/cache)
 ifeq ($(OS),Windows_NT)
 	RM = rmdir /S /Q
 	MKDIR = mkdir -p
@@ -13,7 +14,7 @@ else
 	EXE =
 endif
 build:
-	mkdir $(BIN_DIR) >nul 2>&1 || exit 0
+	mkdir bin >nul 2>&1 || exit 0
 	cd api-gateway/cmd/api-gateway/ && go build . && $(MV) api-gateway$(EXE) $(BIN_DIR)
 	cd connector/cmd/connector/ && go build . && $(MV) connector$(EXE)  $(BIN_DIR)
 	cd job/cmd/job/ && go build . && $(MV) job$(EXE)  $(BIN_DIR)
@@ -57,17 +58,16 @@ ifeq ($(OS),Windows_NT)
 	$(PKILL) user$(EXE) >nul 2>&1 || exit 0
 	$(PKILL) online$(EXE) >nul 2>&1 || exit 0
 else
-	$(PKILL) api-gateway
-	$(PKILL) connector
-	$(PKILL) job
-	$(PKILL) logic
-	$(PKILL) message
-	$(PKILL) relationship
-	$(PKILL) user
-	$(PKILL) online
+	$(PKILL) api-gateway >nul 2>&1 || exit 0
+	$(PKILL) connector >nul 2>&1 || exit 0
+	$(PKILL) job >nul 2>&1 || exit 0
+	$(PKILL) logic >nul 2>&1 || exit 0
+	$(PKILL) message >nul 2>&1 || exit 0
+	$(PKILL) relationship >nul 2>&1 || exit 0
+	$(PKILL) user >nul 2>&1 || exit 0
+	$(PKILL) online >nul 2>&1 || exit 0
 endif
 	make clean
 clean:
-	$(RM) $(BIN_DIR)\*.exe
-	$(RM) $(BIN_DIR)\cache
-	$(RM) $(BIN_DIR)\logs
+	$(RM) $(BIN_DIR) >nul 2>&1 || exit 0
+	$(RM) $(CACHE_DIR) >nul 2>&1 || exit 0
