@@ -61,14 +61,7 @@ ifeq ($(OS),Windows_NT)
 	$(PKILL) user$(EXE) >nul 2>&1 || exit 0
 	$(PKILL) online$(EXE) >nul 2>&1 || exit 0
 else
-	pkill -9 -f "api-gateway"
-	pkill -9 -f "connector"
-	pkill -9 -f "job"
-	pkill -9 -f "logic"
-	pkill -9 -f "message"
-	pkill -9 -f "relationship"
-	pkill -9 -f "user"
-	pkill -9 -f "online"
+	pkill -9 -f "pangchat"
 endif
 	make clean
 clean:
