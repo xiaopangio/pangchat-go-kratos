@@ -27,7 +27,6 @@ build:
 	cd logic/user/cmd/user/ && go build . && $(MV) user$(EXE)  $(BIN_DIR)
 	cd online/cmd/online/ && go build . && $(MV) online$(EXE)  $(BIN_DIR)
 run:
-	make clean
 	make build
 ifeq ($(OS),Windows_NT)
 	cd $(BIN_DIR) && start /B .\api-gateway$(EXE) -conf ../api-gateway/configs/config.yaml
